@@ -26,14 +26,14 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <MantineProvider>
-            <html lang='en'>
-                <body
-                    className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-                >
+        <html lang='en' suppressHydrationWarning>
+            <body
+                className={`${geistSans.variable} ${geistMono.variable} antialiased vsc-initialized`}
+            >
+                <MantineProvider>
                     {children}
-                </body>
-            </html>
-        </MantineProvider>
+                </MantineProvider>
+            </body>
+        </html>
     );
 }
