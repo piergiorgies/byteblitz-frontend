@@ -4,17 +4,6 @@ import './globals.css';
 import '@mantine/core/styles.css';
 import { MantineProvider } from '@mantine/core';
 
-const geistSans = localFont({
-    src: './fonts/GeistVF.woff',
-    variable: '--font-geist-sans',
-    weight: '100 900',
-});
-const geistMono = localFont({
-    src: './fonts/GeistMonoVF.woff',
-    variable: '--font-geist-mono',
-    weight: '100 900',
-});
-
 export const metadata: Metadata = {
     title: 'ByteBlitz',
     description: 'ByteBlitz by IEEE Student Branch of Brescia',
@@ -28,7 +17,7 @@ export default function RootLayout({
     return (
         <html lang='en' suppressHydrationWarning>
             <body
-                className={`${geistSans.variable} ${geistMono.variable} antialiased vsc-initialized`}
+                className={`antialiased vsc-initialized`}
             >
                 <MantineProvider>
                     {children}
