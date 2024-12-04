@@ -16,12 +16,8 @@ export default function RootLayout({
 }>) {
     return (
         <html lang='en' suppressHydrationWarning>
-            <body
-                className={`antialiased vsc-initialized`}
-            >
-                <MantineProvider>
-                    {children}
-                </MantineProvider>
+            <body className={`vsc-initialized antialiased`}>
+                <MantineProvider>{children}</MantineProvider>
             </body>
         </html>
     );

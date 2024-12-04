@@ -1,11 +1,13 @@
 'use client';
 
-import { AppShell, Burger, Button, Group, NavLink, Text } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
-import { useRouter } from "next/router";
-import React from "react";
+import { AppShell, Burger, Button, Group, NavLink, Text } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import { useRouter } from 'next/router';
+import React from 'react';
 
-export default function AdminLayout({ children }: Readonly<{children: React.ReactNode}>) {
+export default function AdminLayout({
+    children,
+}: Readonly<{ children: React.ReactNode }>) {
     // const router = useRouter();
     const [opened, { toggle }] = useDisclosure();
 
@@ -30,14 +32,9 @@ export default function AdminLayout({ children }: Readonly<{children: React.Reac
                                 size='sm'
                             />
                             <div className='flex w-full items-center justify-between'>
-                                <Text c='dimmed'>
-                                    ByteBlitz
-                                </Text>
+                                <Text c='dimmed'>ByteBlitz</Text>
                                 <Button
-                                    size='xs'
-                                    radius='xs'
-                                    color='black'
-                                    // onClick={handleLogout}
+                                // onClick={handleLogout}
                                 >
                                     Logout
                                 </Button>
@@ -45,9 +42,7 @@ export default function AdminLayout({ children }: Readonly<{children: React.Reac
                         </div>
                     </Group>
                 </AppShell.Header>
-                <AppShell.Navbar p='xs'>
-                    
-                </AppShell.Navbar>
+                <AppShell.Navbar p='xs'></AppShell.Navbar>
                 <AppShell.Main className='bg-slate-100'>
                     {children}
                 </AppShell.Main>

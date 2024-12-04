@@ -1,6 +1,17 @@
 'use client';
 import { use, useEffect, useState } from 'react';
-import { AppShell, Burger, Card, Center, Grid, Loader, rem, SimpleGrid, Skeleton, Space } from '@mantine/core';
+import {
+    AppShell,
+    Burger,
+    Card,
+    Center,
+    Grid,
+    Loader,
+    rem,
+    SimpleGrid,
+    Skeleton,
+    Space,
+} from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import Navbar from '../components/home/Navbar';
 import Link from 'next/link';
@@ -21,15 +32,14 @@ export default function Home() {
                     searchParams: {
                         limit: maxProblems,
                         offset: offset,
-                    }
+                    },
                 });
                 response.json().then((data: any) => {
                     console.log(data.data);
                     setConstests(data.data);
                     setLoading(false);
                 });
-            }
-            catch (error) {
+            } catch (error) {
                 console.error(error);
             }
         };
@@ -37,31 +47,33 @@ export default function Home() {
         fetchContests();
     }, []);
 
-
     return (
         <AppShell
             header={{ height: 60 }}
-        // padding="md"
+            // padding="md"
         >
             <AppShell.Header>
                 <Burger
                     opened={opened}
                     onClick={toggle}
-                    hiddenFrom="sm"
-                    size="sm"
+                    hiddenFrom='sm'
+                    size='sm'
                 />
                 <Navbar />
             </AppShell.Header>
             <AppShell.Main>
                 <Center className='bg-gray-100'>
-                    <div className='hero min-h-screen bg-base-200 my-6'>
-
+                    <div className='hero bg-base-200 my-6 min-h-screen'>
                         <Space h={50} />
                         <Center>
                             <div className='hero-content text-center'>
                                 <div className='max-w-lg'>
-                                    <h1 className='text-5xl font-bold'>Welcome to ByteBlitz!</h1>
-                                    <h4 className='text-2xl my-4'>A platform for coding competitions.</h4>
+                                    <h1 className='text-5xl font-bold'>
+                                        Welcome to ByteBlitz!
+                                    </h1>
+                                    <h4 className='my-4 text-2xl'>
+                                        A platform for coding competitions.
+                                    </h4>
                                 </div>
                             </div>
                         </Center>
@@ -70,13 +82,15 @@ export default function Home() {
                             {contests.map((contest: any) => (
                                 <Card
                                     key={contest.id}
-                                    shadow="sm"
-                                    padding="lg"
-                                    radius="md"
+                                    shadow='sm'
+                                    padding='lg'
+                                    radius='md'
                                     withBorder
                                 >
                                     <div>
-                                        <h2 className='text-lg font-bold'>{contest.name}</h2>
+                                        <h2 className='text-lg font-bold'>
+                                            {contest.name}
+                                        </h2>
                                         <p>{contest.description}</p>
                                     </div>
                                 </Card>
@@ -84,8 +98,7 @@ export default function Home() {
                         </SimpleGrid>
                     </div>
                 </Center>
-
             </AppShell.Main>
-        </AppShell >
+        </AppShell>
     );
 }

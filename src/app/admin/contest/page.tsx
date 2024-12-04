@@ -1,3 +1,5 @@
+import { Center } from '@mantine/core';
+
 export default function ProblemPage() {
-    return <p>PROBLEM PAGE</p>
+    return <Center></Center>;
 }

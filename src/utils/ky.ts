@@ -4,7 +4,7 @@ const api = ky.extend({
     hooks: {
         beforeRequest: [
             (options) => {
-                const accessToken = localStorage.getItem('token');
+                const accessToken = localStorage.getItem('loginToken');
                 if (accessToken) {
                     options.headers.set(
                         'Authorization',
