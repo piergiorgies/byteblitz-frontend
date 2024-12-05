@@ -11,25 +11,23 @@ export default function ProblemsPage() {
     const searchForm = useForm({
         mode: 'uncontrolled',
         initialValues: {
-            searchQuery: ''
-        }
+            searchQuery: '',
+        },
     });
 
     const onSubmitSearchQuery = (values: typeof searchForm.values) => {
         setSearchQuery(values.searchQuery);
-    }
+    };
 
     return (
         <Box bg='white' p='md'>
             <Flex justify='space-between' mb='md'>
-                <Button
-                    leftSection={<FaPlus/>}
-                >Add new</Button>
+                <Button leftSection={<FaPlus />}>Add new</Button>
 
                 <form onSubmit={searchForm.onSubmit(onSubmitSearchQuery)}>
                     <TextInput
                         placeholder='Search'
-                        leftSection={<FaMagnifyingGlass/>}
+                        leftSection={<FaMagnifyingGlass />}
                         key={searchForm.key('searchQuery')}
                         {...searchForm.getInputProps('searchQuery')}
                     />

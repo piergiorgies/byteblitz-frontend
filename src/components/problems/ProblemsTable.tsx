@@ -12,6 +12,7 @@ import {
 import api from '@/utils/ky';
 import {
     Box,
+    Button,
     Center,
     Divider,
     Flex,
@@ -22,7 +23,18 @@ import {
     Table,
     Text,
 } from '@mantine/core';
-import { FaCheck, FaSort, FaSortDown, FaSortUp, FaX } from 'react-icons/fa6';
+import {
+    FaCheck,
+    FaPenToSquare,
+    FaSort,
+    FaSortDown,
+    FaSortUp,
+    FaTrash,
+    FaX,
+} from 'react-icons/fa6';
+
+import { modals } from '@mantine/modals';
+import { notifications } from '@mantine/notifications';
 
 export default function ProblemsTable({ filter }: { filter: string }) {
     const [problems, setProblems] = useState<Problem[]>([]);
@@ -35,20 +47,39 @@ export default function ProblemsTable({ filter }: { filter: string }) {
     });
     const [rowCount, setRowCount] = useState(0);
 
-    useEffect(() => {
-        setAreProblemsLoading(true);
-
-        api.get('problems', { searchParams: { limit: pagination.pageSize, offset: (pagination.pageIndex * pagination.pageSize), search: filter } })
-            .then(async (response) => {
-                const problems = await response.json<{ data: Problem[], count: number }>();
-                setProblems(problems.data);
-                setRowCount(problems.count);
-            })
-            .catch((error) => {
-                console.log(error);
+    const getProblems = async() => {
+        try {
+            const response = await api.get('problems', {
+                searchParams: {
+                    limit: pagination.pageSize,
+                    offset: pagination.pageIndex * pagination.pageSize,
+                    search: filter,
+                },
             });
 
+            const problems = await response.json<{
+                data: Problem[];
+                count: number;
+            }>();
+            setProblems(problems.data);
+            setRowCount(problems.count);
+
+            if(pagination.pageIndex * pagination.pageSize >= problems.count) {
+                setPagination({
+                    pageIndex: pagination.pageIndex - 1,
+                    pageSize: pagination.pageSize,
+                });
+            }
+        } catch(error) {
+            console.log(error);
+        }
+
         setAreProblemsLoading(false);
+    }
+
+    useEffect(() => {
+        setAreProblemsLoading(true);
+        getProblems();
     }, [pagination, filter]);
 
     useEffect(() => {
@@ -58,6 +89,32 @@ export default function ProblemsTable({ filter }: { filter: string }) {
     useEffect(() => {
         setPagination({ ...pagination, pageSize: pageSize });
     }, [pageSize]);
+
+    const handleDeleteProblem = async(problem: Problem) => {
+        modals.openConfirmModal({
+            title: 'Delete problem',
+            children: (
+                <Text>
+                    Are you sure you want to delete the problem <Text span fw='bold'>{problem.title}</Text>?
+                </Text>
+            ),
+            labels: { confirm: 'Confirm', cancel: 'Cancel' },
+            onConfirm: async() => {
+                try {
+                    await api.delete(`problems/${problem.id}`);
+                    notifications.show({
+                        title: 'Deleted',
+                        message: 'Problem deleted succesfully!',
+                        color: 'green',
+                    });
+
+                    await getProblems();
+                } catch(error) {
+                    console.log(error);
+                }
+            }
+        });
+    }
 
     const columns = useMemo(
         () => [
@@ -98,7 +155,7 @@ export default function ProblemsTable({ filter }: { filter: string }) {
         getSortedRowModel: getSortedRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         manualPagination: true,
-        rowCount
+        rowCount,
     });
 
     return (
@@ -135,6 +192,7 @@ export default function ProblemsTable({ filter }: { filter: string }) {
                                     </div>
                                 </Table.Th>
                             ))}
+                            <Table.Th></Table.Th>
                         </Table.Tr>
                     ))}
                 </Table.Thead>
@@ -150,6 +208,25 @@ export default function ProblemsTable({ filter }: { filter: string }) {
                                     )}
                                 </Table.Td>
                             ))}
+                            <Table.Td>
+                                <Flex>
+                                    <Button
+                                        size='xs'
+                                        variant='subtle'
+                                        color='blue'
+                                    >
+                                        <FaPenToSquare />
+                                    </Button>
+                                    <Button
+                                        size='xs'
+                                        variant='subtle'
+                                        color='red'
+                                        onClick={() => handleDeleteProblem(row.original)}
+                                    >
+                                        <FaTrash />
+                                    </Button>
+                                </Flex>
+                            </Table.Td>
                         </Table.Tr>
                     ))}
 
@@ -172,24 +249,31 @@ export default function ProblemsTable({ filter }: { filter: string }) {
                         .map((_, i) => (
                             <Table.Tr key={i}>
                                 <Table.Td>
-                                    <Skeleton width='70%'><Space h="lg"/></Skeleton>
+                                    <Skeleton width='70%'>
+                                        <Space h='lg' />
+                                    </Skeleton>
                                 </Table.Td>
                                 <Table.Td>
-                                    <Skeleton width='70%'><Space h="lg"/></Skeleton>
+                                    <Skeleton width='70%'>
+                                        <Space h='lg' />
+                                    </Skeleton>
                                 </Table.Td>
                                 <Table.Td>
-                                    <Skeleton width='70%'><Space h="lg"/></Skeleton>
+                                    <Skeleton width='70%'>
+                                        <Space h='lg' />
+                                    </Skeleton>
                                 </Table.Td>
                                 <Table.Td>
-                                    <Skeleton width='70%'><Space h="lg"/></Skeleton>
+                                    <Skeleton width='70%'>
+                                        <Space h='lg' />
+                                    </Skeleton>
                                 </Table.Td>
                             </Table.Tr>
                         ))}
                 </Table.Tbody>
-
             </Table>
 
-            <Divider my='md'/>
+            <Divider my='md' />
 
             <Flex justify='space-between'>
                 <Select
