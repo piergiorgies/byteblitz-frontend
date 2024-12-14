@@ -9,7 +9,7 @@ import { FaMagnifyingGlass, FaPlus } from 'react-icons/fa6';
 
 export default function ProblemsPage() {
     const router = useRouter();
-    
+
     const [searchQuery, setSearchQuery] = useState('');
     const searchForm = useForm({
         mode: 'uncontrolled',
@@ -25,7 +25,12 @@ export default function ProblemsPage() {
     return (
         <>
             <Flex justify='space-between' mb='md'>
-                <Button leftSection={<FaPlus />} onClick={() => router.push('/admin/problems/add')}>Add new</Button>
+                <Button
+                    leftSection={<FaPlus />}
+                    onClick={() => router.push('/admin/problems/add')}
+                >
+                    Add new
+                </Button>
 
                 <form onSubmit={searchForm.onSubmit(onSubmitSearchQuery)}>
                     <TextInput

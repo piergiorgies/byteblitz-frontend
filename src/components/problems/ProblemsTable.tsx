@@ -47,7 +47,7 @@ export default function ProblemsTable({ filter }: { filter: string }) {
     });
     const [rowCount, setRowCount] = useState(0);
 
-    const getProblems = async() => {
+    const getProblems = async () => {
         try {
             const response = await api.get('problems', {
                 searchParams: {
@@ -64,18 +64,18 @@ export default function ProblemsTable({ filter }: { filter: string }) {
             setProblems(problems.data);
             setRowCount(problems.count);
 
-            if(pagination.pageIndex * pagination.pageSize >= problems.count) {
+            if (pagination.pageIndex * pagination.pageSize >= problems.count) {
                 setPagination({
                     pageIndex: pagination.pageIndex - 1,
                     pageSize: pagination.pageSize,
                 });
             }
-        } catch(error) {
+        } catch (error) {
             console.log(error);
         }
 
         setAreProblemsLoading(false);
-    }
+    };
 
     useEffect(() => {
         setAreProblemsLoading(true);
@@ -90,17 +90,21 @@ export default function ProblemsTable({ filter }: { filter: string }) {
         setPagination({ ...pagination, pageSize: pageSize });
     }, [pageSize]);
 
-    const handleDeleteProblem = async(problem: Problem) => {
+    const handleDeleteProblem = async (problem: Problem) => {
         modals.openConfirmModal({
             title: 'Delete problem',
             children: (
                 <Text>
-                    Are you sure you want to delete the problem <Text span fw='bold'>{problem.title}</Text>?
+                    Are you sure you want to delete the problem{' '}
+                    <Text span fw='bold'>
+                        {problem.title}
+                    </Text>
+                    ?
                 </Text>
             ),
             labels: { confirm: 'Confirm', cancel: 'Cancel' },
             confirmProps: { variant: 'subtle', color: 'red' },
-            onConfirm: async() => {
+            onConfirm: async () => {
                 try {
                     await api.delete(`problems/${problem.id}`);
                     notifications.show({
@@ -110,12 +114,12 @@ export default function ProblemsTable({ filter }: { filter: string }) {
                     });
 
                     await getProblems();
-                } catch(error) {
+                } catch (error) {
                     console.log(error);
                 }
-            }
+            },
         });
-    }
+    };
 
     const columns = useMemo(
         () => [
@@ -222,7 +226,9 @@ export default function ProblemsTable({ filter }: { filter: string }) {
                                         size='xs'
                                         variant='subtle'
                                         color='red'
-                                        onClick={() => handleDeleteProblem(row.original)}
+                                        onClick={() =>
+                                            handleDeleteProblem(row.original)
+                                        }
                                     >
                                         <FaTrash />
                                     </Button>

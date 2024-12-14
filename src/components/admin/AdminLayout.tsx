@@ -1,14 +1,19 @@
 'use client';
 
-import { AppShell, Burger, Button, Group, NavLink, Text } from '@mantine/core';
+import { AppShell, Burger, Button, Group, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import React from 'react';
+import AdminNavbar from './AdminNavbar';
 
 export default function AdminLayoutComponent({
     children,
     username,
     userPermissions,
-}: Readonly<{ children: React.ReactNode, username: string, userPermissions: number }>) {
+}: Readonly<{
+    children: React.ReactNode;
+    username: string;
+    userPermissions: number;
+}>) {
     const [opened, { toggle }] = useDisclosure();
 
     return (
@@ -42,7 +47,9 @@ export default function AdminLayoutComponent({
                         </div>
                     </Group>
                 </AppShell.Header>
-                <AppShell.Navbar p='xs'></AppShell.Navbar>
+                <AppShell.Navbar p='xs'>
+                    <AdminNavbar userPermissions={userPermissions} />
+                </AppShell.Navbar>
                 <AppShell.Main className='bg-slate-100'>
                     {children}
                 </AppShell.Main>

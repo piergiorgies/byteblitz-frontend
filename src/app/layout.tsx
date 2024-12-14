@@ -22,10 +22,8 @@ export default function RootLayout({
         <html lang='en' suppressHydrationWarning>
             <body className={`vsc-initialized antialiased`}>
                 <MantineProvider>
-                    <Notifications/>
-                    <ModalsProvider>
-                        {children}
-                    </ModalsProvider>
+                    <Notifications />
+                    <ModalsProvider>{children}</ModalsProvider>
                 </MantineProvider>
             </body>
         </html>

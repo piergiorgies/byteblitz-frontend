@@ -38,7 +38,7 @@ export default function Navbar() {
                     username: values.username,
                     password: values.password,
                 },
-                cache: 'no-store', 
+                cache: 'no-store',
                 credentials: 'include',
             });
             response.json().then((data: any) => {

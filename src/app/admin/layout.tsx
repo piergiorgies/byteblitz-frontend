@@ -9,15 +9,20 @@ export default async function AdminLayout({
 }: Readonly<{ children: React.ReactNode }>) {
     const headerList = await headers();
     const loggedUser = headerList.get('X-LOGGED-USER') ?? 'User';
-    const loggedUserPermissions = Number(headerList.get('X-LOGGED-PERMISSIONS'));
+    const loggedUserPermissions = Number(
+        headerList.get('X-LOGGED-PERMISSIONS'),
+    );
 
     return (
-        <AdminLayoutComponent username={loggedUser} userPermissions={loggedUserPermissions}>
+        <AdminLayoutComponent
+            username={loggedUser}
+            userPermissions={loggedUserPermissions}
+        >
             <Box bg='white' p='md'>
                 <AutoBreadcrumbs />
-                <Space h='sm'/>
+                <Space h='sm' />
                 {children}
             </Box>
         </AdminLayoutComponent>
-    )
+    );
 }
