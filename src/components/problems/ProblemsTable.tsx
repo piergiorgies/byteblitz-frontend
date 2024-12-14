@@ -99,6 +99,7 @@ export default function ProblemsTable({ filter }: { filter: string }) {
                 </Text>
             ),
             labels: { confirm: 'Confirm', cancel: 'Cancel' },
+            confirmProps: { variant: 'subtle', color: 'red' },
             onConfirm: async() => {
                 try {
                     await api.delete(`problems/${problem.id}`);
@@ -121,17 +122,17 @@ export default function ProblemsTable({ filter }: { filter: string }) {
             {
                 accessorKey: 'id',
                 header: '#',
-                cell: (info: any) => info.getValue(),
+                cell: (info: any) => <Text>{info.getValue()}</Text>,
             },
             {
                 accessorKey: 'title',
                 header: 'Title',
-                cell: (info: any) => info.getValue(),
+                cell: (info: any) => <Text fw='bold'>{info.getValue()}</Text>,
             },
             {
                 accessorKey: 'points',
                 header: 'Points',
-                cell: (info: any) => info.getValue(),
+                cell: (info: any) => <Text>{info.getValue()}</Text>,
             },
             {
                 accessorKey: 'is_public',

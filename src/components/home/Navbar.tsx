@@ -16,13 +16,13 @@ export default function Navbar() {
         },
     });
     useEffect(() => {
-        setLoginToken(localStorage.getItem('loginToken') ?? '');
+        setLoginToken(localStorage.getItem('token') ?? '');
     }, []);
 
     const router = useRouter();
 
     const handleLogout = () => {
-        localStorage.removeItem('loginToken');
+        localStorage.removeItem('token');
         setLoginToken('');
 
         window.location.href = '/';
@@ -38,13 +38,15 @@ export default function Navbar() {
                     username: values.username,
                     password: values.password,
                 },
+                cache: 'no-store', 
+                credentials: 'include',
             });
             response.json().then((data: any) => {
-                localStorage.setItem('loginToken', data.access_token);
+                localStorage.setItem('token', data.access_token);
                 setLoginToken(data.access_token);
             });
         } catch (error) {
-            console.error(error);
+            console.log(error);
         }
 
         closeModal();

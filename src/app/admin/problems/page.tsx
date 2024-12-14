@@ -3,10 +3,13 @@
 import ProblemsTable from '@/components/problems/ProblemsTable';
 import { Box, Button, Flex, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { FaMagnifyingGlass, FaPlus } from 'react-icons/fa6';
 
 export default function ProblemsPage() {
+    const router = useRouter();
+    
     const [searchQuery, setSearchQuery] = useState('');
     const searchForm = useForm({
         mode: 'uncontrolled',
@@ -20,9 +23,9 @@ export default function ProblemsPage() {
     };
 
     return (
-        <Box bg='white' p='md'>
+        <>
             <Flex justify='space-between' mb='md'>
-                <Button leftSection={<FaPlus />}>Add new</Button>
+                <Button leftSection={<FaPlus />} onClick={() => router.push('/admin/problems/add')}>Add new</Button>
 
                 <form onSubmit={searchForm.onSubmit(onSubmitSearchQuery)}>
                     <TextInput
@@ -35,6 +38,6 @@ export default function ProblemsPage() {
             </Flex>
 
             <ProblemsTable filter={searchQuery} />
-        </Box>
+        </>
     );
 }

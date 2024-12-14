@@ -1,52 +1,23 @@
-'use client';
-
-import { AppShell, Burger, Button, Group, NavLink, Text } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
-import { useRouter } from 'next/router';
+import AdminLayoutComponent from '@/components/admin/AdminLayout';
+import AutoBreadcrumbs from '@/components/admin/AutoBreadcrumbs';
+import { Box, Space } from '@mantine/core';
+import { headers } from 'next/headers';
 import React from 'react';
 
-export default function AdminLayout({
+export default async function AdminLayout({
     children,
 }: Readonly<{ children: React.ReactNode }>) {
-    // const router = useRouter();
-    const [opened, { toggle }] = useDisclosure();
+    const headerList = await headers();
+    const loggedUser = headerList.get('X-LOGGED-USER') ?? 'User';
+    const loggedUserPermissions = Number(headerList.get('X-LOGGED-PERMISSIONS'));
 
     return (
-        <>
-            <AppShell
-                header={{ height: 60 }}
-                navbar={{
-                    width: 300,
-                    breakpoint: 'sm',
-                    collapsed: { mobile: !opened },
-                }}
-                padding='md'
-            >
-                <AppShell.Header>
-                    <Group h='100%' px='md'>
-                        <div className='flex w-full'>
-                            <Burger
-                                opened={opened}
-                                onClick={toggle}
-                                hiddenFrom='sm'
-                                size='sm'
-                            />
-                            <div className='flex w-full items-center justify-between'>
-                                <Text c='dimmed'>ByteBlitz</Text>
-                                <Button
-                                // onClick={handleLogout}
-                                >
-                                    Logout
-                                </Button>
-                            </div>
-                        </div>
-                    </Group>
-                </AppShell.Header>
-                <AppShell.Navbar p='xs'></AppShell.Navbar>
-                <AppShell.Main className='bg-slate-100'>
-                    {children}
-                </AppShell.Main>
-            </AppShell>
-        </>
-    );
+        <AdminLayoutComponent username={loggedUser} userPermissions={loggedUserPermissions}>
+            <Box bg='white' p='md'>
+                <AutoBreadcrumbs />
+                <Space h='sm'/>
+                {children}
+            </Box>
+        </AdminLayoutComponent>
+    )
 }

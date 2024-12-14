@@ -40,7 +40,7 @@ export default function Home() {
                     setLoading(false);
                 });
             } catch (error) {
-                console.error(error);
+                console.log(error);
             }
         };
 
