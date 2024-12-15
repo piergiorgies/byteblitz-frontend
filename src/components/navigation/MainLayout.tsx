@@ -11,33 +11,24 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import React from 'react';
-import AdminNavbar from './AdminNavbar';
-import HeaderUserButton from '../navigation/HeaderUserButton';
+import HeaderUserButton from './HeaderUserButton';
 import { useRouter } from 'next/navigation';
 
-export default function AdminLayoutComponent({
+export default function MainLayout({
     children,
     username,
     userPermissions,
 }: Readonly<{
     children: React.ReactNode;
-    username: string;
-    userPermissions: number;
+    username: string | null;
+    userPermissions: number | null;
 }>) {
     const router = useRouter();
     const [opened, { toggle }] = useDisclosure();
 
     return (
         <>
-            <AppShell
-                header={{ height: 60 }}
-                navbar={{
-                    width: 300,
-                    breakpoint: 'sm',
-                    collapsed: { mobile: !opened },
-                }}
-                padding='md'
-            >
+            <AppShell header={{ height: 60 }} padding='md'>
                 <AppShell.Header>
                     <Group h='100%' px='md'>
                         <Flex w={'100%'}>
@@ -59,7 +50,6 @@ export default function AdminLayoutComponent({
                                 >
                                     ByteBlitz
                                 </Title>
-
                                 <HeaderUserButton
                                     username={username}
                                     userPermissions={userPermissions}
@@ -68,9 +58,6 @@ export default function AdminLayoutComponent({
                         </Flex>
                     </Group>
                 </AppShell.Header>
-                <AppShell.Navbar p='xs'>
-                    <AdminNavbar userPermissions={userPermissions} />
-                </AppShell.Navbar>
                 <AppShell.Main className='bg-slate-100'>
                     {children}
                 </AppShell.Main>
