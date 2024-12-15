@@ -31,9 +31,6 @@ export default function LoginModal({
                 },
                 cache: 'no-store',
                 credentials: 'include',
-                headers: {
-                    'Access-Control-Allow-Origin': '*',
-                },
             });
             const data: { access_token: string } = await response.json();
             console.log(data);

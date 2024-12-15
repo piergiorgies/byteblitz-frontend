@@ -10,6 +10,7 @@ import {
     FaUser,
 } from 'react-icons/fa6';
 import LoginModal from '../modals/LoginModal';
+import api from '@/utils/ky';
 
 export default function HeaderUserButton({
     username,
@@ -42,10 +43,22 @@ export default function HeaderUserButton({
         );
     }
 
+    const logout = async() => {
+        try {
+            await api.get('auth/logout', {
+                credentials: 'include',
+            });
+            router.refresh();
+
+        } catch(error) {
+            console.log(error);
+        }
+    }
+
     return (
         <Menu>
             <Menu.Target>
-                <Button>{username}</Button>
+                <Button leftSection={<FaUser/>}>{username}</Button>
             </Menu.Target>
 
             <Menu.Dropdown>
@@ -74,6 +87,7 @@ export default function HeaderUserButton({
                     color='red'
                     leftSection={<FaArrowRightFromBracket />}
                     rightSection={<FaChevronRight />}
+                    onClick={logout}
                 >
                     Logout
                 </Menu.Item>

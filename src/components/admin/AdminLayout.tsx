@@ -3,10 +3,8 @@
 import {
     AppShell,
     Burger,
-    Button,
     Flex,
     Group,
-    Text,
     Title,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
