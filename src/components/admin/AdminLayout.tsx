@@ -1,12 +1,6 @@
 'use client';
 
-import {
-    AppShell,
-    Burger,
-    Flex,
-    Group,
-    Title,
-} from '@mantine/core';
+import { AppShell, Burger, Flex, Group, Title } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import React from 'react';
 import AdminNavbar from './AdminNavbar';

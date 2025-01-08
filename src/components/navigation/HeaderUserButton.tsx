@@ -43,22 +43,21 @@ export default function HeaderUserButton({
         );
     }
 
-    const logout = async() => {
+    const logout = async () => {
         try {
             await api.get('auth/logout', {
                 credentials: 'include',
             });
             router.refresh();
-
-        } catch(error) {
+        } catch (error) {
             console.log(error);
         }
-    }
+    };
 
     return (
         <Menu>
             <Menu.Target>
-                <Button leftSection={<FaUser/>}>{username}</Button>
+                <Button leftSection={<FaUser />}>{username}</Button>
             </Menu.Target>
 
             <Menu.Dropdown>

@@ -14,3 +14,9 @@ export interface Problem {
     is_public: boolean;
     constraints: Constraint[];
 }
+
+export interface ConstraintsInfoInForm {
+    languageId: number;
+    timeLimit: number;
+    memoryLimit: number;
+}

@@ -10,8 +10,14 @@ export async function extractJWTPayload(
     if (!token) return null;
 
     try {
-        let key = new TextEncoder().encode(process.env.NEXT_PUBLIC_JWT_SECRET);
-        const { payload } = await jose.jwtVerify(token, key);
+        const publicKeyPEM = process.env.NEXT_PUBLIC_JWT_PUBLIC_KEY;
+        const algorithm = process.env.NEXT_PUBLIC_JWT_ALGORITHM;
+        if (!publicKeyPEM || !algorithm) {
+            throw new Error("Public key is not set in the environment variables.");
+        }
+
+        const key = await jose.importSPKI(publicKeyPEM, algorithm);
+        const { payload } = await jose.jwtVerify(token, key, { algorithms: [algorithm] });
         return payload as ExtendedJWTPayload;
     } catch (error) {
         return null;
