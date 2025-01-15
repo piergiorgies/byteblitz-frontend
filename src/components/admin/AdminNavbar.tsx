@@ -4,7 +4,13 @@ import UserRoles from '@/models/UserRoles';
 import { NavLink, Text } from '@mantine/core';
 import { usePathname, useRouter } from 'next/navigation';
 import React from 'react';
-import { FaChevronRight, FaGavel, FaQuestion, FaTrophy, FaUsers } from 'react-icons/fa6';
+import {
+    FaChevronRight,
+    FaGavel,
+    FaQuestion,
+    FaTrophy,
+    FaUsers,
+} from 'react-icons/fa6';
 export default function AdminNavbar({
     userPermissions,
 }: {

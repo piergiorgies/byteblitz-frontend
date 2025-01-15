@@ -64,7 +64,10 @@ export default function ProblemsTable({ filter }: { filter: string }) {
             setProblems(problems.data);
             setRowCount(problems.count);
 
-            if (pagination.pageIndex * pagination.pageSize >= problems.count && pagination.pageIndex !== 0) {
+            if (
+                pagination.pageIndex * pagination.pageSize >= problems.count &&
+                pagination.pageIndex !== 0
+            ) {
                 setPagination({
                     pageIndex: pagination.pageIndex - 1,
                     pageSize: pagination.pageSize,

@@ -1,20 +1,20 @@
 'use client';
 
-import JudgesTable from "@/components/judges/JudgesTable";
-import { Box, Button, Flex, TextInput } from "@mantine/core";
-import { useForm } from "@mantine/form";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { FaMagnifyingGlass, FaPlus } from "react-icons/fa6";
+import JudgesTable from '@/components/judges/JudgesTable';
+import { Box, Button, Flex, TextInput } from '@mantine/core';
+import { useForm } from '@mantine/form';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { FaMagnifyingGlass, FaPlus } from 'react-icons/fa6';
 
 export default function JudgesPage() {
     const router = useRouter();
 
-    const [searchQuery, setSearchQuery] = useState("");
+    const [searchQuery, setSearchQuery] = useState('');
     const searchForm = useForm({
-        mode: "uncontrolled",
+        mode: 'uncontrolled',
         initialValues: {
-            searchQuery: "",
+            searchQuery: '',
         },
     });
 
@@ -24,20 +24,20 @@ export default function JudgesPage() {
 
     return (
         <>
-            <Flex justify="space-between" mb="md">
+            <Flex justify='space-between' mb='md'>
                 <Button
                     leftSection={<FaPlus />}
-                    onClick={() => router.push("/admin/judges/add")}
+                    onClick={() => router.push('/admin/judges/add')}
                 >
                     Add new
                 </Button>
 
                 <form onSubmit={searchForm.onSubmit(onSubmitSearchQuery)}>
                     <TextInput
-                        placeholder="Search"
+                        placeholder='Search'
                         leftSection={<FaMagnifyingGlass />}
-                        key={searchForm.key("searchQuery")}
-                        {...searchForm.getInputProps("searchQuery")}
+                        key={searchForm.key('searchQuery')}
+                        {...searchForm.getInputProps('searchQuery')}
                     />
                 </form>
             </Flex>

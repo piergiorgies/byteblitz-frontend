@@ -4,4 +4,3 @@ export interface Judge {
     last_connection: Date;
     status: boolean;
 }
-

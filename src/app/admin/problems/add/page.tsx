@@ -51,7 +51,9 @@ export default function AddProblemPage() {
 
     const [languages, setLanguages] = useState<Language[]>([]);
 
-    const [specificLimits, setSpecificLimits] = useState<ConstraintsInfoInForm[]>([]);
+    const [specificLimits, setSpecificLimits] = useState<
+        ConstraintsInfoInForm[]
+    >([]);
 
     const addSpecificLimit = () => {
         setSpecificLimits((prev) => [
@@ -62,28 +64,32 @@ export default function AddProblemPage() {
     const removeSpecificLimit = (index: number) => {
         setSpecificLimits((prev) => prev.filter((_, i) => i !== index));
     };
-    const updateSpecificLimit = (index: number, key: keyof ConstraintsInfoInForm, value: any) => {
+    const updateSpecificLimit = (
+        index: number,
+        key: keyof ConstraintsInfoInForm,
+        value: any,
+    ) => {
         setSpecificLimits((prev) =>
             prev.map((constraint, i) =>
-                i === index ? { ...constraint, [key]: value } : constraint
-            )
+                i === index ? { ...constraint, [key]: value } : constraint,
+            ),
         );
     };
 
-    const saveProblem = async(values: typeof problemInfoForm.values) => {
+    const saveProblem = async (values: typeof problemInfoForm.values) => {
         console.log(values);
         console.log(specificLimits);
-    }
+    };
 
-    const getLanguages = async() => {
+    const getLanguages = async () => {
         try {
             const response = await api.get('problems/languages/available');
             const availableLanguages = await response.json<Language[]>();
             setLanguages(availableLanguages);
-        } catch(error) {
+        } catch (error) {
             console.log(error);
         }
-    }
+    };
 
     useEffect(() => {
         getLanguages();
@@ -149,7 +155,7 @@ export default function AddProblemPage() {
             <form>
                 <Title>Problem limits</Title>
                 <SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }}>
-                <NumberInput
+                    <NumberInput
                         label='Time limit (ms)'
                         placeholder='1000'
                         key={problemInfoForm.key('timeLimit')}
@@ -175,49 +181,81 @@ export default function AddProblemPage() {
                     </Table.Tr>
                 </Table.Thead>
                 <Table.Tbody>
-                        {specificLimits.map((constraint, index) => (
-                            <Table.Tr key={index}>
-                                <Table.Td>
-                                    <Button
-                                        size='xs'
-                                        color='red'
-                                        variant='subtle'
-                                        onClick={() => removeSpecificLimit(index)}
-                                    >
-                                        <FaX />
-                                    </Button>
-                                </Table.Td>
-                                <Table.Td>
-                                    <Select
-                                        data={languages.map((language) => { 
-                                            return { value: language.id.toString(), label: language.name }
-                                        })}
-                                        value={constraint.languageId !== -1 ? constraint.languageId.toString() : null}
-                                        onChange={(value) => updateSpecificLimit(index, 'languageId', value)}
-                                        allowDeselect
-                                    />
-                                </Table.Td>
-                                <Table.Td>
-                                    <NumberInput
-                                        value={constraint.timeLimit}
-                                        onChange={(value) => updateSpecificLimit(index, 'timeLimit', value)}
-                                    />
-                                </Table.Td>
-                                <Table.Td>
-                                    <NumberInput
-                                        value={constraint.memoryLimit}
-                                        onChange={(value) => updateSpecificLimit(index, 'memoryLimit', value)}
-                                    />
-                                </Table.Td>
-                            </Table.Tr>
-                        ))}
-                    </Table.Tbody>
+                    {specificLimits.map((constraint, index) => (
+                        <Table.Tr key={index}>
+                            <Table.Td>
+                                <Button
+                                    size='xs'
+                                    color='red'
+                                    variant='subtle'
+                                    onClick={() => removeSpecificLimit(index)}
+                                >
+                                    <FaX />
+                                </Button>
+                            </Table.Td>
+                            <Table.Td>
+                                <Select
+                                    data={languages.map((language) => {
+                                        return {
+                                            value: language.id.toString(),
+                                            label: language.name,
+                                        };
+                                    })}
+                                    value={
+                                        constraint.languageId !== -1
+                                            ? constraint.languageId.toString()
+                                            : null
+                                    }
+                                    onChange={(value) =>
+                                        updateSpecificLimit(
+                                            index,
+                                            'languageId',
+                                            value,
+                                        )
+                                    }
+                                    allowDeselect
+                                />
+                            </Table.Td>
+                            <Table.Td>
+                                <NumberInput
+                                    value={constraint.timeLimit}
+                                    onChange={(value) =>
+                                        updateSpecificLimit(
+                                            index,
+                                            'timeLimit',
+                                            value,
+                                        )
+                                    }
+                                />
+                            </Table.Td>
+                            <Table.Td>
+                                <NumberInput
+                                    value={constraint.memoryLimit}
+                                    onChange={(value) =>
+                                        updateSpecificLimit(
+                                            index,
+                                            'memoryLimit',
+                                            value,
+                                        )
+                                    }
+                                />
+                            </Table.Td>
+                        </Table.Tr>
+                    ))}
+                </Table.Tbody>
                 <Table.Caption>
-                    <Button leftSection={<FaPlus/>} variant='transparent' color='gray' onClick={addSpecificLimit}>Add constraints</Button>
+                    <Button
+                        leftSection={<FaPlus />}
+                        variant='transparent'
+                        color='gray'
+                        onClick={addSpecificLimit}
+                    >
+                        Add constraints
+                    </Button>
                 </Table.Caption>
             </Table>
 
-            <Divider my='xs'/>
+            <Divider my='xs' />
 
             <Title>Test cases</Title>
 
@@ -227,7 +265,12 @@ export default function AddProblemPage() {
                 maxSize={5 * 1024 ** 2}
                 accept={[MIME_TYPES.zip]}
             >
-                <Group justify='center' gap='xl' mih='220' style={{ pointerEvents: 'none' }}>
+                <Group
+                    justify='center'
+                    gap='xl'
+                    mih='220'
+                    style={{ pointerEvents: 'none' }}
+                >
                     <Dropzone.Idle>
                         <Title c='dimmed'>
                             <FaRegFileZipper />
@@ -235,11 +278,14 @@ export default function AddProblemPage() {
                     </Dropzone.Idle>
 
                     <Flex direction='column'>
-                        <Text size='xl'>Upload the zip with the test cases</Text>
-                        <Text c='dimmed' size='sm'>Make sure the file inside are in the right format</Text>
+                        <Text size='xl'>
+                            Upload the zip with the test cases
+                        </Text>
+                        <Text c='dimmed' size='sm'>
+                            Make sure the file inside are in the right format
+                        </Text>
                     </Flex>
                 </Group>
-
             </Dropzone>
 
             <Flex justify='end'>

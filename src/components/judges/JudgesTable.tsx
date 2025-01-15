@@ -3,9 +3,33 @@
 import { Judge } from '@/models/Judge';
 import { useEffect, useMemo, useState } from 'react';
 import api from '@/utils/ky';
-import { flexRender, getCoreRowModel, getFilteredRowModel, useReactTable } from '@tanstack/react-table';
-import { Box, Button, Center, Divider, Flex, Pagination, Select, Skeleton, Space, Table, Text } from '@mantine/core';
-import { FaCircle, FaPenToSquare, FaSort, FaSortDown, FaSortUp, FaTrash } from 'react-icons/fa6';
+import {
+    flexRender,
+    getCoreRowModel,
+    getFilteredRowModel,
+    useReactTable,
+} from '@tanstack/react-table';
+import {
+    Box,
+    Button,
+    Center,
+    Divider,
+    Flex,
+    Pagination,
+    Select,
+    Skeleton,
+    Space,
+    Table,
+    Text,
+} from '@mantine/core';
+import {
+    FaCircle,
+    FaPenToSquare,
+    FaSort,
+    FaSortDown,
+    FaSortUp,
+    FaTrash,
+} from 'react-icons/fa6';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 import dayjs from 'dayjs';
@@ -38,7 +62,10 @@ export default function JudgesTable({ filter }: { filter: string }) {
             setJudges(problems.data);
             setRowCount(problems.count);
 
-            if (pagination.pageIndex * pagination.pageSize >= problems.count && pagination.pageIndex !== 0) {
+            if (
+                pagination.pageIndex * pagination.pageSize >= problems.count &&
+                pagination.pageIndex !== 0
+            ) {
                 setPagination({
                     pageIndex: pagination.pageIndex - 1,
                     pageSize: pagination.pageSize,
@@ -49,7 +76,7 @@ export default function JudgesTable({ filter }: { filter: string }) {
         }
 
         setAreJudgesLoading(false);
-    }
+    };
 
     useEffect(() => {
         setAreJudgesLoading(true);
@@ -70,7 +97,10 @@ export default function JudgesTable({ filter }: { filter: string }) {
             children: (
                 <Text>
                     Are you sure you want to delete the judge{' '}
-                    <Text fw='bold'>{judge.name}</Text>?
+                    <Text span fw='bold'>
+                        {judge.name}
+                    </Text>
+                    ?
                 </Text>
             ),
             labels: { confirm: 'Confirm', cancel: 'Cancel' },
@@ -86,44 +116,49 @@ export default function JudgesTable({ filter }: { filter: string }) {
                     });
 
                     await getJudges();
-
                 } catch (error) {
                     console.error('Error deleting judge', error);
                 }
             },
-        })
+        });
     };
 
-    const columns = useMemo(() => [
-        {
-            header: '#',
-            accessorKey: 'id',
-            cell: (info: any) => <Text>{info.getValue()}</Text>,
-        },
-        {
-            header: 'Name',
-            accessorKey: 'name',
-            cell: (info: any) => <Text fw='bold'>{info.getValue()}</Text>,
-        },
-        {
-            header: 'Last Connection',
-            accessorKey: 'last_connection',
-            cell: (info: any) => {
-                const rawDate = info.getValue();
-                const formattedDate = rawDate
-                    ? dayjs(rawDate).format('DD/MM/YYYY HH:mm')
-                    : 'N/A'; // Fallback if the date is null or undefined
-                return <Text>{formattedDate}</Text>;
+    const columns = useMemo(
+        () => [
+            {
+                header: '#',
+                accessorKey: 'id',
+                cell: (info: any) => <Text>{info.getValue()}</Text>,
             },
-        },
-        {
-            header: 'Status',
-            accessorKey: 'status',
-            cell: (info: any) => (
-                info.getValue() ? <FaCircle color='green' /> : <FaCircle color='red' />
-            ),
-        },
-    ], []);
+            {
+                header: 'Name',
+                accessorKey: 'name',
+                cell: (info: any) => <Text fw='bold'>{info.getValue()}</Text>,
+            },
+            {
+                header: 'Last Connection',
+                accessorKey: 'last_connection',
+                cell: (info: any) => {
+                    const rawDate = info.getValue();
+                    const formattedDate = rawDate
+                        ? dayjs(rawDate).format('DD/MM/YYYY HH:mm')
+                        : 'N/A'; // Fallback if the date is null or undefined
+                    return <Text>{formattedDate}</Text>;
+                },
+            },
+            {
+                header: 'Status',
+                accessorKey: 'status',
+                cell: (info: any) =>
+                    info.getValue() ? (
+                        <FaCircle color='green' />
+                    ) : (
+                        <FaCircle color='red' />
+                    ),
+            },
+        ],
+        [],
+    );
 
     const table = useReactTable({
         data: judges,
@@ -159,7 +194,7 @@ export default function JudgesTable({ filter }: { filter: string }) {
                                                 <FaSort />
                                             </span>
                                         ) : header.column.getIsSorted() ===
-                                            'desc' ? (
+                                          'desc' ? (
                                             <span className='me-1 text-slate-400'>
                                                 <FaSortDown />
                                             </span>
@@ -193,13 +228,16 @@ export default function JudgesTable({ filter }: { filter: string }) {
                             ))}
                             <Table.Td>
                                 <Flex>
-                                    <Button
+                                    {/* <Button
                                         size='xs'
                                         variant='subtle'
                                         color='blue'
+                                        onClick={() =>
+                                            handleEditJudge(row.original)
+                                        }
                                     >
                                         <FaPenToSquare />
-                                    </Button>
+                                    </Button> */}
                                     <Button
                                         size='xs'
                                         variant='subtle'
