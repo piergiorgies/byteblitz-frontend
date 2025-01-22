@@ -34,6 +34,7 @@ import {
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 import dayjs from "dayjs";
+import { useRouter } from "next/navigation";
 
 export default function UsersTable({ filter }: { filter: string }) {
     const [users, setUsers] = useState<User[]>([]);
@@ -46,6 +47,7 @@ export default function UsersTable({ filter }: { filter: string }) {
     });
     const [rowCount, setRowCount] = useState(0);
     const [userTypes, setUserTypes] = useState<UserType[]>([]);
+    const router = useRouter();
 
     const getUsers = async () => {
         try {
@@ -125,6 +127,10 @@ export default function UsersTable({ filter }: { filter: string }) {
         });
     };
 
+    const handleEditUser = async (user: User) => {
+        router.push(`/admin/users/edit?id=${user.id}`);
+    };
+
     useEffect(() => {
         getUserTypes();
     }, []);
@@ -161,12 +167,9 @@ export default function UsersTable({ filter }: { filter: string }) {
                 accessorKey: 'user_type_id',
                 header: 'User type',
                 cell: (info: any) => {
-                    console.log(info.getValue());
-                    console.log(userTypes);
                     const userType = userTypes.find(
                         (type) => type.id === info.getValue(),
                     );
-                    console.log(userType);
                     return (
                         <Text>{userType?.code}</Text>
                     )
@@ -256,6 +259,9 @@ export default function UsersTable({ filter }: { filter: string }) {
                                         size='xs'
                                         variant='subtle'
                                         color='blue'
+                                        onClick={() =>
+                                            handleEditUser(row.original)
+                                        }
                                     >
                                         <FaPenToSquare />
                                     </Button>
