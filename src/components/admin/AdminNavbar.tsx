@@ -52,7 +52,7 @@ export default function AdminNavbar({
                     label={<Text size='lg'>Users</Text>}
                     leftSection={<FaUsers />}
                     rightSection={<FaChevronRight />}
-                    onClick={() => router.push('/admin/problems')}
+                    onClick={() => router.push('/admin/users')}
                     active={pathname.startsWith('/admin/users')}
                 />
             ) : (
