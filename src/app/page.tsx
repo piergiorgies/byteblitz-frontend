@@ -20,7 +20,6 @@ export default function Home() {
                     },
                 });
                 response.json().then((data: any) => {
-                    console.log(data.data);
                     setConstests(data.data);
                     setLoading(false);
                 });
