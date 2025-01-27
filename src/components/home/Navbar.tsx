@@ -13,16 +13,16 @@ export default function Navbar() {
         initialValues: {
             username: '',
             password: '',
-        }
+        },
     });
     useEffect(() => {
-        setLoginToken(localStorage.getItem('loginToken') ?? '');
+        setLoginToken(localStorage.getItem('token') ?? '');
     }, []);
 
     const router = useRouter();
 
     const handleLogout = () => {
-        localStorage.removeItem('loginToken');
+        localStorage.removeItem('token');
         setLoginToken('');
 
         window.location.href = '/';
@@ -37,29 +37,33 @@ export default function Navbar() {
                 json: {
                     username: values.username,
                     password: values.password,
-                }
-            }
-            );
+                },
+                cache: 'no-store',
+                credentials: 'include',
+            });
             response.json().then((data: any) => {
-                localStorage.setItem('loginToken', data.access_token);
+                localStorage.setItem('token', data.access_token);
                 setLoginToken(data.access_token);
-            }
-            );
+            });
         } catch (error) {
-            console.error(error);
+            console.log(error);
         }
 
         closeModal();
-    }
+    };
 
     return (
-        <div className='flex justify-between items-center h-full'>
-            <Link href='/' className='text-2xl pl-4 pt-1'>
+        <div className='flex h-full items-center justify-between'>
+            <Link href='/' className='pl-4 pt-1 text-2xl'>
                 ByteBlitz
             </Link>
-            <div >
+            <div>
                 {loginToken ? (
-                    <Button className='me-2' variant="outline" onClick={handleLogout}>
+                    <Button
+                        className='me-2'
+                        variant='outline'
+                        onClick={handleLogout}
+                    >
                         Logout
                     </Button>
                 ) : (
@@ -69,30 +73,26 @@ export default function Navbar() {
                 )}
             </div>
 
-            <Modal
-                opened={modalOpen}
-                onClose={closeModal}
-                title="Login"
-            >
+            <Modal opened={modalOpen} onClose={closeModal} title='Login'>
                 {/* Login form */}
                 <form onSubmit={form.onSubmit(doLogin)}>
                     <TextInput
-                        label="Email"
-                        placeholder="Enter your email"
+                        label='Email'
+                        placeholder='Enter your email'
                         required
-                        mb="sm"
+                        mb='sm'
                         key={form.key('username')}
                         {...form.getInputProps('username')}
                     />
                     <PasswordInput
-                        label="Password"
-                        placeholder="Enter your password"
+                        label='Password'
+                        placeholder='Enter your password'
                         required
-                        mb="sm"
+                        mb='sm'
                         key={form.key('password')}
                         {...form.getInputProps('password')}
                     />
-                    <Group mt="md">
+                    <Group mt='md'>
                         <Button onClick={closeModal}>Cancel</Button>
                         <Button type='submit'>Login</Button>
                     </Group>
@@ -101,4 +101,3 @@ export default function Navbar() {
         </div>
     );
 }
-
