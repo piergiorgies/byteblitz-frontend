@@ -25,5 +25,5 @@ export default function AddUsersPage() {
         }
     };
 
-    return <UserForm mode="add" onSubmit={handleAddUser} />;
+    return <UserForm mode='add' onSubmit={handleAddUser} />;
 }

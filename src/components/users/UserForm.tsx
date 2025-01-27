@@ -26,7 +26,11 @@ type UserFormProps = {
     onSubmit: (values: any) => Promise<void>;
 };
 
-export default function UserForm({ mode, initialValues, onSubmit }: UserFormProps) {
+export default function UserForm({
+    mode,
+    initialValues,
+    onSubmit,
+}: UserFormProps) {
     const [userTypes, setUserTypes] = useState<UserType[]>([]);
 
     const userInfoForm = useForm({
@@ -40,7 +44,9 @@ export default function UserForm({ mode, initialValues, onSubmit }: UserFormProp
         validate: {
             username: (value) => (value.trim() ? null : 'Name is required'),
             email: (value) =>
-                /^\S+@\S+\.\S+$/.test(value.trim()) ? null : 'Invalid email address',
+                /^\S+@\S+\.\S+$/.test(value.trim())
+                    ? null
+                    : 'Invalid email address',
             password: (value) =>
                 mode === 'add' && value && value.length < 6
                     ? 'Password must be at least 6 characters long'
@@ -49,7 +55,8 @@ export default function UserForm({ mode, initialValues, onSubmit }: UserFormProp
                 mode === 'add' && value !== values.password
                     ? 'Passwords do not match'
                     : null,
-            user_type_id: (value) => (value.trim() ? null : 'User Type is required'),
+            user_type_id: (value) =>
+                value.trim() ? null : 'User Type is required',
         },
     });
 
@@ -70,34 +77,34 @@ export default function UserForm({ mode, initialValues, onSubmit }: UserFormProp
     return (
         <form onSubmit={userInfoForm.onSubmit(onSubmit)}>
             <Title order={2}>{mode === 'add' ? 'Add User' : 'Edit User'}</Title>
-            <SimpleGrid cols={2} spacing="lg">
+            <SimpleGrid cols={2} spacing='lg'>
                 <TextInput
-                    label="Username"
-                    placeholder="Enter username"
+                    label='Username'
+                    placeholder='Enter username'
                     {...userInfoForm.getInputProps('username')}
                 />
                 <TextInput
-                    label="Email"
-                    placeholder="Enter email"
+                    label='Email'
+                    placeholder='Enter email'
                     {...userInfoForm.getInputProps('email')}
                 />
                 {mode === 'add' && (
                     <>
                         <PasswordInput
-                            label="Password"
-                            placeholder="Enter password"
+                            label='Password'
+                            placeholder='Enter password'
                             {...userInfoForm.getInputProps('password')}
                         />
                         <PasswordInput
-                            label="Confirm Password"
-                            placeholder="Re-enter password"
+                            label='Confirm Password'
+                            placeholder='Re-enter password'
                             {...userInfoForm.getInputProps('confirmPassword')}
                         />
                     </>
                 )}
                 <Select
-                    label="User Type"
-                    placeholder="Select user type"
+                    label='User Type'
+                    placeholder='Select user type'
                     data={userTypes.map((type) => ({
                         value: type.id.toString(),
                         label: type.code,
@@ -105,10 +112,9 @@ export default function UserForm({ mode, initialValues, onSubmit }: UserFormProp
                     {...userInfoForm.getInputProps('user_type_id')}
                 />
             </SimpleGrid>
-            <Button type="submit" mt="xl">
+            <Button type='submit' mt='xl'>
                 {mode === 'add' ? 'Add User' : 'Save Changes'}
             </Button>
         </form>
     );
 }
-

@@ -53,7 +53,7 @@ export default function EditUserPage() {
 
     return (
         <UserForm
-            mode="edit"
+            mode='edit'
             initialValues={{
                 username: user.username,
                 email: user.email,

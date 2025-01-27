@@ -1,7 +1,7 @@
 'use client';
 
-import { use, useEffect, useMemo, useState } from "react";
-import { User, UserType } from "@/models/User";
+import { use, useEffect, useMemo, useState } from 'react';
+import { User, UserType } from '@/models/User';
 import {
     flexRender,
     getCoreRowModel,
@@ -33,8 +33,8 @@ import {
 
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
-import dayjs from "dayjs";
-import { useRouter } from "next/navigation";
+import dayjs from 'dayjs';
+import { useRouter } from 'next/navigation';
 
 export default function UsersTable({ filter }: { filter: string }) {
     const [users, setUsers] = useState<User[]>([]);
@@ -74,14 +74,12 @@ export default function UsersTable({ filter }: { filter: string }) {
                     pageSize: pagination.pageSize,
                 });
             }
-
         } catch (error) {
             console.log(error);
         }
 
         setAreUsersLoading(false);
     };
-
 
     useEffect(() => {
         setAreUsersLoading(true);
@@ -117,7 +115,7 @@ export default function UsersTable({ filter }: { filter: string }) {
                         title: 'Deleted',
                         message: 'User deleted successfully',
                         color: 'green',
-                    })
+                    });
 
                     await getUsers();
                 } catch (error) {
@@ -170,11 +168,9 @@ export default function UsersTable({ filter }: { filter: string }) {
                     const userType = userTypes.find(
                         (type) => type.id === info.getValue(),
                     );
-                    return (
-                        <Text>{userType?.code}</Text>
-                    )
-                }
-            }
+                    return <Text>{userType?.code}</Text>;
+                },
+            },
         ],
         [userTypes],
     );
@@ -223,7 +219,7 @@ export default function UsersTable({ filter }: { filter: string }) {
                                                 <FaSort />
                                             </span>
                                         ) : header.column.getIsSorted() ===
-                                            'desc' ? (
+                                          'desc' ? (
                                             <span className='me-1 text-slate-400'>
                                                 <FaSortDown />
                                             </span>
@@ -249,7 +245,10 @@ export default function UsersTable({ filter }: { filter: string }) {
                             {row.getVisibleCells().map((cell) => {
                                 return (
                                     <Table.Td key={cell.id}>
-                                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                        {flexRender(
+                                            cell.column.columnDef.cell,
+                                            cell.getContext(),
+                                        )}
                                     </Table.Td>
                                 );
                             })}
