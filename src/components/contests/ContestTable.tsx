@@ -32,6 +32,9 @@ import {
     FaSortUp,
     FaTrash,
 } from 'react-icons/fa6';
+import { useRouter } from 'next/navigation';
+import { modals } from '@mantine/modals';
+import { notifications } from '@mantine/notifications';
 
 export default function ContestTable({ filter }: { filter: string }) {
     const [contests, setContests] = useState<Contest[]>([]);
@@ -43,6 +46,7 @@ export default function ContestTable({ filter }: { filter: string }) {
         pageSize: pageSize,
     });
     const [rowCount, setRowCount] = useState(0);
+    const router = useRouter();
 
     const getContests = async () => {
         try {
@@ -77,6 +81,10 @@ export default function ContestTable({ filter }: { filter: string }) {
         setAreContestsLoading(false);
     };
 
+    const handleEditContest = async (contest: Contest) => {
+        router.push(`/admin/contests/edit?id=${contest.id}`);
+    };
+
     useEffect(() => {
         setAreContestsLoading(true);
         getContests();
@@ -89,6 +97,37 @@ export default function ContestTable({ filter }: { filter: string }) {
     useEffect(() => {
         setPagination({ ...pagination, pageSize: pageSize });
     }, [pageSize]);
+
+
+    const handleDeleteContest = async (contest: Contest) => {
+        modals.openConfirmModal({
+            title: 'Delete Contest',
+            children: (
+                <Text>
+                    Are you sure you want to delete the contest{' '}
+                    <Text span fw='bold'>
+                        {contest.name}
+                    </Text>
+                    ?
+                </Text>
+            ),
+            labels: { confirm: 'Confirm', cancel: 'Cancel' },
+            confirmProps: { variant: 'sublte', color: 'red' },
+            onConfirm: async () => {
+                try {
+                    await api.delete(`contests/${contest.id}`);
+                    notifications.show({
+                        title: 'Deleted',
+                        message: 'Contest deleted successfully',
+                        color: 'green',
+                    });
+                    await getContests();
+                } catch (error) {
+                    console.log(error);
+                }
+            }
+        })
+    };
 
     const columns = useMemo(
         () => [
@@ -167,7 +206,7 @@ export default function ContestTable({ filter }: { filter: string }) {
                                                 <FaSort />
                                             </span>
                                         ) : header.column.getIsSorted() ===
-                                          'desc' ? (
+                                            'desc' ? (
                                             <span className='me-1 text-slate-400'>
                                                 <FaSortDown />
                                             </span>
@@ -204,6 +243,9 @@ export default function ContestTable({ filter }: { filter: string }) {
                                         size='xs'
                                         variant='subtle'
                                         color='blue'
+                                        onClick={() =>
+                                            handleEditContest(row.original)
+                                        }
                                     >
                                         <FaPenToSquare />
                                     </Button>
@@ -211,6 +253,9 @@ export default function ContestTable({ filter }: { filter: string }) {
                                         size='xs'
                                         variant='subtle'
                                         color='red'
+                                        onClick={() => {
+                                            handleDeleteContest(row.original);
+                                        }}
                                     >
                                         <FaTrash />
                                     </Button>

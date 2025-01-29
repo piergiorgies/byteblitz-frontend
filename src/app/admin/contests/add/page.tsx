@@ -5,10 +5,16 @@ import api from '@/utils/ky';
 import { notifications } from '@mantine/notifications';
 
 export default function AddContestsPage() {
-    const hanfleAddContest = async (values: any) => {
+    const handleAddContest = async (values: any) => {
+        console.log(values)
+        const formattedValues = {
+            ...values,
+            start_datetime: new Date(values.start_datetime),
+            end_datetime: new Date(values.end_datetime),
+        };
         try {
             await api.post('contests', {
-                json: values,
+                json: formattedValues,
             });
             notifications.show({
                 title: 'Success',
@@ -25,5 +31,5 @@ export default function AddContestsPage() {
         }
     }
 
-    return <ContestForm mode='add' onSubmit={hanfleAddContest} />;
+    return <ContestForm mode='add' onSubmit={handleAddContest} />;
 }
