@@ -1,22 +1,31 @@
 export interface Constraint {
-    problem_id: number;
-    language_id: number;
-    language_name: string;
-    memory_limit: number;
-    time_limit: number;
+    problemId: number;
+    languageId: number;
+    languageName: string;
+    memoryLimit: number;
+    timeLimit: number;
 }
 
 export interface Problem {
-    id: number;
+    id?: number;
     title: string;
     description: string;
     points: number;
-    is_public: boolean;
-    constraints: Constraint[];
+    isPublic: boolean;
+    constraints?: ConstraintsInfoInForm[];
+    testCases?: ProblemTestCase[];
 }
 
 export interface ConstraintsInfoInForm {
     languageId: number;
     timeLimit: number;
     memoryLimit: number;
+}
+
+export interface ProblemTestCase {
+    id?: number;
+    input: string;
+    output: string;
+    points: number;
+    isPretest: boolean;
 }

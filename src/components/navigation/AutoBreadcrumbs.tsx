@@ -13,7 +13,8 @@ export default function AutoBreadcrumbs({
     path?: string;
     separator?: ReactNode;
 }) {
-    const realPath = path ? path : usePathname();
+    const pathName = usePathname();
+    const realPath = path ? path : pathName;
     const formattedPath = realPath.startsWith('/')
         ? realPath.slice(1)
         : realPath;
