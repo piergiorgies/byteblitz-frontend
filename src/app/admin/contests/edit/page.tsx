@@ -1,10 +1,10 @@
 'use client';
 
-import ContestForm from "@/components/contests/ContestForm";
-import api from "@/utils/ky";
-import { notifications } from "@mantine/notifications";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import ContestForm from '@/components/contests/ContestForm';
+import api from '@/utils/ky';
+import { notifications } from '@mantine/notifications';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 export default function EditContestPage() {
     const router = useRouter();
@@ -20,7 +20,7 @@ export default function EditContestPage() {
         } catch (error) {
             console.error('Error fetching contest:', error);
         }
-    }
+    };
 
     const handleEditContest = async (values: any) => {
         try {
@@ -50,7 +50,6 @@ export default function EditContestPage() {
     }, [contestId]);
 
     if (!contest) return <div>Loading...</div>;
-    console.log(contest);
 
     return (
         <ContestForm
@@ -60,6 +59,7 @@ export default function EditContestPage() {
                 description: contest.description,
                 start_datetime: new Date(contest.start_datetime),
                 end_datetime: new Date(contest.end_datetime),
+                users: contest.users.map((user: any) => user.id),
             }}
             onSubmit={handleEditContest}
         />

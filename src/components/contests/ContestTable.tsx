@@ -98,7 +98,6 @@ export default function ContestTable({ filter }: { filter: string }) {
         setPagination({ ...pagination, pageSize: pageSize });
     }, [pageSize]);
 
-
     const handleDeleteContest = async (contest: Contest) => {
         modals.openConfirmModal({
             title: 'Delete Contest',
@@ -125,8 +124,8 @@ export default function ContestTable({ filter }: { filter: string }) {
                 } catch (error) {
                     console.log(error);
                 }
-            }
-        })
+            },
+        });
     };
 
     const columns = useMemo(
@@ -206,7 +205,7 @@ export default function ContestTable({ filter }: { filter: string }) {
                                                 <FaSort />
                                             </span>
                                         ) : header.column.getIsSorted() ===
-                                            'desc' ? (
+                                          'desc' ? (
                                             <span className='me-1 text-slate-400'>
                                                 <FaSortDown />
                                             </span>

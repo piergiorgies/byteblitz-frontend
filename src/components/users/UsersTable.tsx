@@ -14,6 +14,7 @@ import {
     Box,
     Button,
     Center,
+    Checkbox,
     Divider,
     Flex,
     Pagination,
@@ -36,7 +37,23 @@ import { notifications } from '@mantine/notifications';
 import dayjs from 'dayjs';
 import { useRouter } from 'next/navigation';
 
-export default function UsersTable({ filter }: { filter: string }) {
+type UserTableProps = {
+    filter: string;
+    visibleColumns?: string[];
+    showControls?: boolean;
+    selectable?: boolean;
+    selectedUserIds?: number[];
+    onSelectionChange?: (selectedUserIds: number[]) => void;
+};
+
+export default function UsersTable({
+    filter,
+    visibleColumns,
+    showControls = true,
+    selectable = false,
+    selectedUserIds = [],
+    onSelectionChange,
+}: UserTableProps) {
     const [users, setUsers] = useState<User[]>([]);
     const [pageSize, setPageSize] = useState(10);
     const [sorting, setSorting] = useState<any>([]);
@@ -48,7 +65,6 @@ export default function UsersTable({ filter }: { filter: string }) {
     const [rowCount, setRowCount] = useState(0);
     const [userTypes, setUserTypes] = useState<UserType[]>([]);
     const router = useRouter();
-
     const getUsers = async () => {
         try {
             const response = await api.get('users', {
@@ -79,6 +95,20 @@ export default function UsersTable({ filter }: { filter: string }) {
         }
 
         setAreUsersLoading(false);
+    };
+
+    const handleSelectionChange = (userId: number, isSelected: boolean) => {
+        let updatedSelection = new Set(selectedUserIds);
+
+        if (isSelected) {
+            updatedSelection.add(userId);
+        } else {
+            updatedSelection.delete(userId);
+        }
+
+        if (onSelectionChange) {
+            onSelectionChange(Array.from(updatedSelection));
+        }
     };
 
     useEffect(() => {
@@ -134,44 +164,49 @@ export default function UsersTable({ filter }: { filter: string }) {
     }, []);
 
     const columns = useMemo(
-        () => [
-            {
-                accessorKey: 'id',
-                header: '#',
-                cell: (info: any) => <Text>{info.getValue()}</Text>,
-            },
-            {
-                accessorKey: 'username',
-                header: 'Username',
-                cell: (info: any) => <Text>{info.getValue()}</Text>,
-            },
-            {
-                accessorKey: 'email',
-                header: 'Email',
-                cell: (info: any) => <Text>{info.getValue()}</Text>,
-            },
-            {
-                accessorKey: 'registered_at',
-                header: 'Registered at',
-                cell: (info: any) => {
-                    const rawDate = info.getValue();
-                    const formattedDate = rawDate
-                        ? dayjs(rawDate).format('DD/MM/YYYY HH:mm')
-                        : 'N/A';
-                    return <Text>{formattedDate}</Text>;
+        () =>
+            [
+                {
+                    accessorKey: 'id',
+                    header: '#',
+                    cell: (info: any) => <Text>{info.getValue()}</Text>,
                 },
-            },
-            {
-                accessorKey: 'user_type_id',
-                header: 'User type',
-                cell: (info: any) => {
-                    const userType = userTypes.find(
-                        (type) => type.id === info.getValue(),
-                    );
-                    return <Text>{userType?.code}</Text>;
+                {
+                    accessorKey: 'username',
+                    header: 'Username',
+                    cell: (info: any) => <Text>{info.getValue()}</Text>,
                 },
-            },
-        ],
+                {
+                    accessorKey: 'email',
+                    header: 'Email',
+                    cell: (info: any) => <Text>{info.getValue()}</Text>,
+                },
+                {
+                    accessorKey: 'registered_at',
+                    header: 'Registered at',
+                    cell: (info: any) => {
+                        const rawDate = info.getValue();
+                        const formattedDate = rawDate
+                            ? dayjs(rawDate).format('DD/MM/YYYY HH:mm')
+                            : 'N/A';
+                        return <Text>{formattedDate}</Text>;
+                    },
+                },
+                {
+                    accessorKey: 'user_type_id',
+                    header: 'User type',
+                    cell: (info: any) => {
+                        const userType = userTypes.find(
+                            (type) => type.id === info.getValue(),
+                        );
+                        return <Text>{userType?.code}</Text>;
+                    },
+                },
+            ].filter((column) =>
+                visibleColumns
+                    ? visibleColumns.includes(column.accessorKey)
+                    : true,
+            ),
         [userTypes],
     );
 
@@ -207,6 +242,7 @@ export default function UsersTable({ filter }: { filter: string }) {
                 <Table.Thead>
                     {table.getHeaderGroups().map((headerGroup) => (
                         <Table.Tr key={headerGroup.id}>
+                            {selectable && <Table.Th></Table.Th>}
                             {headerGroup.headers.map((header) => (
                                 <Table.Th
                                     key={header.id}
@@ -238,57 +274,75 @@ export default function UsersTable({ filter }: { filter: string }) {
                         </Table.Tr>
                     ))}
                 </Table.Thead>
-
                 <Table.Tbody hidden={areUsersLoading}>
-                    {table.getRowModel().rows.map((row) => (
-                        <Table.Tr key={row.id}>
-                            {row.getVisibleCells().map((cell) => {
-                                return (
+                    {table.getRowModel().rows.map((row) => {
+                        const userId = row.original.id;
+                        return (
+                            <Table.Tr key={row.id}>
+                                {selectable && (
+                                    <Table.Td>
+                                        <Flex>
+                                            <Checkbox
+                                                checked={selectedUserIds.includes(
+                                                    userId,
+                                                )}
+                                                onChange={(e) => {
+                                                    handleSelectionChange(
+                                                        userId,
+                                                        e.target.checked,
+                                                    );
+                                                }}
+                                            />
+                                        </Flex>
+                                    </Table.Td>
+                                )}
+                                {row.getVisibleCells().map((cell) => (
                                     <Table.Td key={cell.id}>
                                         {flexRender(
                                             cell.column.columnDef.cell,
                                             cell.getContext(),
                                         )}
                                     </Table.Td>
-                                );
-                            })}
-                            <Table.Td>
-                                <Flex>
-                                    <Button
-                                        size='xs'
-                                        variant='subtle'
-                                        color='blue'
-                                        onClick={() =>
-                                            handleEditUser(row.original)
-                                        }
-                                    >
-                                        <FaPenToSquare />
-                                    </Button>
-                                    <Button
-                                        size='xs'
-                                        variant='subtle'
-                                        color='red'
-                                        onClick={() =>
-                                            handleDeleteUser(row.original)
-                                        }
-                                    >
-                                        <FaTrash />
-                                    </Button>
-                                </Flex>
-                            </Table.Td>
-                        </Table.Tr>
-                    ))}
-
-                    {table.getRowModel().rows.length === 0 ? (
+                                ))}
+                                {showControls && (
+                                    <Table.Td>
+                                        <Flex>
+                                            <Button
+                                                size='xs'
+                                                variant='subtle'
+                                                color='blue'
+                                                onClick={() =>
+                                                    handleEditUser(row.original)
+                                                }
+                                            >
+                                                <FaPenToSquare />
+                                            </Button>
+                                            <Button
+                                                size='xs'
+                                                variant='subtle'
+                                                color='red'
+                                                onClick={() =>
+                                                    handleDeleteUser(
+                                                        row.original,
+                                                    )
+                                                }
+                                            >
+                                                <FaTrash />
+                                            </Button>
+                                        </Flex>
+                                    </Table.Td>
+                                )}
+                            </Table.Tr>
+                        );
+                    })}
+                    {table.getRowModel().rows.length === 0 && (
                         <Table.Tr>
                             <Table.Td colSpan={columns.length + 1}>
                                 <Center>
-                                    <Text c='dimmed'>No users found.</Text>
+                                    <Text>No users found.</Text>
                                 </Center>
                             </Table.Td>
                         </Table.Tr>
-                    ) : (
-                        <></>
                     )}
                 </Table.Tbody>
                 <Table.Tbody hidden={!areUsersLoading}>
@@ -339,7 +393,6 @@ export default function UsersTable({ filter }: { filter: string }) {
                         setPageSize(value == null ? 10 : parseInt(value))
                     }
                 />
-
                 <Pagination
                     value={pagination.pageIndex + 1}
                     total={table.getPageCount()}
