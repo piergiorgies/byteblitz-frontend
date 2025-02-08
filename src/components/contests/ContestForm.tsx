@@ -16,6 +16,7 @@ type ContestFormProps = {
         start_datetime: Date;
         end_datetime: Date;
         users: number[];
+        contest_problems: { problem_id: number; publication_delay: number }[];
     };
     onSubmit: (values: any) => Promise<void>;
 };
@@ -32,6 +33,7 @@ export default function ContestForm({
             start_datetime: null,
             end_datetime: null,
             users: [],
+            contest_problems: [] as { problem_id: number; publication_delay: number }[],
         },
         validate: {
             name: (value) => (value.trim() ? null : 'Name is required'),
@@ -49,9 +51,15 @@ export default function ContestForm({
     const [selectedUserIds, setSelectedUserIds] = useState<number[]>(
         initialValues?.users || [],
     );
+    const [selectedProblem, setSelectedProblemIds] = useState<{ problem_id: number; publication_delay: number }[]>(
+        initialValues?.contest_problems || [],
+    );
 
     const handleUserSelect = (updatedUserIds: number[]) => {
         setSelectedUserIds(updatedUserIds);
+    };
+    const handleProblemSelect = (updatedProblems: { problem_id: number; publication_delay: number }[]) => {
+        setSelectedProblemIds(updatedProblems);
     };
 
     useEffect(() => {
@@ -59,8 +67,15 @@ export default function ContestForm({
     }, [selectedUserIds]);
 
     useEffect(() => {
+        contestForm.setFieldValue('contest_problems', selectedProblem);
+    }, [selectedProblem]);
+
+    useEffect(() => {
         if (initialValues?.users) {
             setSelectedUserIds(initialValues.users);
+        }
+        if (initialValues?.contest_problems) {
+            setSelectedProblemIds(initialValues.contest_problems);
         }
     }, [initialValues]);
 
@@ -144,7 +159,15 @@ export default function ContestForm({
                     leftSection={<FaMagnifyingGlass />}
                     onKeyDown={handleSearchProblemKeyDown}
                 />
-                <ProblemsTable filter={searchProblemQuery} />
+                <ProblemsTable
+                    filter={searchProblemQuery}
+                    visibleColumns={['title', 'points', 'is_public']}
+                    selectable={true}
+                    showControls={false}
+                    showDelayInput={true}
+                    selectedProblem={selectedProblem}
+                    onSelectionChange={handleProblemSelect}
+                />
 
                 <Button type='submit' mt='xl'>
                     {mode === 'add' ? 'Add Contest' : 'Save Changes'}

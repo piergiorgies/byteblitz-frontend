@@ -111,7 +111,7 @@ export default function ContestTable({ filter }: { filter: string }) {
                 </Text>
             ),
             labels: { confirm: 'Confirm', cancel: 'Cancel' },
-            confirmProps: { variant: 'sublte', color: 'red' },
+            confirmProps: { variant: 'subtle', color: 'red' },
             onConfirm: async () => {
                 try {
                     await api.delete(`contests/${contest.id}`);
@@ -205,7 +205,7 @@ export default function ContestTable({ filter }: { filter: string }) {
                                                 <FaSort />
                                             </span>
                                         ) : header.column.getIsSorted() ===
-                                          'desc' ? (
+                                            'desc' ? (
                                             <span className='me-1 text-slate-400'>
                                                 <FaSortDown />
                                             </span>
