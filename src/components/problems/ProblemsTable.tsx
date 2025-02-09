@@ -14,8 +14,10 @@ import {
     Box,
     Button,
     Center,
+    Checkbox,
     Divider,
     Flex,
+    NumberInput,
     Pagination,
     Select,
     Skeleton,
@@ -36,7 +38,25 @@ import {
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 
-export default function ProblemsTable({ filter }: { filter: string }) {
+type ProblemTableProps = {
+    filter: string;
+    visibleColumns?: string[];
+    showControls?: boolean;
+    selectable?: boolean;
+    showDelayInput?: boolean;
+    selectedProblem?: { problem_id: number; publication_delay: number }[];
+    onSelectionChange?: (selectedProblem: { problem_id: number; publication_delay: number }[]) => void;
+};
+
+export default function ProblemsTable({
+    filter,
+    visibleColumns,
+    showControls = true,
+    selectable = false,
+    showDelayInput = false,
+    selectedProblem = [],
+    onSelectionChange,
+}: ProblemTableProps) {
     const [problems, setProblems] = useState<Problem[]>([]);
     const [pageSize, setPageSize] = useState(10);
     const [sorting, setSorting] = useState<any>([]);
@@ -79,6 +99,25 @@ export default function ProblemsTable({ filter }: { filter: string }) {
 
         setAreProblemsLoading(false);
     };
+
+    const handleSelectionChange = (problemId: number, isSelected: boolean, publication_delay: number) => {
+        let updatedSelection = selectedProblem.map((p) =>
+            typeof p === "number" ? { problem_id: p, publication_delay: 0 } : p
+        );
+
+        if (isSelected) {
+            if (!updatedSelection.some(p => p.problem_id === problemId)) {
+                updatedSelection.push({ problem_id: problemId, publication_delay });
+            }
+        } else {
+            updatedSelection = updatedSelection.filter(p => p.problem_id !== problemId);
+        }
+
+        if (onSelectionChange) {
+            onSelectionChange(updatedSelection);
+        }
+    };
+
 
     useEffect(() => {
         setAreProblemsLoading(true);
@@ -146,7 +185,11 @@ export default function ProblemsTable({ filter }: { filter: string }) {
                 header: 'Public?',
                 cell: (info: any) => (info.getValue() ? <FaCheck /> : <FaX />),
             },
-        ],
+        ].filter((column) =>
+            visibleColumns
+                ? visibleColumns.includes(column.accessorKey)
+                : true,
+        ),
         [],
     );
 
@@ -172,6 +215,7 @@ export default function ProblemsTable({ filter }: { filter: string }) {
                 <Table.Thead>
                     {table.getHeaderGroups().map((headerGroup) => (
                         <Table.Tr key={headerGroup.id}>
+                            {selectable && <Table.Th></Table.Th>}
                             {headerGroup.headers.map((header) => (
                                 <Table.Th
                                     key={header.id}
@@ -184,7 +228,7 @@ export default function ProblemsTable({ filter }: { filter: string }) {
                                                 <FaSort />
                                             </span>
                                         ) : header.column.getIsSorted() ===
-                                          'desc' ? (
+                                            'desc' ? (
                                             <span className='me-1 text-slate-400'>
                                                 <FaSortDown />
                                             </span>
@@ -206,39 +250,85 @@ export default function ProblemsTable({ filter }: { filter: string }) {
                 </Table.Thead>
 
                 <Table.Tbody hidden={areProblemsLoading}>
-                    {table.getRowModel().rows.map((row) => (
-                        <Table.Tr key={row.id}>
-                            {row.getVisibleCells().map((cell) => (
-                                <Table.Td key={cell.id}>
-                                    {flexRender(
-                                        cell.column.columnDef.cell,
-                                        cell.getContext(),
-                                    )}
-                                </Table.Td>
-                            ))}
-                            <Table.Td>
-                                <Flex>
-                                    <Button
-                                        size='xs'
-                                        variant='subtle'
-                                        color='blue'
-                                    >
-                                        <FaPenToSquare />
-                                    </Button>
-                                    <Button
-                                        size='xs'
-                                        variant='subtle'
-                                        color='red'
-                                        onClick={() =>
-                                            handleDeleteProblem(row.original)
-                                        }
-                                    >
-                                        <FaTrash />
-                                    </Button>
-                                </Flex>
-                            </Table.Td>
-                        </Table.Tr>
-                    ))}
+                    {table.getRowModel().rows.map((row) => {
+                        const problemId = row.original.id;
+                        return (
+                            <Table.Tr key={row.id}>
+                                {selectable && (
+                                    <Table.Td>
+                                        <Flex>
+                                            <Checkbox
+                                                checked={selectedProblem?.some(p => p.problem_id === problemId) || false}
+                                                onChange={(e) =>
+                                                    handleSelectionChange(
+                                                        problemId,
+                                                        e.target.checked,
+                                                        0,
+                                                    )
+                                                }
+                                            />
+
+                                        </Flex>
+                                    </Table.Td>
+                                )}
+                                {row.getVisibleCells().map((cell) => (
+                                    <Table.Td key={cell.id}>
+                                        {flexRender(
+                                            cell.column.columnDef.cell,
+                                            cell.getContext(),
+                                        )}
+                                    </Table.Td>
+                                ))}
+                                {showControls && (
+                                    <Table.Td>
+                                        <Flex>
+                                            <Button
+                                                size='xs'
+                                                variant='subtle'
+                                                color='blue'
+                                            >
+                                                <FaPenToSquare />
+                                            </Button>
+                                            <Button
+                                                size='xs'
+                                                variant='subtle'
+                                                color='red'
+                                                onClick={() =>
+                                                    handleDeleteProblem(row.original)
+                                                }
+                                            >
+                                                <FaTrash />
+                                            </Button>
+                                        </Flex>
+                                    </Table.Td>
+                                )}
+                                {showDelayInput && (
+                                    <Table.Td>
+                                        <Flex>
+                                            <NumberInput
+                                                disabled={!selectedProblem.some(p => p.problem_id === problemId || false)}
+                                                min={0}
+                                                max={100}
+                                                placeholder="Publication delay"
+                                                value={selectedProblem.find(p => p.problem_id === problemId)?.publication_delay || 0}
+                                                onChange={(value) => {
+                                                    const numericValue = Number(value) || 0;
+                                                    const currentSelection = selectedProblem.map((p) =>
+                                                        p.problem_id === problemId ? { ...p, publication_delay: numericValue } : p
+                                                    );
+
+                                                    if (onSelectionChange) {
+                                                        onSelectionChange(currentSelection);
+                                                    }
+                                                }}
+                                            />
+
+                                        </Flex>
+                                    </Table.Td>
+                                )}
+                            </Table.Tr>
+                        );
+                    })}
 
                     {table.getRowModel().rows.length === 0 ? (
                         <Table.Tr>
