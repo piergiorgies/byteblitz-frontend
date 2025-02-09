@@ -9,46 +9,21 @@ export default function AddContestsPage() {
     const router = useRouter();
 
     const handleAddContest = async (values: any) => {
-        // remove the users and problems from the values object but before do a copy of the array
-        const userIds = values.users.slice();
-        delete values.users;
-
-        const problems = values.contest_problems.slice();
-
-        delete values.problems;
 
         const formattedValues = {
             ...values,
-            start_datetime: values.start_datetime
-                ? new Date(values.start_datetime)
-                : null,
-            end_datetime: values.end_datetime
-                ? new Date(values.end_datetime)
-                : null,
+            start_datetime: values.start_datetime ? new Date(values.start_datetime) : null,
+            end_datetime: values.end_datetime ? new Date(values.end_datetime) : null,
+            user_ids: values.users,
+            problems: values.contest_problems
         };
+
+        // Remove unwanted properties
+        const { users, contest_problems, ...cleanedValues } = formattedValues;
         try {
-            const response = await api.post('contests', {
-                json: formattedValues,
+            await api.post('contests', {
+                json: cleanedValues,
             });
-
-            const data = await response.json<{
-                id: number;
-                message: string;
-            }>();
-
-            // call the api to add the users to the contest
-            await api.post(`contests/${data.id}/users`, {
-                json: {
-                    ids: userIds,
-                },
-            });
-
-            // call the api to add the problems to the contest
-            await api.post(`contests/${data.id}/problems`, {
-                json: {
-                    problems: problems,
-                }
-            })
 
             notifications.show({
                 title: 'Success',

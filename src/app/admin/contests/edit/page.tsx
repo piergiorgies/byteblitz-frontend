@@ -23,42 +23,21 @@ export default function EditContestPage() {
     };
 
     const handleEditContest = async (values: any) => {
-        // remove the users and problems from the values object but before do a copy of the array
-        const userIds = values.users.slice();
-        delete values.users;
-        console.log('userIds:', userIds);
-
-        const problems = values.contest_problems.slice();
-        delete values.problems;
-        console.log('problems: ', problems)
-
         const formattedValues = {
             ...values,
-            start_datetime: values.start_datetime
-                ? new Date(values.start_datetime)
-                : null,
-            end_datetime: values.end_datetime
-                ? new Date(values.end_datetime)
-                : null,
+            start_datetime: values.start_datetime ? new Date(values.start_datetime) : null,
+            end_datetime: values.end_datetime ? new Date(values.end_datetime) : null,
+            user_ids: values.users,
+            problems: values.contest_problems
         };
+
+        // Remove unwanted properties
+        const { users, contest_problems, ...cleanedValues } = formattedValues;
 
         try {
             await api.put(`contests/${contestId}`, {
-                json: formattedValues,
+                json: cleanedValues,
             });
-
-            await api.post(`contests/${contestId}/users`, {
-                json: {
-                    ids: userIds,
-                },
-            });
-
-            // call the api to add the problems to the contest
-            await api.post(`contests/${contestId}/problems`, {
-                json: {
-                    problems: problems,
-                }
-            })
 
             notifications.show({
                 title: 'Success',
