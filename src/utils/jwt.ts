@@ -23,7 +23,7 @@ export async function extractJWTPayload(
             algorithms: [algorithm],
         });
         return payload as ExtendedJWTPayload;
-    } catch (error) {
+    } catch {
         return null;
     }
 }

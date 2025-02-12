@@ -20,13 +20,10 @@ export default function HeaderUserButton({
     userPermissions: number | null;
 }) {
     const router = useRouter();
+    const [loginModalOpened, { open: openLoginModal, close: closeLoginModal }] =
+        useDisclosure(false);
 
     if (username == null || userPermissions == null) {
-        const [
-            loginModalOpened,
-            { open: openLoginModal, close: closeLoginModal },
-        ] = useDisclosure(false);
-
         return (
             <>
                 <LoginModal

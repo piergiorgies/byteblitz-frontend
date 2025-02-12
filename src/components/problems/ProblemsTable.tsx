@@ -3,10 +3,12 @@
 import { Problem } from '@/models/Problem';
 import { useEffect, useMemo, useState } from 'react';
 import {
+    CellContext,
     flexRender,
     getCoreRowModel,
     getFilteredRowModel,
     getSortedRowModel,
+    SortingState,
     useReactTable,
 } from '@tanstack/react-table';
 import api from '@/utils/ky';
@@ -37,6 +39,7 @@ import {
 
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
+import { useRouter } from 'next/navigation';
 
 type ProblemTableProps = {
     filter: string;
@@ -59,13 +62,14 @@ export default function ProblemsTable({
 }: ProblemTableProps) {
     const [problems, setProblems] = useState<Problem[]>([]);
     const [pageSize, setPageSize] = useState(10);
-    const [sorting, setSorting] = useState<any>([]);
+    const [sorting, setSorting] = useState<SortingState>([]);
     const [areProblemsLoading, setAreProblemsLoading] = useState(true);
     const [pagination, setPagination] = useState({
         pageIndex: 0,
         pageSize: pageSize,
     });
     const [rowCount, setRowCount] = useState(0);
+    const router = useRouter();
 
     const getProblems = async () => {
         try {
@@ -168,22 +172,29 @@ export default function ProblemsTable({
             {
                 accessorKey: 'id',
                 header: '#',
-                cell: (info: any) => <Text>{info.getValue()}</Text>,
+                cell: (info: CellContext<Problem, number>) => (
+                    <Text>{info.getValue()}</Text>
+                ),
             },
             {
                 accessorKey: 'title',
                 header: 'Title',
-                cell: (info: any) => <Text fw='bold'>{info.getValue()}</Text>,
+                cell: (info: CellContext<Problem, string>) => (
+                    <Text fw='bold'>{info.getValue()}</Text>
+                ),
             },
             {
                 accessorKey: 'points',
                 header: 'Points',
-                cell: (info: any) => <Text>{info.getValue()}</Text>,
+                cell: (info: CellContext<Problem, number>) => (
+                    <Text>{info.getValue()}</Text>
+                ),
             },
             {
                 accessorKey: 'is_public',
                 header: 'Public?',
-                cell: (info: any) => (info.getValue() ? <FaCheck /> : <FaX />),
+                cell: (info: CellContext<Problem, boolean>) =>
+                    info.getValue() ? <FaCheck /> : <FaX />,
             },
         ].filter((column) =>
             visibleColumns
@@ -261,7 +272,7 @@ export default function ProblemsTable({
                                                 checked={selectedProblem?.some(p => p.problem_id === problemId) || false}
                                                 onChange={(e) =>
                                                     handleSelectionChange(
-                                                        problemId,
+                                                        problemId ?? 0,
                                                         e.target.checked,
                                                         0,
                                                     )
@@ -286,6 +297,7 @@ export default function ProblemsTable({
                                                 size='xs'
                                                 variant='subtle'
                                                 color='blue'
+                                                onClick={() => router.push(`/admin/problems/edit?id=${problemId}`)}
                                             >
                                                 <FaPenToSquare />
                                             </Button>
@@ -346,8 +358,8 @@ export default function ProblemsTable({
                 <Table.Tbody hidden={!areProblemsLoading}>
                     {Array(3)
                         .fill(0)
-                        .map((_, i) => (
-                            <Table.Tr key={i}>
+                        .map((x, i) => (
+                            <Table.Tr key={`${x}${i}`}>
                                 <Table.Td>
                                     <Skeleton width='70%'>
                                         <Space h='lg' />
@@ -383,7 +395,7 @@ export default function ProblemsTable({
                         { value: '15', label: '15' },
                     ]}
                     value={pageSize.toString()}
-                    onChange={(value, _) =>
+                    onChange={(value) =>
                         setPageSize(value == null ? 10 : parseInt(value))
                     }
                 />

@@ -22,7 +22,7 @@ export default function LoginModal({
         },
     });
 
-    const doLogin = async (values: any) => {
+    const doLogin = async (values: typeof loginForm.values) => {
         try {
             const response = await api.post('auth/login', {
                 json: {
