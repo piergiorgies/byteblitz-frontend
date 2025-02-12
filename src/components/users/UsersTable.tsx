@@ -1,14 +1,12 @@
 'use client';
 
-import { Problem } from '@/models/Problem';
 import { useEffect, useMemo, useState } from 'react';
+import { User, UserType } from '@/models/User';
 import {
-    CellContext,
     flexRender,
     getCoreRowModel,
     getFilteredRowModel,
     getSortedRowModel,
-    SortingState,
     useReactTable,
 } from '@tanstack/react-table';
 import api from '@/utils/ky';
@@ -19,7 +17,6 @@ import {
     Checkbox,
     Divider,
     Flex,
-    NumberInput,
     Pagination,
     Select,
     Skeleton,
@@ -28,68 +25,64 @@ import {
     Text,
 } from '@mantine/core';
 import {
-    FaCheck,
     FaPenToSquare,
     FaSort,
     FaSortDown,
     FaSortUp,
     FaTrash,
-    FaX,
 } from 'react-icons/fa6';
 
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
+import dayjs from 'dayjs';
 import { useRouter } from 'next/navigation';
 
-type ProblemTableProps = {
+type UserTableProps = {
     filter: string;
     visibleColumns?: string[];
     showControls?: boolean;
     selectable?: boolean;
-    showDelayInput?: boolean;
-    selectedProblem?: { problem_id: number; publication_delay: number }[];
-    onSelectionChange?: (selectedProblem: { problem_id: number; publication_delay: number }[]) => void;
+    selectedUserIds?: number[];
+    onSelectionChange?: (selectedUserIds: number[]) => void;
 };
 
-export default function ProblemsTable({
+export default function UsersTable({
     filter,
     visibleColumns,
     showControls = true,
     selectable = false,
-    showDelayInput = false,
-    selectedProblem = [],
+    selectedUserIds = [],
     onSelectionChange,
-}: ProblemTableProps) {
-    const [problems, setProblems] = useState<Problem[]>([]);
+}: UserTableProps) {
+    const [users, setUsers] = useState<User[]>([]);
     const [pageSize, setPageSize] = useState(10);
-    const [sorting, setSorting] = useState<SortingState>([]);
-    const [areProblemsLoading, setAreProblemsLoading] = useState(true);
+    const [sorting, setSorting] = useState<any>([]);
+    const [areUsersLoading, setAreUsersLoading] = useState(true);
     const [pagination, setPagination] = useState({
         pageIndex: 0,
         pageSize: pageSize,
     });
     const [rowCount, setRowCount] = useState(0);
+    const [userTypes, setUserTypes] = useState<UserType[]>([]);
     const router = useRouter();
-
-    const getProblems = async () => {
+    const getUsers = async () => {
         try {
-            const response = await api.get('problems', {
+            const response = await api.get('users', {
                 searchParams: {
                     limit: pagination.pageSize,
                     offset: pagination.pageIndex * pagination.pageSize,
                     search: filter,
                 },
             });
-
-            const problems = await response.json<{
-                data: Problem[];
+            const users = await response.json<{
+                data: User[];
                 count: number;
             }>();
-            setProblems(problems.data);
-            setRowCount(problems.count);
+            setUsers(users.data);
+            setRowCount(users.count);
 
             if (
-                pagination.pageIndex * pagination.pageSize >= problems.count &&
+                pagination.pageIndex * pagination.pageSize >= users.count &&
                 pagination.pageIndex !== 0
             ) {
                 setPagination({
@@ -101,32 +94,27 @@ export default function ProblemsTable({
             console.log(error);
         }
 
-        setAreProblemsLoading(false);
+        setAreUsersLoading(false);
     };
 
-    const handleSelectionChange = (problemId: number, isSelected: boolean, publication_delay: number) => {
-        let updatedSelection = selectedProblem.map((p) =>
-            typeof p === "number" ? { problem_id: p, publication_delay: 0 } : p
-        );
+    const handleSelectionChange = (userId: number, isSelected: boolean) => {
+        let updatedSelection = new Set(selectedUserIds);
 
         if (isSelected) {
-            if (!updatedSelection.some(p => p.problem_id === problemId)) {
-                updatedSelection.push({ problem_id: problemId, publication_delay });
-            }
+            updatedSelection.add(userId);
         } else {
-            updatedSelection = updatedSelection.filter(p => p.problem_id !== problemId);
+            updatedSelection.delete(userId);
         }
 
         if (onSelectionChange) {
-            onSelectionChange(updatedSelection);
+            onSelectionChange(Array.from(updatedSelection));
         }
     };
 
-
     useEffect(() => {
-        setAreProblemsLoading(true);
-        getProblems();
-    }, [pagination, filter]);
+        setAreUsersLoading(true);
+        getUsers();
+    }, [pagination, filter, userTypes]);
 
     useEffect(() => {
         table.setGlobalFilter(filter);
@@ -136,14 +124,14 @@ export default function ProblemsTable({
         setPagination({ ...pagination, pageSize: pageSize });
     }, [pageSize]);
 
-    const handleDeleteProblem = async (problem: Problem) => {
+    const handleDeleteUser = async (user: User) => {
         modals.openConfirmModal({
-            title: 'Delete problem',
+            title: 'Delete user',
             children: (
                 <Text>
-                    Are you sure you want to delete the problem{' '}
+                    Are you sure you want to delete the user{' '}
                     <Text span fw='bold'>
-                        {problem.title}
+                        {user.username}
                     </Text>
                     ?
                 </Text>
@@ -152,14 +140,14 @@ export default function ProblemsTable({
             confirmProps: { variant: 'subtle', color: 'red' },
             onConfirm: async () => {
                 try {
-                    await api.delete(`problems/${problem.id}`);
+                    await api.delete(`users/${user.id}`);
                     notifications.show({
                         title: 'Deleted',
-                        message: 'Problem deleted succesfully!',
+                        message: 'User deleted successfully',
                         color: 'green',
                     });
 
-                    await getProblems();
+                    await getUsers();
                 } catch (error) {
                     console.log(error);
                 }
@@ -167,45 +155,63 @@ export default function ProblemsTable({
         });
     };
 
+    const handleEditUser = async (user: User) => {
+        router.push(`/admin/users/edit?id=${user.id}`);
+    };
+
+    useEffect(() => {
+        getUserTypes();
+    }, []);
+
     const columns = useMemo(
-        () => [
-            {
-                accessorKey: 'id',
-                header: '#',
-                cell: (info: CellContext<Problem, number>) => (
-                    <Text>{info.getValue()}</Text>
-                ),
-            },
-            {
-                accessorKey: 'title',
-                header: 'Title',
-                cell: (info: CellContext<Problem, string>) => (
-                    <Text fw='bold'>{info.getValue()}</Text>
-                ),
-            },
-            {
-                accessorKey: 'points',
-                header: 'Points',
-                cell: (info: CellContext<Problem, number>) => (
-                    <Text>{info.getValue()}</Text>
-                ),
-            },
-            {
-                accessorKey: 'is_public',
-                header: 'Public?',
-                cell: (info: CellContext<Problem, boolean>) =>
-                    info.getValue() ? <FaCheck /> : <FaX />,
-            },
-        ].filter((column) =>
-            visibleColumns
-                ? visibleColumns.includes(column.accessorKey)
-                : true,
-        ),
-        [],
+        () =>
+            [
+                {
+                    accessorKey: 'id',
+                    header: '#',
+                    cell: (info: any) => <Text>{info.getValue()}</Text>,
+                },
+                {
+                    accessorKey: 'username',
+                    header: 'Username',
+                    cell: (info: any) => <Text>{info.getValue()}</Text>,
+                },
+                {
+                    accessorKey: 'email',
+                    header: 'Email',
+                    cell: (info: any) => <Text>{info.getValue()}</Text>,
+                },
+                {
+                    accessorKey: 'registered_at',
+                    header: 'Registered at',
+                    cell: (info: any) => {
+                        const rawDate = info.getValue();
+                        const formattedDate = rawDate
+                            ? dayjs(rawDate).format('DD/MM/YYYY HH:mm')
+                            : 'N/A';
+                        return <Text>{formattedDate}</Text>;
+                    },
+                },
+                {
+                    accessorKey: 'user_type_id',
+                    header: 'User type',
+                    cell: (info: any) => {
+                        const userType = userTypes.find(
+                            (type) => type.id === info.getValue(),
+                        );
+                        return <Text>{userType?.code}</Text>;
+                    },
+                },
+            ].filter((column) =>
+                visibleColumns
+                    ? visibleColumns.includes(column.accessorKey)
+                    : true,
+            ),
+        [userTypes],
     );
 
     const table = useReactTable({
-        data: problems,
+        data: users,
         columns: columns,
         state: {
             sorting,
@@ -219,6 +225,16 @@ export default function ProblemsTable({
         manualPagination: true,
         rowCount,
     });
+
+    const getUserTypes = async () => {
+        try {
+            const response = await api.get('users/types/available');
+            const availableUserTypes = await response.json<UserType[]>();
+            setUserTypes(availableUserTypes);
+        } catch (error) {
+            console.error('Error fetching user types:', error);
+        }
+    };
 
     return (
         <Box>
@@ -255,30 +271,28 @@ export default function ProblemsTable({
                                     </div>
                                 </Table.Th>
                             ))}
-                            <Table.Th></Table.Th>
                         </Table.Tr>
                     ))}
                 </Table.Thead>
-
-                <Table.Tbody hidden={areProblemsLoading}>
+                <Table.Tbody hidden={areUsersLoading}>
                     {table.getRowModel().rows.map((row) => {
-                        const problemId = row.original.id;
+                        const userId = row.original.id;
                         return (
                             <Table.Tr key={row.id}>
                                 {selectable && (
                                     <Table.Td>
                                         <Flex>
                                             <Checkbox
-                                                checked={selectedProblem?.some(p => p.problem_id === problemId) || false}
-                                                onChange={(e) =>
+                                                checked={selectedUserIds.includes(
+                                                    userId,
+                                                )}
+                                                onChange={(e) => {
                                                     handleSelectionChange(
-                                                        problemId ?? 0,
+                                                        userId,
                                                         e.target.checked,
-                                                        0,
-                                                    )
-                                                }
+                                                    );
+                                                }}
                                             />
-
                                         </Flex>
                                     </Table.Td>
                                 )}
@@ -297,7 +311,9 @@ export default function ProblemsTable({
                                                 size='xs'
                                                 variant='subtle'
                                                 color='blue'
-                                                onClick={() => router.push(`/admin/problems/edit?id=${problemId}`)}
+                                                onClick={() =>
+                                                    handleEditUser(row.original)
+                                                }
                                             >
                                                 <FaPenToSquare />
                                             </Button>
@@ -306,7 +322,9 @@ export default function ProblemsTable({
                                                 variant='subtle'
                                                 color='red'
                                                 onClick={() =>
-                                                    handleDeleteProblem(row.original)
+                                                    handleDeleteUser(
+                                                        row.original,
+                                                    )
                                                 }
                                             >
                                                 <FaTrash />
@@ -314,52 +332,29 @@ export default function ProblemsTable({
                                         </Flex>
                                     </Table.Td>
                                 )}
-                                {showDelayInput && (
-                                    <Table.Td>
-                                        <Flex>
-                                            <NumberInput
-                                                disabled={!selectedProblem.some(p => p.problem_id === problemId || false)}
-                                                min={0}
-                                                max={100}
-                                                placeholder="Publication delay"
-                                                value={selectedProblem.find(p => p.problem_id === problemId)?.publication_delay || 0}
-                                                onChange={(value) => {
-                                                    const numericValue = Number(value) || 0;
-                                                    const currentSelection = selectedProblem.map((p) =>
-                                                        p.problem_id === problemId ? { ...p, publication_delay: numericValue } : p
-                                                    );
-
-                                                    if (onSelectionChange) {
-                                                        onSelectionChange(currentSelection);
-                                                    }
-                                                }}
-                                            />
-
-                                        </Flex>
-                                    </Table.Td>
-                                )}
                             </Table.Tr>
                         );
                     })}
-
-                    {table.getRowModel().rows.length === 0 ? (
+                    {table.getRowModel().rows.length === 0 && (
                         <Table.Tr>
                             <Table.Td colSpan={columns.length + 1}>
                                 <Center>
-                                    <Text c='dimmed'>No problems found.</Text>
+                                    <Text>No users found.</Text>
                                 </Center>
                             </Table.Td>
                         </Table.Tr>
-                    ) : (
-                        <></>
                     )}
                 </Table.Tbody>
-
-                <Table.Tbody hidden={!areProblemsLoading}>
+                <Table.Tbody hidden={!areUsersLoading}>
                     {Array(3)
                         .fill(0)
-                        .map((x, i) => (
-                            <Table.Tr key={`${x}${i}`}>
+                        .map((_, i) => (
+                            <Table.Tr key={i}>
+                                <Table.Td>
+                                    <Skeleton width='70%'>
+                                        <Space h='lg' />
+                                    </Skeleton>
+                                </Table.Td>
                                 <Table.Td>
                                     <Skeleton width='70%'>
                                         <Space h='lg' />
@@ -384,7 +379,6 @@ export default function ProblemsTable({
                         ))}
                 </Table.Tbody>
             </Table>
-
             <Divider my='md' />
 
             <Flex justify='space-between'>
@@ -395,11 +389,10 @@ export default function ProblemsTable({
                         { value: '15', label: '15' },
                     ]}
                     value={pageSize.toString()}
-                    onChange={(value) =>
+                    onChange={(value, _) =>
                         setPageSize(value == null ? 10 : parseInt(value))
                     }
                 />
-
                 <Pagination
                     value={pagination.pageIndex + 1}
                     total={table.getPageCount()}

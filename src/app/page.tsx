@@ -1,7 +1,36 @@
 'use client';
+import api from '@/utils/ky';
 import { Center, SimpleGrid, Space } from '@mantine/core';
+import { useEffect, useState } from 'react';
 
 export default function Home() {
+    const [contests, setConstests] = useState([]);
+
+    const maxProblems = 6;
+    const offset = 0;
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchContests = async () => {
+            try {
+                const response = await api.get('contests/', {
+                    searchParams: {
+                        limit: maxProblems,
+                        offset: offset,
+                    },
+                });
+                response.json().then((data: any) => {
+                    setConstests(data.data);
+                    setLoading(false);
+                });
+            } catch (error) {
+                console.log(error);
+            }
+        };
+
+        fetchContests();
+    }, []);
+
     return (
         <Center className='bg-gray-100'>
             <div className='hero bg-base-200 my-6 min-h-screen'>

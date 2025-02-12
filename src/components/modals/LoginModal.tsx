@@ -33,7 +33,6 @@ export default function LoginModal({
                 credentials: 'include',
             });
             const data: { access_token: string } = await response.json();
-            console.log(data);
             localStorage.setItem('token', data.access_token);
             router.refresh();
         } catch (error) {

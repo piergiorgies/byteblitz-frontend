@@ -4,7 +4,13 @@ import UserRoles from '@/models/UserRoles';
 import { NavLink, Text } from '@mantine/core';
 import { usePathname, useRouter } from 'next/navigation';
 import React from 'react';
-import { FaChevronRight, FaQuestion, FaTrophy, FaUsers } from 'react-icons/fa6';
+import {
+    FaChevronRight,
+    FaGavel,
+    FaQuestion,
+    FaTrophy,
+    FaUsers,
+} from 'react-icons/fa6';
 export default function AdminNavbar({
     userPermissions,
 }: {
@@ -46,8 +52,20 @@ export default function AdminNavbar({
                     label={<Text size='lg'>Users</Text>}
                     leftSection={<FaUsers />}
                     rightSection={<FaChevronRight />}
-                    onClick={() => router.push('/admin/problems')}
+                    onClick={() => router.push('/admin/users')}
                     active={pathname.startsWith('/admin/users')}
+                />
+            ) : (
+                <></>
+            )}
+
+            {hasPermission(userPermissions, UserRoles.USER_MAINTAINER) ? (
+                <NavLink
+                    label={<Text size='lg'>Judges</Text>}
+                    leftSection={<FaGavel />}
+                    rightSection={<FaChevronRight />}
+                    onClick={() => router.push('/admin/judges')}
+                    active={pathname.startsWith('/admin/judges')}
                 />
             ) : (
                 <></>

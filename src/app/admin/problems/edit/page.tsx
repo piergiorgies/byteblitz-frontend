@@ -4,14 +4,15 @@ import EditProblem from '@/components/problems/EditProblem';
 import { Problem, ProblemTestCase } from '@/models/Problem';
 import api from '@/utils/ky';
 import { Center, Loader } from '@mantine/core';
-import { useParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { objectToCamel, objectToSnake } from 'ts-case-convert';
 import { notifications } from '@mantine/notifications';
 import { HTTPError } from 'ky';
 
 export default function EditProblemPage() {
-    const { problemId } = useParams();
+    const searchParams = useSearchParams();
+    const problemId = searchParams.get('id');
     const [problem, setProblem] = useState<Problem | null>(null);
 
     const saveProblem = async (editedProblem: Problem) => {
