@@ -14,7 +14,7 @@ export default function EditContestPage() {
 
     const fetchContest = async () => {
         try {
-            const response = await api.get(`contests/${contestId}`);
+            const response = await api.get(`admin/contests/${contestId}`);
             const data = await response.json();
             setContest(data);
         } catch (error) {
@@ -31,14 +31,13 @@ export default function EditContestPage() {
             end_datetime: values.end_datetime
                 ? new Date(values.end_datetime)
                 : null,
-            user_ids: values.users,
             problems: values.contest_problems,
         };
 
-        const { users, contest_problems, ...cleanedValues } = formattedValues;
+        const { contest_problems, ...cleanedValues } = formattedValues;
 
         try {
-            await api.put(`contests/${contestId}`, {
+            await api.put(`admin/contests/${contestId}`, {
                 json: cleanedValues,
             });
 
@@ -74,7 +73,7 @@ export default function EditContestPage() {
                 description: contest.description,
                 start_datetime: new Date(contest.start_datetime),
                 end_datetime: new Date(contest.end_datetime),
-                users: contest.users.map((user: any) => user.id),
+                users: contest.users,
                 contest_problems: contest.contest_problems,
             }}
             onSubmit={handleEditContest}

@@ -17,6 +17,8 @@ type ContestFormProps = {
         end_datetime: Date;
         users: number[];
         contest_problems: { problem_id: number; publication_delay: number }[];
+        is_public?: boolean;
+        is_registration_open?: boolean;
     };
     onSubmit: (values: any) => Promise<void>;
 };
@@ -37,6 +39,8 @@ export default function ContestForm({
                 problem_id: number;
                 publication_delay: number;
             }[],
+            is_public: false,
+            is_registration_open: false,
         },
         validate: {
             name: (value) => (value.trim() ? null : 'Name is required'),
@@ -76,6 +80,7 @@ export default function ContestForm({
     }, [selectedProblem]);
 
     useEffect(() => {
+        console.log('initialValues:', initialValues);
         if (initialValues?.users) {
             setSelectedUserIds(initialValues.users);
         }

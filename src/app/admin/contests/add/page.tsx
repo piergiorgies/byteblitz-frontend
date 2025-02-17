@@ -17,14 +17,13 @@ export default function AddContestsPage() {
             end_datetime: values.end_datetime
                 ? new Date(values.end_datetime)
                 : null,
-            user_ids: values.users,
             problems: values.contest_problems,
         };
 
         // Remove unwanted properties
-        const { users, contest_problems, ...cleanedValues } = formattedValues;
+        const { contest_problems, ...cleanedValues } = formattedValues;
         try {
-            await api.post('contests', {
+            await api.post('admin/contests', {
                 json: cleanedValues,
             });
 

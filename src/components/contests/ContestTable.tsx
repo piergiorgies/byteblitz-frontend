@@ -51,7 +51,7 @@ export default function ContestTable({ filter }: { filter: string }) {
 
     const getContests = async () => {
         try {
-            const response = await api.get('contests', {
+            const response = await api.get('admin/contests', {
                 searchParams: {
                     limit: pagination.pageSize,
                     offset: pagination.pageIndex * pagination.pageSize,

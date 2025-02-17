@@ -75,7 +75,7 @@ export default function ProblemsTable({
 
     const getProblems = async () => {
         try {
-            const response = await api.get('problems', {
+            const response = await api.get('admin/problems', {
                 searchParams: {
                     limit: pagination.pageSize,
                     offset: pagination.pageIndex * pagination.pageSize,
@@ -115,6 +115,7 @@ export default function ProblemsTable({
             typeof p === 'number' ? { problem_id: p, publication_delay: 0 } : p,
         );
 
+        console.log(updatedSelection);
         if (isSelected) {
             if (!updatedSelection.some((p) => p.problem_id === problemId)) {
                 updatedSelection.push({
