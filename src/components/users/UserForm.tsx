@@ -62,7 +62,7 @@ export default function UserForm({
 
     const getUserTypes = async () => {
         try {
-            const response = await api.get('users/types/available');
+            const response = await api.get('admin/users/types/available');
             const availableUserTypes = await response.json<UserType[]>();
             setUserTypes(availableUserTypes);
         } catch (error) {

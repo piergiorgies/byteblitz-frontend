@@ -17,8 +17,8 @@ type ContestFormProps = {
         end_datetime: Date;
         users: number[];
         contest_problems: { problem_id: number; publication_delay: number }[];
-        is_public?: boolean;
-        is_registration_open?: boolean;
+        is_public: boolean;
+        is_registration_open: boolean;
     };
     onSubmit: (values: any) => Promise<void>;
 };
@@ -80,7 +80,7 @@ export default function ContestForm({
     }, [selectedProblem]);
 
     useEffect(() => {
-        console.log('initialValues:', initialValues);
+        console.log('initialValues', initialValues);
         if (initialValues?.users) {
             setSelectedUserIds(initialValues.users);
         }
@@ -139,11 +139,15 @@ export default function ContestForm({
                     />
                     <Checkbox
                         label='Is public'
-                        {...contestForm.getInputProps('is_public')}
+                        {...contestForm.getInputProps('is_public', {
+                            type: 'checkbox',
+                        })}
                     />
                     <Checkbox
                         label='Is registration open'
-                        {...contestForm.getInputProps('is_registration_open')}
+                        {...contestForm.getInputProps('is_registration_open', {
+                            type: 'checkbox',
+                        })}
                     />
                 </SimpleGrid>
 

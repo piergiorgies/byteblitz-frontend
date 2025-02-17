@@ -140,7 +140,7 @@ export default function UsersTable({
             confirmProps: { variant: 'subtle', color: 'red' },
             onConfirm: async () => {
                 try {
-                    await api.delete(`users/${user.id}`);
+                    await api.delete(`admin/users/${user.id}`);
                     notifications.show({
                         title: 'Deleted',
                         message: 'User deleted successfully',

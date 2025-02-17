@@ -27,11 +27,13 @@ import {
 } from '@tanstack/react-table';
 import dayjs from 'dayjs';
 import {
+    FaCheck,
     FaPenToSquare,
     FaSort,
     FaSortDown,
     FaSortUp,
     FaTrash,
+    FaX,
 } from 'react-icons/fa6';
 import { useRouter } from 'next/navigation';
 import { modals } from '@mantine/modals';
@@ -115,7 +117,7 @@ export default function ContestTable({ filter }: { filter: string }) {
             confirmProps: { variant: 'subtle', color: 'red' },
             onConfirm: async () => {
                 try {
-                    await api.delete(`contests/${contest.id}`);
+                    await api.delete(`admin/contests/${contest.id}`);
                     notifications.show({
                         title: 'Deleted',
                         message: 'Contest deleted successfully',
@@ -172,14 +174,14 @@ export default function ContestTable({ filter }: { filter: string }) {
                 accessorKey: 'is_public',
                 header: 'Public',
                 cell: (info: any) => (
-                    <Checkbox checked={info.getValue()} disabled />
+                    info.getValue() === true ? <FaCheck /> : <FaX />
                 ),
             },
             {
                 accessorKey: 'is_registration_open',
                 header: 'Registration Open',
                 cell: (info: any) => (
-                    <Checkbox checked={info.getValue()} disabled />
+                    info.getValue() === true ? <FaCheck /> : <FaX />
                 ),
             }
         ],

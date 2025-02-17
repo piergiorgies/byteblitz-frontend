@@ -75,6 +75,8 @@ export default function EditContestPage() {
                 end_datetime: new Date(contest.end_datetime),
                 users: contest.users,
                 contest_problems: contest.contest_problems,
+                is_public: contest.is_public,
+                is_registration_open: contest.is_registration_open,
             }}
             onSubmit={handleEditContest}
         />
