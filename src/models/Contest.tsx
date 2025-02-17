@@ -6,6 +6,8 @@ export interface Contest {
     description: string;
     start_datetime: Date;
     end_datetime: Date;
+    is_public: boolean;
+    is_registration_open: boolean;
 }
 
 export interface ContestInfo extends Contest {

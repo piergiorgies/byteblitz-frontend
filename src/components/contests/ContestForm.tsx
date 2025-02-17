@@ -1,4 +1,4 @@
-import { Button, SimpleGrid, TextInput, Title, Flex, Box } from '@mantine/core';
+import { Button, SimpleGrid, TextInput, Title, Flex, Box, Checkbox } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { DateTimePicker } from '@mantine/dates';
 import { useEffect, useState } from 'react';
@@ -131,6 +131,14 @@ export default function ContestForm({
                         placeholder='Pick the end date and time'
                         required
                         {...contestForm.getInputProps('end_datetime')}
+                    />
+                    <Checkbox
+                        label='Is public'
+                        {...contestForm.getInputProps('is_public')}
+                    />
+                    <Checkbox
+                        label='Is registration open'
+                        {...contestForm.getInputProps('is_registration_open')}
                     />
                 </SimpleGrid>
 

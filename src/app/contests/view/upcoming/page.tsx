@@ -36,6 +36,9 @@ export default function ViewContestPage() {
 
     const theme = useMantineTheme();
 
+    const contestStart = new Date(contest?.start_datetime || '');
+    const notificationTitle = 'Contest start at ' + contestStart.toLocaleString();
+
     const fetchContest = async () => {
         try {
             const response = await api.get(`contests/${contestId}/upcoming`);
@@ -128,8 +131,8 @@ export default function ViewContestPage() {
             <Notification
                 mt={4}
                 p={20}
-                title='The contest is ended'
-                color='gray'
+                title={notificationTitle}
+                color={theme.primaryColor}
                 withCloseButton={false}
             />
 
@@ -161,7 +164,7 @@ export default function ViewContestPage() {
                                                             <FaSort />
                                                         </span>
                                                     ) : header.column.getIsSorted() ===
-                                                      'desc' ? (
+                                                        'desc' ? (
                                                         <span className='me-1 text-slate-400'>
                                                             <FaSortDown />
                                                         </span>
@@ -199,6 +202,7 @@ export default function ViewContestPage() {
                 </Grid.Col>
                 <Grid.Col span={6}>
                     <Title order={4}>Leaderboard</Title>
+                    <Text size='md'>Contest leaderboard goes here</Text>
                 </Grid.Col>
             </Grid>
         </Container>

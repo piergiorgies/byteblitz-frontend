@@ -4,6 +4,7 @@ import {
     Box,
     Button,
     Center,
+    Checkbox,
     Divider,
     Flex,
     Pagination,
@@ -59,10 +60,10 @@ export default function ContestTable({ filter }: { filter: string }) {
             });
 
             const contests = await response.json<{
-                data: Contest[];
+                contests: Contest[];
                 count: number;
             }>();
-            setContests(contests.data);
+            setContests(contests.contests);
             setRowCount(contests.count);
 
             if (
@@ -167,6 +168,20 @@ export default function ContestTable({ filter }: { filter: string }) {
                     return <Text>{formattedDate}</Text>;
                 },
             },
+            {
+                accessorKey: 'is_public',
+                header: 'Public',
+                cell: (info: any) => (
+                    <Checkbox checked={info.getValue()} disabled />
+                ),
+            },
+            {
+                accessorKey: 'is_registration_open',
+                header: 'Registration Open',
+                cell: (info: any) => (
+                    <Checkbox checked={info.getValue()} disabled />
+                ),
+            }
         ],
         [],
     );
@@ -205,7 +220,7 @@ export default function ContestTable({ filter }: { filter: string }) {
                                                 <FaSort />
                                             </span>
                                         ) : header.column.getIsSorted() ===
-                                          'desc' ? (
+                                            'desc' ? (
                                             <span className='me-1 text-slate-400'>
                                                 <FaSortDown />
                                             </span>
