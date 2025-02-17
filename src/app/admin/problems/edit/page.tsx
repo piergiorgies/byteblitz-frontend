@@ -19,84 +19,18 @@ export default function EditProblemPage() {
         if (problem == null) return;
 
         try {
-            const { testCases, ...problemWithoutTestCases } = editedProblem;
-            const extractedTestCases = testCases ?? [];
 
-            await api.put(`problems/${problemId}`, {
-                json: objectToSnake(problemWithoutTestCases),
+
+            await api.put(`admin/problems/${problemId}`, {
+                json: objectToSnake(editedProblem),
             });
 
-            const erroredTestCases = [];
-            let i;
-            const originalTestCasesLength = problem.testCases?.length ?? 0;
-            const length = Math.min(
-                extractedTestCases.length,
-                originalTestCasesLength,
-            );
+            notifications.show({
+                title: 'Updated',
+                message: 'Problem updated succesfully!',
+                color: 'green',
+            });
 
-            for (i = 0; i < length; i++) {
-                const testCase = extractedTestCases[i];
-                const originalId = problem.testCases![i].id ?? 0;
-
-                try {
-                    await api.put(`problems/${problemId}/testcases`, {
-                        json: objectToSnake({
-                            ...testCase,
-                            id: originalId,
-                            notes: `Test case #${i + 1}`,
-                        }),
-                    });
-                } catch {
-                    erroredTestCases.push(i);
-                }
-            }
-
-            // Test cases deleted by the user
-            if (extractedTestCases.length < originalTestCasesLength) {
-                const idsToDelete = problem
-                    .testCases!.slice(i)
-                    .map((testCase) => testCase.id);
-
-                try {
-                    await api.delete(`problems/${problemId}/testcases`, {
-                        json: { ids: idsToDelete },
-                    });
-                } catch {
-                    erroredTestCases.push(...idsToDelete);
-                }
-            }
-
-            // Test cases added by the user
-            if (extractedTestCases.length > originalTestCasesLength) {
-                for (i; i < extractedTestCases.length; i++) {
-                    const testCase = extractedTestCases[i];
-
-                    try {
-                        await api.post(`problems/${problemId}/testcases`, {
-                            json: objectToSnake({
-                                ...testCase,
-                                notes: `Test case #${i + 1}`,
-                            }),
-                        });
-                    } catch {
-                        erroredTestCases.push(i);
-                    }
-                }
-            }
-
-            if (erroredTestCases.length === 0) {
-                notifications.show({
-                    title: 'Updated',
-                    message: 'Problem updated succesfully!',
-                    color: 'green',
-                });
-            } else {
-                notifications.show({
-                    title: 'Error',
-                    message: `Error in updating the following test cases: ${erroredTestCases.map((x) => `#${x}`).join(', ')}`,
-                    color: 'red',
-                });
-            }
         } catch (error: unknown) {
             if (error instanceof HTTPError && error.response.status === 409) {
                 notifications.show({
@@ -116,18 +50,8 @@ export default function EditProblemPage() {
 
     const getProblem = useCallback(async () => {
         try {
-            const requests = [
-                api.get(`problems/${problemId}`),
-                api.get(`problems/${problemId}/testcases`),
-            ];
-
-            const [problemsReponse, testCasesResponse] =
-                await Promise.all(requests);
-            const problem = await problemsReponse.json<Problem>();
-            const { data: testCases } = await testCasesResponse.json<{
-                data: ProblemTestCase[];
-            }>();
-            problem.testCases = testCases;
+            const reponse = api.get(`admin/problems/${problemId}`);
+            const problem = await reponse.json<Problem>();
 
             setProblem(objectToCamel(problem));
         } catch (error) {

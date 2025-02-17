@@ -11,8 +11,11 @@ import {
 import { useForm } from '@mantine/form';
 import api from '@/utils/ky';
 import { notifications } from '@mantine/notifications';
+import { useRouter } from 'next/navigation';
 
 export default function AddJudgesPage() {
+    const router = useRouter();
+
     const judgeInfoForm = useForm({
         mode: 'uncontrolled',
         initialValues: {
@@ -27,7 +30,7 @@ export default function AddJudgesPage() {
 
     const saveJudge = async (values: typeof judgeInfoForm.values) => {
         try {
-            const response = await api.post('judges', {
+            const response = await api.post('admin/judges', {
                 json: {
                     name: values.name,
                     key: values.key,
@@ -42,6 +45,7 @@ export default function AddJudgesPage() {
                 color: 'teal',
             });
             judgeInfoForm.reset();
+            router.push('/admin/judges');
         } catch (error: any) {
             notifications.show({
                 title: 'Error',

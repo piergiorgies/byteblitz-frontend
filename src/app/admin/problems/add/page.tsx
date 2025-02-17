@@ -13,39 +13,19 @@ export default function AddProblemPage() {
 
     const saveProblem = async (problem: Problem) => {
         try {
-            const { testCases, ...problemWithoutTestCases } = problem;
-            const extractedTestCases = testCases ?? [];
+            const toSubmit = objectToSnake(problem);
+            console.log(toSubmit);
+            const response = await api.post('admin/problems', {
+                json: toSubmit,
+            });
+            const createdProblem = await response.json();
 
-            const response = await api.post('problems', {
-                json: objectToSnake(problemWithoutTestCases),
+            notifications.show({
+                title: 'Success',
+                message: `Problem has been created successfully.`,
+                color: 'green',
             });
 
-            const responseBody = await response.json<{ created_id: number }>();
-            const { created_id: problemId } = responseBody;
-
-            const erroredTestCases = [];
-            for (let i = 0; i < extractedTestCases.length; i++) {
-                const testCase = extractedTestCases[i];
-
-                try {
-                    await api.post(`problems/${problemId}/testcases`, {
-                        json: objectToSnake({
-                            ...testCase,
-                            notes: `Test case #${i + 1}`,
-                        }),
-                    });
-                } catch {
-                    erroredTestCases.push(i);
-                }
-            }
-
-            localStorage.setItem(
-                'problemCreated',
-                JSON.stringify({
-                    success: erroredTestCases.length === 0,
-                    erroredTestCases,
-                }),
-            );
             router.push('/admin/problems');
         } catch (error: unknown) {
             if (error instanceof HTTPError && error.response.status === 409) {

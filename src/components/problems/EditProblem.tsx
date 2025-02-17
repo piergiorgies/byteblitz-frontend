@@ -174,7 +174,7 @@ export default function EditProblem({
 
     const getLanguages = async () => {
         try {
-            const response = await api.get('problems/languages/available');
+            const response = await api.get('admin/problems/languages/available');
             const availableLanguages = await response.json<Language[]>();
             setLanguages(availableLanguages);
         } catch (error) {
