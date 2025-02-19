@@ -67,7 +67,7 @@ export default function UsersTable({
     const router = useRouter();
     const getUsers = async () => {
         try {
-            const response = await api.get('users', {
+            const response = await api.get('admin/users', {
                 searchParams: {
                     limit: pagination.pageSize,
                     offset: pagination.pageIndex * pagination.pageSize,
@@ -75,10 +75,10 @@ export default function UsersTable({
                 },
             });
             const users = await response.json<{
-                data: User[];
+                users: User[];
                 count: number;
             }>();
-            setUsers(users.data);
+            setUsers(users.users);
             setRowCount(users.count);
 
             if (
@@ -140,7 +140,7 @@ export default function UsersTable({
             confirmProps: { variant: 'subtle', color: 'red' },
             onConfirm: async () => {
                 try {
-                    await api.delete(`users/${user.id}`);
+                    await api.delete(`admin/users/${user.id}`);
                     notifications.show({
                         title: 'Deleted',
                         message: 'User deleted successfully',
@@ -228,7 +228,7 @@ export default function UsersTable({
 
     const getUserTypes = async () => {
         try {
-            const response = await api.get('users/types/available');
+            const response = await api.get('admin/users/types/available');
             const availableUserTypes = await response.json<UserType[]>();
             setUserTypes(availableUserTypes);
         } catch (error) {
@@ -255,7 +255,7 @@ export default function UsersTable({
                                                 <FaSort />
                                             </span>
                                         ) : header.column.getIsSorted() ===
-                                            'desc' ? (
+                                          'desc' ? (
                                             <span className='me-1 text-slate-400'>
                                                 <FaSortDown />
                                             </span>

@@ -14,7 +14,7 @@ export default function EditContestPage() {
 
     const fetchContest = async () => {
         try {
-            const response = await api.get(`contests/${contestId}`);
+            const response = await api.get(`admin/contests/${contestId}`);
             const data = await response.json();
             setContest(data);
         } catch (error) {
@@ -25,17 +25,19 @@ export default function EditContestPage() {
     const handleEditContest = async (values: any) => {
         const formattedValues = {
             ...values,
-            start_datetime: values.start_datetime ? new Date(values.start_datetime) : null,
-            end_datetime: values.end_datetime ? new Date(values.end_datetime) : null,
-            user_ids: values.users,
-            problems: values.contest_problems
+            start_datetime: values.start_datetime
+                ? new Date(values.start_datetime)
+                : null,
+            end_datetime: values.end_datetime
+                ? new Date(values.end_datetime)
+                : null,
+            problems: values.contest_problems,
         };
 
-        // Remove unwanted properties
-        const { users, contest_problems, ...cleanedValues } = formattedValues;
+        const { contest_problems, ...cleanedValues } = formattedValues;
 
         try {
-            await api.put(`contests/${contestId}`, {
+            await api.put(`admin/contests/${contestId}`, {
                 json: cleanedValues,
             });
 
@@ -71,8 +73,10 @@ export default function EditContestPage() {
                 description: contest.description,
                 start_datetime: new Date(contest.start_datetime),
                 end_datetime: new Date(contest.end_datetime),
-                users: contest.users.map((user: any) => user.id),
+                users: contest.users,
                 contest_problems: contest.contest_problems,
+                is_public: contest.is_public,
+                is_registration_open: contest.is_registration_open,
             }}
             onSubmit={handleEditContest}
         />

@@ -48,7 +48,9 @@ type ProblemTableProps = {
     selectable?: boolean;
     showDelayInput?: boolean;
     selectedProblem?: { problem_id: number; publication_delay: number }[];
-    onSelectionChange?: (selectedProblem: { problem_id: number; publication_delay: number }[]) => void;
+    onSelectionChange?: (
+        selectedProblem: { problem_id: number; publication_delay: number }[],
+    ) => void;
 };
 
 export default function ProblemsTable({
@@ -73,7 +75,7 @@ export default function ProblemsTable({
 
     const getProblems = async () => {
         try {
-            const response = await api.get('problems', {
+            const response = await api.get('admin/problems', {
                 searchParams: {
                     limit: pagination.pageSize,
                     offset: pagination.pageIndex * pagination.pageSize,
@@ -82,10 +84,10 @@ export default function ProblemsTable({
             });
 
             const problems = await response.json<{
-                data: Problem[];
+                problems: Problem[];
                 count: number;
             }>();
-            setProblems(problems.data);
+            setProblems(problems.problems);
             setRowCount(problems.count);
 
             if (
@@ -104,24 +106,33 @@ export default function ProblemsTable({
         setAreProblemsLoading(false);
     };
 
-    const handleSelectionChange = (problemId: number, isSelected: boolean, publication_delay: number) => {
+    const handleSelectionChange = (
+        problemId: number,
+        isSelected: boolean,
+        publication_delay: number,
+    ) => {
         let updatedSelection = selectedProblem.map((p) =>
-            typeof p === "number" ? { problem_id: p, publication_delay: 0 } : p
+            typeof p === 'number' ? { problem_id: p, publication_delay: 0 } : p,
         );
 
+        console.log(updatedSelection);
         if (isSelected) {
-            if (!updatedSelection.some(p => p.problem_id === problemId)) {
-                updatedSelection.push({ problem_id: problemId, publication_delay });
+            if (!updatedSelection.some((p) => p.problem_id === problemId)) {
+                updatedSelection.push({
+                    problem_id: problemId,
+                    publication_delay,
+                });
             }
         } else {
-            updatedSelection = updatedSelection.filter(p => p.problem_id !== problemId);
+            updatedSelection = updatedSelection.filter(
+                (p) => p.problem_id !== problemId,
+            );
         }
 
         if (onSelectionChange) {
             onSelectionChange(updatedSelection);
         }
     };
-
 
     useEffect(() => {
         setAreProblemsLoading(true);
@@ -152,7 +163,7 @@ export default function ProblemsTable({
             confirmProps: { variant: 'subtle', color: 'red' },
             onConfirm: async () => {
                 try {
-                    await api.delete(`problems/${problem.id}`);
+                    await api.delete(`admin/problems/${problem.id}`);
                     notifications.show({
                         title: 'Deleted',
                         message: 'Problem deleted succesfully!',
@@ -168,39 +179,40 @@ export default function ProblemsTable({
     };
 
     const columns = useMemo(
-        () => [
-            {
-                accessorKey: 'id',
-                header: '#',
-                cell: (info: CellContext<Problem, number>) => (
-                    <Text>{info.getValue()}</Text>
-                ),
-            },
-            {
-                accessorKey: 'title',
-                header: 'Title',
-                cell: (info: CellContext<Problem, string>) => (
-                    <Text fw='bold'>{info.getValue()}</Text>
-                ),
-            },
-            {
-                accessorKey: 'points',
-                header: 'Points',
-                cell: (info: CellContext<Problem, number>) => (
-                    <Text>{info.getValue()}</Text>
-                ),
-            },
-            {
-                accessorKey: 'is_public',
-                header: 'Public?',
-                cell: (info: CellContext<Problem, boolean>) =>
-                    info.getValue() ? <FaCheck /> : <FaX />,
-            },
-        ].filter((column) =>
-            visibleColumns
-                ? visibleColumns.includes(column.accessorKey)
-                : true,
-        ),
+        () =>
+            [
+                {
+                    accessorKey: 'id',
+                    header: '#',
+                    cell: (info: CellContext<Problem, number>) => (
+                        <Text>{info.getValue()}</Text>
+                    ),
+                },
+                {
+                    accessorKey: 'title',
+                    header: 'Title',
+                    cell: (info: CellContext<Problem, string>) => (
+                        <Text fw='bold'>{info.getValue()}</Text>
+                    ),
+                },
+                {
+                    accessorKey: 'points',
+                    header: 'Points',
+                    cell: (info: CellContext<Problem, number>) => (
+                        <Text>{info.getValue()}</Text>
+                    ),
+                },
+                {
+                    accessorKey: 'is_public',
+                    header: 'Public?',
+                    cell: (info: CellContext<Problem, boolean>) =>
+                        info.getValue() ? <FaCheck /> : <FaX />,
+                },
+            ].filter((column) =>
+                visibleColumns
+                    ? visibleColumns.includes(column.accessorKey)
+                    : true,
+            ),
         [],
     );
 
@@ -239,7 +251,7 @@ export default function ProblemsTable({
                                                 <FaSort />
                                             </span>
                                         ) : header.column.getIsSorted() ===
-                                            'desc' ? (
+                                          'desc' ? (
                                             <span className='me-1 text-slate-400'>
                                                 <FaSortDown />
                                             </span>
@@ -269,7 +281,13 @@ export default function ProblemsTable({
                                     <Table.Td>
                                         <Flex>
                                             <Checkbox
-                                                checked={selectedProblem?.some(p => p.problem_id === problemId) || false}
+                                                checked={
+                                                    selectedProblem?.some(
+                                                        (p) =>
+                                                            p.problem_id ===
+                                                            problemId,
+                                                    ) || false
+                                                }
                                                 onChange={(e) =>
                                                     handleSelectionChange(
                                                         problemId ?? 0,
@@ -278,7 +296,6 @@ export default function ProblemsTable({
                                                     )
                                                 }
                                             />
-
                                         </Flex>
                                     </Table.Td>
                                 )}
@@ -297,7 +314,11 @@ export default function ProblemsTable({
                                                 size='xs'
                                                 variant='subtle'
                                                 color='blue'
-                                                onClick={() => router.push(`/admin/problems/edit?id=${problemId}`)}
+                                                onClick={() =>
+                                                    router.push(
+                                                        `/admin/problems/edit?id=${problemId}`,
+                                                    )
+                                                }
                                             >
                                                 <FaPenToSquare />
                                             </Button>
@@ -306,7 +327,9 @@ export default function ProblemsTable({
                                                 variant='subtle'
                                                 color='red'
                                                 onClick={() =>
-                                                    handleDeleteProblem(row.original)
+                                                    handleDeleteProblem(
+                                                        row.original,
+                                                    )
                                                 }
                                             >
                                                 <FaTrash />
@@ -318,23 +341,47 @@ export default function ProblemsTable({
                                     <Table.Td>
                                         <Flex>
                                             <NumberInput
-                                                disabled={!selectedProblem.some(p => p.problem_id === problemId || false)}
+                                                disabled={
+                                                    !selectedProblem.some(
+                                                        (p) =>
+                                                            p.problem_id ===
+                                                            problemId ||
+                                                            false,
+                                                    )
+                                                }
                                                 min={0}
                                                 max={100}
-                                                placeholder="Publication delay"
-                                                value={selectedProblem.find(p => p.problem_id === problemId)?.publication_delay || 0}
+                                                placeholder='Publication delay'
+                                                value={
+                                                    selectedProblem.find(
+                                                        (p) =>
+                                                            p.problem_id ===
+                                                            problemId,
+                                                    )?.publication_delay || 0
+                                                }
                                                 onChange={(value) => {
-                                                    const numericValue = Number(value) || 0;
-                                                    const currentSelection = selectedProblem.map((p) =>
-                                                        p.problem_id === problemId ? { ...p, publication_delay: numericValue } : p
-                                                    );
+                                                    const numericValue =
+                                                        Number(value) || 0;
+                                                    const currentSelection =
+                                                        selectedProblem.map(
+                                                            (p) =>
+                                                                p.problem_id ===
+                                                                    problemId
+                                                                    ? {
+                                                                        ...p,
+                                                                        publication_delay:
+                                                                            numericValue,
+                                                                    }
+                                                                    : p,
+                                                        );
 
                                                     if (onSelectionChange) {
-                                                        onSelectionChange(currentSelection);
+                                                        onSelectionChange(
+                                                            currentSelection,
+                                                        );
                                                     }
                                                 }}
                                             />
-
                                         </Flex>
                                     </Table.Td>
                                 )}

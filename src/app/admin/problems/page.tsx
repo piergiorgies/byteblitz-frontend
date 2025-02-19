@@ -23,32 +23,6 @@ export default function ProblemsPage() {
         setSearchQuery(values.searchQuery);
     };
 
-    useEffect(() => {
-        const storedData = localStorage.getItem('problemCreated');
-
-        if (storedData) {
-            const { success, erroredTestCases } = JSON.parse(storedData);
-
-            if (success) {
-                notifications.show({
-                    title: 'Success',
-                    message: 'Problem created successfully!',
-                    color: 'green',
-                });
-            }
-
-            if (erroredTestCases.length > 0) {
-                notifications.show({
-                    title: 'Warning',
-                    message: `Some test cases failed to save: ${erroredTestCases.map((x: number) => `#${x}`).join(', ')}`,
-                    color: 'orange',
-                });
-            }
-
-            localStorage.removeItem('problemCreated');
-        }
-    }, []);
-
     return (
         <>
             <Flex justify='space-between' mb='md'>

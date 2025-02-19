@@ -9,19 +9,21 @@ export default function AddContestsPage() {
     const router = useRouter();
 
     const handleAddContest = async (values: any) => {
-
         const formattedValues = {
             ...values,
-            start_datetime: values.start_datetime ? new Date(values.start_datetime) : null,
-            end_datetime: values.end_datetime ? new Date(values.end_datetime) : null,
-            user_ids: values.users,
-            problems: values.contest_problems
+            start_datetime: values.start_datetime
+                ? new Date(values.start_datetime)
+                : null,
+            end_datetime: values.end_datetime
+                ? new Date(values.end_datetime)
+                : null,
+            problems: values.contest_problems,
         };
 
         // Remove unwanted properties
-        const { users, contest_problems, ...cleanedValues } = formattedValues;
+        const { contest_problems, ...cleanedValues } = formattedValues;
         try {
-            await api.post('contests', {
+            await api.post('admin/contests', {
                 json: cleanedValues,
             });
 
@@ -31,7 +33,6 @@ export default function AddContestsPage() {
                 color: 'green',
             });
             router.push('/admin/contests');
-
         } catch (error) {
             console.error('Failed to add contest:', error);
             notifications.show({
