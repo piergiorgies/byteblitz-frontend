@@ -40,6 +40,9 @@ import {
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 import { useRouter } from 'next/navigation';
+import { access } from 'fs';
+import Difficulty from './Difficulty';
+import { Complexity } from '@/models/Difficulty';
 
 type ProblemTableProps = {
     filter: string;
@@ -200,6 +203,13 @@ export default function ProblemsTable({
                     header: 'Points',
                     cell: (info: CellContext<Problem, number>) => (
                         <Text>{info.getValue()}</Text>
+                    ),
+                },
+                {
+                    accessorKey: 'difficulty',
+                    header: 'Difficulty',
+                    cell: (info: CellContext<Problem, string>) => (
+                        <Difficulty difficulty={info.getValue() as Complexity} />
                     ),
                 },
                 {
