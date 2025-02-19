@@ -14,7 +14,7 @@ export default function EditUserPage() {
 
     const fetchUser = async () => {
         try {
-            const response = await api.get(`users/${userId}`);
+            const response = await api.get(`admin/users/${userId}`);
             const data = await response.json();
             setUser(data);
         } catch (error) {
@@ -24,7 +24,7 @@ export default function EditUserPage() {
 
     const handleEditUser = async (values: any) => {
         try {
-            await api.put(`users/${userId}`, {
+            await api.put(`admin/users/${userId}`, {
                 json: values,
             });
             notifications.show({

@@ -1,7 +1,8 @@
 'use client';
 import api from '@/utils/ky';
-import { Center, SimpleGrid, Space } from '@mantine/core';
+import { Button, Center, SimpleGrid, Space } from '@mantine/core';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
     const [contests, setConstests] = useState([]);
@@ -9,6 +10,7 @@ export default function Home() {
     const maxProblems = 6;
     const offset = 0;
     const [loading, setLoading] = useState(true);
+    const router = useRouter();
 
     useEffect(() => {
         const fetchContests = async () => {
@@ -48,7 +50,11 @@ export default function Home() {
                     </div>
                 </Center>
                 <Space h={50} />
-                <SimpleGrid cols={3} />
+                <div className='flex justify-center'>
+                    <Button fullWidth onClick={() => router.push('/contests')}>
+                        View Contests
+                    </Button>
+                </div>
             </div>
         </Center>
     );

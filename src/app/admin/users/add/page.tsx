@@ -10,7 +10,7 @@ export default function AddUsersPage() {
             // remove the password confirmation field
             const submitValues = { ...values };
             delete submitValues.confirmPassword;
-            await api.post('auth/signup', {
+            await api.post('admin/users', {
                 json: submitValues,
             });
             notifications.show({

@@ -1,4 +1,12 @@
-import { Button, SimpleGrid, TextInput, Title, Flex, Box } from '@mantine/core';
+import {
+    Button,
+    SimpleGrid,
+    TextInput,
+    Title,
+    Flex,
+    Box,
+    Checkbox,
+} from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { DateTimePicker } from '@mantine/dates';
 import { useEffect, useState } from 'react';
@@ -17,6 +25,8 @@ type ContestFormProps = {
         end_datetime: Date;
         users: number[];
         contest_problems: { problem_id: number; publication_delay: number }[];
+        is_public: boolean;
+        is_registration_open: boolean;
     };
     onSubmit: (values: any) => Promise<void>;
 };
@@ -37,6 +47,8 @@ export default function ContestForm({
                 problem_id: number;
                 publication_delay: number;
             }[],
+            is_public: false,
+            is_registration_open: false,
         },
         validate: {
             name: (value) => (value.trim() ? null : 'Name is required'),
@@ -76,6 +88,7 @@ export default function ContestForm({
     }, [selectedProblem]);
 
     useEffect(() => {
+        console.log('initialValues', initialValues);
         if (initialValues?.users) {
             setSelectedUserIds(initialValues.users);
         }
@@ -131,6 +144,18 @@ export default function ContestForm({
                         placeholder='Pick the end date and time'
                         required
                         {...contestForm.getInputProps('end_datetime')}
+                    />
+                    <Checkbox
+                        label='Is public'
+                        {...contestForm.getInputProps('is_public', {
+                            type: 'checkbox',
+                        })}
+                    />
+                    <Checkbox
+                        label='Is registration open'
+                        {...contestForm.getInputProps('is_registration_open', {
+                            type: 'checkbox',
+                        })}
                     />
                 </SimpleGrid>
 

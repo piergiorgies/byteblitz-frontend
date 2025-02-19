@@ -75,7 +75,7 @@ export default function ProblemsTable({
 
     const getProblems = async () => {
         try {
-            const response = await api.get('problems', {
+            const response = await api.get('admin/problems', {
                 searchParams: {
                     limit: pagination.pageSize,
                     offset: pagination.pageIndex * pagination.pageSize,
@@ -84,10 +84,10 @@ export default function ProblemsTable({
             });
 
             const problems = await response.json<{
-                data: Problem[];
+                problems: Problem[];
                 count: number;
             }>();
-            setProblems(problems.data);
+            setProblems(problems.problems);
             setRowCount(problems.count);
 
             if (
@@ -115,6 +115,7 @@ export default function ProblemsTable({
             typeof p === 'number' ? { problem_id: p, publication_delay: 0 } : p,
         );
 
+        console.log(updatedSelection);
         if (isSelected) {
             if (!updatedSelection.some((p) => p.problem_id === problemId)) {
                 updatedSelection.push({
@@ -162,7 +163,7 @@ export default function ProblemsTable({
             confirmProps: { variant: 'subtle', color: 'red' },
             onConfirm: async () => {
                 try {
-                    await api.delete(`problems/${problem.id}`);
+                    await api.delete(`admin/problems/${problem.id}`);
                     notifications.show({
                         title: 'Deleted',
                         message: 'Problem deleted succesfully!',
@@ -344,7 +345,7 @@ export default function ProblemsTable({
                                                     !selectedProblem.some(
                                                         (p) =>
                                                             p.problem_id ===
-                                                                problemId ||
+                                                            problemId ||
                                                             false,
                                                     )
                                                 }
@@ -365,12 +366,12 @@ export default function ProblemsTable({
                                                         selectedProblem.map(
                                                             (p) =>
                                                                 p.problem_id ===
-                                                                problemId
+                                                                    problemId
                                                                     ? {
-                                                                          ...p,
-                                                                          publication_delay:
-                                                                              numericValue,
-                                                                      }
+                                                                        ...p,
+                                                                        publication_delay:
+                                                                            numericValue,
+                                                                    }
                                                                     : p,
                                                         );
 

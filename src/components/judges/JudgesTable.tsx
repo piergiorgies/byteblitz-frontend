@@ -47,7 +47,7 @@ export default function JudgesTable({ filter }: { filter: string }) {
 
     const getJudges = async () => {
         try {
-            const response = await api.get('judges', {
+            const response = await api.get('admin/judges', {
                 searchParams: {
                     limit: pagination.pageSize,
                     offset: pagination.pageIndex * pagination.pageSize,
@@ -56,10 +56,10 @@ export default function JudgesTable({ filter }: { filter: string }) {
             });
 
             const problems = await response.json<{
-                data: Judge[];
+                judges: Judge[];
                 count: number;
             }>();
-            setJudges(problems.data);
+            setJudges(problems.judges);
             setRowCount(problems.count);
 
             if (
@@ -107,11 +107,11 @@ export default function JudgesTable({ filter }: { filter: string }) {
             confirmProps: { variant: 'subtle', color: 'red' },
             onConfirm: async () => {
                 try {
-                    await api.delete(`judges/${judge.id}`);
+                    await api.delete(`admin/judges/${judge.id}`);
 
                     notifications.show({
                         title: 'Deleted',
-                        message: 'Problem deleted succesfully!',
+                        message: 'Judge deleted succesfully!',
                         color: 'green',
                     });
 
@@ -228,16 +228,6 @@ export default function JudgesTable({ filter }: { filter: string }) {
                             ))}
                             <Table.Td>
                                 <Flex>
-                                    {/* <Button
-                                        size='xs'
-                                        variant='subtle'
-                                        color='blue'
-                                        onClick={() =>
-                                            handleEditJudge(row.original)
-                                        }
-                                    >
-                                        <FaPenToSquare />
-                                    </Button> */}
                                     <Button
                                         size='xs'
                                         variant='subtle'

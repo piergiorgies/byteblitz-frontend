@@ -4,6 +4,7 @@ import {
     Box,
     Button,
     Center,
+    Checkbox,
     Divider,
     Flex,
     Pagination,
@@ -26,11 +27,13 @@ import {
 } from '@tanstack/react-table';
 import dayjs from 'dayjs';
 import {
+    FaCheck,
     FaPenToSquare,
     FaSort,
     FaSortDown,
     FaSortUp,
     FaTrash,
+    FaX,
 } from 'react-icons/fa6';
 import { useRouter } from 'next/navigation';
 import { modals } from '@mantine/modals';
@@ -50,7 +53,7 @@ export default function ContestTable({ filter }: { filter: string }) {
 
     const getContests = async () => {
         try {
-            const response = await api.get('contests', {
+            const response = await api.get('admin/contests', {
                 searchParams: {
                     limit: pagination.pageSize,
                     offset: pagination.pageIndex * pagination.pageSize,
@@ -59,10 +62,10 @@ export default function ContestTable({ filter }: { filter: string }) {
             });
 
             const contests = await response.json<{
-                data: Contest[];
+                contests: Contest[];
                 count: number;
             }>();
-            setContests(contests.data);
+            setContests(contests.contests);
             setRowCount(contests.count);
 
             if (
@@ -114,7 +117,7 @@ export default function ContestTable({ filter }: { filter: string }) {
             confirmProps: { variant: 'subtle', color: 'red' },
             onConfirm: async () => {
                 try {
-                    await api.delete(`contests/${contest.id}`);
+                    await api.delete(`admin/contests/${contest.id}`);
                     notifications.show({
                         title: 'Deleted',
                         message: 'Contest deleted successfully',
@@ -166,6 +169,18 @@ export default function ContestTable({ filter }: { filter: string }) {
                         : 'N/A';
                     return <Text>{formattedDate}</Text>;
                 },
+            },
+            {
+                accessorKey: 'is_public',
+                header: 'Public',
+                cell: (info: any) =>
+                    info.getValue() === true ? <FaCheck /> : <FaX />,
+            },
+            {
+                accessorKey: 'is_registration_open',
+                header: 'Registration Open',
+                cell: (info: any) =>
+                    info.getValue() === true ? <FaCheck /> : <FaX />,
             },
         ],
         [],
