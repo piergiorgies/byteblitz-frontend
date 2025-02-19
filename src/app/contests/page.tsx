@@ -27,22 +27,22 @@ export default function Contests() {
         past: [],
     });
     const [loading, setLoading] = useState(true);
-    const [user, setUser] = useState(null as User | null);
+    // const [user, setUser] = useState(null as User | null);
 
-    useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                const response = await api.get('users/me');
-                response.json<User>().then((data) => {
-                    setUser(data);
-                });
-            } catch (error) {
-                setUser(null);
-            }
-        };
+    // useEffect(() => {
+    //     const fetchUser = async () => {
+    //         try {
+    //             const response = await api.get('users/me');
+    //             response.json<User>().then((data) => {
+    //                 setUser(data);
+    //             });
+    //         } catch (error) {
+    //             setUser(null);
+    //         }
+    //     };
 
-        fetchUser();
-    }, []);
+    //     fetchUser();
+    // }, []);
 
     useEffect(() => {
         const fetchContests = async () => {
@@ -84,7 +84,6 @@ export default function Contests() {
                             <ContestList
                                 key={contest.id}
                                 contests={[contest]}
-                                user={user}
                             />
                         ))}
                     </Grid.Col>
@@ -98,7 +97,6 @@ export default function Contests() {
                             <ContestList
                                 key={contest.id}
                                 contests={[contest]}
-                                user={user}
                             />
                         ))}
                     </Grid.Col>
@@ -112,7 +110,6 @@ export default function Contests() {
                             <ContestList
                                 key={contest.id}
                                 contests={[contest]}
-                                user={user}
                             />
                         ))}
                     </Grid.Col>
@@ -124,10 +121,8 @@ export default function Contests() {
 
 function ContestList({
     contests,
-    user,
 }: {
     contests: ContestInfo[];
-    user: User | null;
 }) {
     if (contests.length === 0) {
         return <Text mt='md'>No contests available</Text>;
@@ -136,7 +131,7 @@ function ContestList({
     return (
         <Box mt='md'>
             {contests.map((contest) => (
-                <ContestCard key={contest.id} contest={contest} user={user} />
+                <ContestCard key={contest.id} contest={contest} />
             ))}
         </Box>
     );

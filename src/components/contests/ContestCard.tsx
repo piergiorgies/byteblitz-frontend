@@ -9,10 +9,9 @@ import { FaClock, FaPeopleGroup, FaQuestion, FaUpload } from 'react-icons/fa6';
 
 type ContestCardProps = {
     contest: ContestInfo;
-    user: User | null;
 };
 
-export default function ContestCard({ contest, user }: ContestCardProps) {
+export default function ContestCard({ contest }: ContestCardProps) {
     const now = dayjs();
     const start = dayjs(contest.start_datetime);
     const end = dayjs(contest.end_datetime);
@@ -33,27 +32,26 @@ export default function ContestCard({ contest, user }: ContestCardProps) {
         router.push(`/contests/view/past?id=${contest.id}`);
     };
 
-    if (user !== null) {
-        if (now.isBefore(start)) {
-            actionButton = (
-                <Button color='blue' onClick={handleRegister}>
-                    Register Now
-                </Button>
-            );
-        } else if (now.isAfter(start) && now.isBefore(end)) {
-            actionButton = (
-                <Button color='green' onClick={handleJoin}>
-                    Join Contest
-                </Button>
-            );
-        } else {
-            actionButton = (
-                <Button color='gray' onClick={handleViewResults}>
-                    View Results
-                </Button>
-            );
-        }
+    if (now.isBefore(start)) {
+        actionButton = (
+            <Button color='blue' onClick={handleRegister}>
+                Register Now
+            </Button>
+        );
+    } else if (now.isAfter(start) && now.isBefore(end)) {
+        actionButton = (
+            <Button color='green' onClick={handleJoin}>
+                Join Contest
+            </Button>
+        );
+    } else {
+        actionButton = (
+            <Button color='gray' onClick={handleViewResults}>
+                View Results
+            </Button>
+        );
     }
+
     return (
         <Card
             shadow='sm'

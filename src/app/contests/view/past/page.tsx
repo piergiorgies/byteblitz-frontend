@@ -1,5 +1,6 @@
 'use client';
 
+import Forbidden from '@/components/global/Forbidden';
 import { Contest, ContestProblem, PastContest } from '@/models/Contest';
 import api from '@/utils/ky';
 import {
@@ -15,6 +16,7 @@ import {
     Table,
     Badge,
     Grid,
+    Blockquote,
 } from '@mantine/core';
 import {
     flexRender,
@@ -22,17 +24,19 @@ import {
     getFilteredRowModel,
     useReactTable,
 } from '@tanstack/react-table';
+import { HTTPError } from 'ky';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-import { FaCaretLeft, FaSort, FaSortDown, FaSortUp } from 'react-icons/fa6';
+import { FaCaretLeft, FaInfo, FaSort, FaSortDown, FaSortUp } from 'react-icons/fa6';
 
 export default function ViewContestPage() {
     const [contest, setContest] = useState<PastContest>();
-    const [problems, setProblems] = useState<ContestProblem[]>([]);
     const searchParams = useSearchParams();
     const contestId = searchParams.get('id');
     const router = useRouter();
     const [isHovered, setIsHovered] = useState(false);
+
+    const [forbidden, setForbidden] = useState(true);
 
     const theme = useMantineTheme();
 
@@ -41,9 +45,13 @@ export default function ViewContestPage() {
             const response = await api.get(`contests/${contestId}/past`);
             const data = await response.json<PastContest>();
             setContest(data);
-            setProblems(data.problems);
-        } catch (error) {
-            console.error('Error fetching contest:', error);
+            setForbidden(false);
+        } catch (error: unknown) {
+            if (error instanceof HTTPError && error.response.status === 403) {
+                setForbidden(true);
+            } else {
+                console.log('Error fetching contest:', error);
+            }
         }
 
         console.log(contest);
@@ -51,7 +59,7 @@ export default function ViewContestPage() {
 
     useEffect(() => {
         fetchContest();
-    }, [contestId]);
+    }, [contestId, forbidden]);
 
     const problemColumns = useMemo(
         () => [
@@ -85,7 +93,7 @@ export default function ViewContestPage() {
     );
 
     const problemTable = useReactTable({
-        data: problems,
+        data: contest?.problems || [],
         columns: problemColumns,
         getCoreRowModel: getCoreRowModel(),
         getSortedRowModel: getCoreRowModel(),
@@ -93,15 +101,17 @@ export default function ViewContestPage() {
         manualPagination: true,
     });
 
-    return (
-        <Container size='lg'>
-            <Flex justify='left'>
+    return forbidden ? (
+        <Forbidden />
+    ) : (
+        <Container size="lg">
+            <Flex justify="left">
                 <Group
-                    gap='xs'
+                    gap="xs"
                     onClick={() => router.back()}
                     style={{
-                        cursor: 'pointer',
-                        transition: 'color 0.2s ease-in-out',
+                        cursor: "pointer",
+                        transition: "color 0.2s ease-in-out",
                     }}
                     onMouseOver={() => setIsHovered(true)}
                     onMouseOut={() => setIsHovered(false)}
@@ -110,13 +120,10 @@ export default function ViewContestPage() {
                         color={
                             isHovered
                                 ? theme.colors[theme.primaryColor][6]
-                                : 'gray'
+                                : "gray"
                         }
                     />
-                    <Text
-                        size='md'
-                        c={isHovered ? theme.primaryColor : 'dimmed'}
-                    >
+                    <Text size="md" c={isHovered ? theme.primaryColor : "dimmed"}>
                         Back to contest
                     </Text>
                 </Group>
@@ -124,62 +131,55 @@ export default function ViewContestPage() {
             <Title mt={8} order={1}>
                 {contest?.name}
             </Title>
-            {/* remove the close button */}
-            <Notification
-                mt={4}
-                p={20}
-                title='The contest is ended'
-                color='gray'
-                withCloseButton={false}
-            />
+            {/* Removed the close button */}
 
-            <Space h='xl' />
-            <Text mt={4} size='md'>
+
+            <Space h="xl" />
+            <Blockquote my={4} color='gray' icon={<FaInfo />} iconSize={30}>
                 {contest?.description}
-            </Text>
+            </Blockquote>
+            {/* <Text mt={4} size="md">
+                {contest?.description}
+            </Text> */}
 
-            <Space h='xl' />
+            <Space h="xl" />
 
-            <Grid gutter={{ base: 5, xs: 'md', md: 'xl', xl: 50 }}>
+            <Grid gutter={{ base: 5, xs: "md", md: "xl", xl: 50 }}>
                 <Grid.Col span={6}>
                     <Title order={4}>Problems</Title>
                     <Table highlightOnHover>
                         <Table.Thead>
-                            {problemTable
-                                .getHeaderGroups()
-                                .map((headerGroup) => (
-                                    <Table.Tr key={headerGroup.id}>
-                                        {headerGroup.headers.map((header) => (
-                                            <Table.Th
-                                                key={header.id}
-                                                onClick={header.column.getToggleSortingHandler()}
-                                                style={{ cursor: 'pointer' }}
-                                            >
-                                                <div className='flex items-center'>
-                                                    {!header.column.getIsSorted() ? (
-                                                        <span className='me-1 text-slate-400'>
-                                                            <FaSort />
-                                                        </span>
-                                                    ) : header.column.getIsSorted() ===
-                                                      'desc' ? (
-                                                        <span className='me-1 text-slate-400'>
-                                                            <FaSortDown />
-                                                        </span>
-                                                    ) : (
-                                                        <span className='me-1 text-slate-400'>
-                                                            <FaSortUp />
-                                                        </span>
-                                                    )}
-                                                    {flexRender(
-                                                        header.column.columnDef
-                                                            .header,
-                                                        header.getContext(),
-                                                    )}
-                                                </div>
-                                            </Table.Th>
-                                        ))}
-                                    </Table.Tr>
-                                ))}
+                            {problemTable.getHeaderGroups().map((headerGroup) => (
+                                <Table.Tr key={headerGroup.id}>
+                                    {headerGroup.headers.map((header) => (
+                                        <Table.Th
+                                            key={header.id}
+                                            onClick={header.column.getToggleSortingHandler()}
+                                            style={{ cursor: "pointer" }}
+                                        >
+                                            <div className="flex items-center">
+                                                {!header.column.getIsSorted() ? (
+                                                    <span className="me-1 text-slate-400">
+                                                        <FaSort />
+                                                    </span>
+                                                ) : header.column.getIsSorted() === "desc" ? (
+                                                    <span className="me-1 text-slate-400">
+                                                        <FaSortDown />
+                                                    </span>
+                                                ) : (
+                                                    <span className="me-1 text-slate-400">
+                                                        <FaSortUp />
+                                                    </span>
+                                                )}
+                                                {flexRender(
+                                                    header.column.columnDef.header,
+                                                    header.getContext()
+                                                )}
+                                            </div>
+                                        </Table.Th>
+                                    ))}
+                                </Table.Tr>
+                            ))}
                         </Table.Thead>
                         <Table.Tbody>
                             {problemTable.getRowModel().rows.map((row) => (
@@ -188,7 +188,7 @@ export default function ViewContestPage() {
                                         <Table.Td key={cell.id}>
                                             {flexRender(
                                                 cell.column.columnDef.cell,
-                                                cell.getContext(),
+                                                cell.getContext()
                                             )}
                                         </Table.Td>
                                     ))}
@@ -203,4 +203,5 @@ export default function ViewContestPage() {
             </Grid>
         </Container>
     );
+
 }
