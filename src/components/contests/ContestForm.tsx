@@ -33,7 +33,10 @@ export default function ContestForm({
             start_datetime: null,
             end_datetime: null,
             users: [],
-            contest_problems: [] as { problem_id: number; publication_delay: number }[],
+            contest_problems: [] as {
+                problem_id: number;
+                publication_delay: number;
+            }[],
         },
         validate: {
             name: (value) => (value.trim() ? null : 'Name is required'),
@@ -51,14 +54,16 @@ export default function ContestForm({
     const [selectedUserIds, setSelectedUserIds] = useState<number[]>(
         initialValues?.users || [],
     );
-    const [selectedProblem, setSelectedProblemIds] = useState<{ problem_id: number; publication_delay: number }[]>(
-        initialValues?.contest_problems || [],
-    );
+    const [selectedProblem, setSelectedProblemIds] = useState<
+        { problem_id: number; publication_delay: number }[]
+    >(initialValues?.contest_problems || []);
 
     const handleUserSelect = (updatedUserIds: number[]) => {
         setSelectedUserIds(updatedUserIds);
     };
-    const handleProblemSelect = (updatedProblems: { problem_id: number; publication_delay: number }[]) => {
+    const handleProblemSelect = (
+        updatedProblems: { problem_id: number; publication_delay: number }[],
+    ) => {
         setSelectedProblemIds(updatedProblems);
     };
 
