@@ -19,8 +19,6 @@ export default function EditProblemPage() {
         if (problem == null) return;
 
         try {
-
-
             await api.put(`admin/problems/${problemId}`, {
                 json: objectToSnake(editedProblem),
             });
@@ -30,7 +28,6 @@ export default function EditProblemPage() {
                 message: 'Problem updated succesfully!',
                 color: 'green',
             });
-
         } catch (error: unknown) {
             if (error instanceof HTTPError && error.response.status === 409) {
                 notifications.show({

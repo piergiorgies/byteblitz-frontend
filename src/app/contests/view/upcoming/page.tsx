@@ -37,7 +37,8 @@ export default function ViewContestPage() {
     const theme = useMantineTheme();
 
     const contestStart = new Date(contest?.start_datetime || '');
-    const notificationTitle = 'Contest start at ' + contestStart.toLocaleString();
+    const notificationTitle =
+        'Contest start at ' + contestStart.toLocaleString();
 
     const fetchContest = async () => {
         try {
@@ -164,7 +165,7 @@ export default function ViewContestPage() {
                                                             <FaSort />
                                                         </span>
                                                     ) : header.column.getIsSorted() ===
-                                                        'desc' ? (
+                                                      'desc' ? (
                                                         <span className='me-1 text-slate-400'>
                                                             <FaSortDown />
                                                         </span>

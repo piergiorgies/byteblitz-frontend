@@ -173,17 +173,15 @@ export default function ContestTable({ filter }: { filter: string }) {
             {
                 accessorKey: 'is_public',
                 header: 'Public',
-                cell: (info: any) => (
-                    info.getValue() === true ? <FaCheck /> : <FaX />
-                ),
+                cell: (info: any) =>
+                    info.getValue() === true ? <FaCheck /> : <FaX />,
             },
             {
                 accessorKey: 'is_registration_open',
                 header: 'Registration Open',
-                cell: (info: any) => (
-                    info.getValue() === true ? <FaCheck /> : <FaX />
-                ),
-            }
+                cell: (info: any) =>
+                    info.getValue() === true ? <FaCheck /> : <FaX />,
+            },
         ],
         [],
     );
@@ -222,7 +220,7 @@ export default function ContestTable({ filter }: { filter: string }) {
                                                 <FaSort />
                                             </span>
                                         ) : header.column.getIsSorted() ===
-                                            'desc' ? (
+                                          'desc' ? (
                                             <span className='me-1 text-slate-400'>
                                                 <FaSortDown />
                                             </span>

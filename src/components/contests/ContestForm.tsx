@@ -1,4 +1,12 @@
-import { Button, SimpleGrid, TextInput, Title, Flex, Box, Checkbox } from '@mantine/core';
+import {
+    Button,
+    SimpleGrid,
+    TextInput,
+    Title,
+    Flex,
+    Box,
+    Checkbox,
+} from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { DateTimePicker } from '@mantine/dates';
 import { useEffect, useState } from 'react';
