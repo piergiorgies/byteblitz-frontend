@@ -1,6 +1,7 @@
 import api from '@/utils/ky';
-import { Button, Group, Modal, PasswordInput, TextInput } from '@mantine/core';
+import { Button, Group, Modal, PasswordInput, Text, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 type onModalClose = () => void;
@@ -13,6 +14,7 @@ export default function LoginModal({
     closeModal: onModalClose;
 }) {
     const router = useRouter();
+    const [errorMessage, setErrorMessage] = useState('');
 
     const loginForm = useForm({
         mode: 'uncontrolled',
@@ -23,6 +25,8 @@ export default function LoginModal({
     });
 
     const doLogin = async (values: typeof loginForm.values) => {
+        setErrorMessage('');
+
         try {
             const response = await api.post('auth/login', {
                 json: {
@@ -32,38 +36,49 @@ export default function LoginModal({
                 cache: 'no-store',
                 credentials: 'include',
             });
+
+            if (!response.ok) {
+                throw new Error('Invalid username or password');
+            }
+
             const data: { access_token: string } = await response.json();
             localStorage.setItem('token', data.access_token);
             router.refresh();
+            closeModal();
         } catch (error) {
-            console.log(error);
+            setErrorMessage('Login failed. Please try again.');
         }
-
-        closeModal();
     };
 
     return (
         <Modal opened={showModal} onClose={closeModal}>
             <form onSubmit={loginForm.onSubmit(doLogin)}>
                 <TextInput
-                    label='Email'
-                    placeholder='Enter your email'
+                    label="Email"
+                    placeholder="Enter your email"
                     required
-                    mb='sm'
+                    mb="sm"
                     key={loginForm.key('username')}
                     {...loginForm.getInputProps('username')}
                 />
                 <PasswordInput
-                    label='Password'
-                    placeholder='Enter your password'
+                    label="Password"
+                    placeholder="Enter your password"
                     required
-                    mb='sm'
+                    mb="sm"
                     key={loginForm.key('password')}
                     {...loginForm.getInputProps('password')}
                 />
-                <Group mt='md'>
+
+                {errorMessage && (
+                    <Text c="red" size="sm" mb="sm">
+                        {errorMessage}
+                    </Text>
+                )}
+
+                <Group mt="md">
                     <Button onClick={closeModal}>Cancel</Button>
-                    <Button type='submit'>Login</Button>
+                    <Button type="submit">Login</Button>
                 </Group>
             </form>
         </Modal>
