@@ -5,33 +5,9 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function Home() {
-    const [contests, setConstests] = useState([]);
 
-    const maxProblems = 6;
-    const offset = 0;
-    const [loading, setLoading] = useState(true);
     const router = useRouter();
 
-    useEffect(() => {
-        const fetchContests = async () => {
-            try {
-                const response = await api.get('contests/', {
-                    searchParams: {
-                        limit: maxProblems,
-                        offset: offset,
-                    },
-                });
-                response.json().then((data: any) => {
-                    setConstests(data.data);
-                    setLoading(false);
-                });
-            } catch (error) {
-                console.log(error);
-            }
-        };
-
-        fetchContests();
-    }, []);
 
     return (
         <Center className='bg-gray-100'>

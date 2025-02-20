@@ -1,6 +1,7 @@
 'use client';
 
-import { Contest, ContestProblem, PastContest } from '@/models/Contest';
+import Forbidden from '@/components/global/Forbidden';
+import { Contest, ContestProblem, ContestInfo } from '@/models/Contest';
 import api from '@/utils/ky';
 import {
     Container,
@@ -15,6 +16,7 @@ import {
     Table,
     Badge,
     Grid,
+    Blockquote,
 } from '@mantine/core';
 import {
     flexRender,
@@ -24,15 +26,22 @@ import {
 } from '@tanstack/react-table';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-import { FaCaretLeft, FaSort, FaSortDown, FaSortUp } from 'react-icons/fa6';
+import {
+    FaCaretLeft,
+    FaInfo,
+    FaSort,
+    FaSortDown,
+    FaSortUp,
+} from 'react-icons/fa6';
 
 export default function ViewContestPage() {
-    const [contest, setContest] = useState<PastContest>();
-    const [problems, setProblems] = useState<ContestProblem[]>([]);
+    const [contest, setContest] = useState<ContestInfo>();
     const searchParams = useSearchParams();
     const contestId = searchParams.get('id');
     const router = useRouter();
     const [isHovered, setIsHovered] = useState(false);
+
+    const [forbidden, setForbidden] = useState(true);
 
     const theme = useMantineTheme();
 
@@ -43,9 +52,9 @@ export default function ViewContestPage() {
     const fetchContest = async () => {
         try {
             const response = await api.get(`contests/${contestId}/upcoming`);
-            const data = await response.json<PastContest>();
+            const data = await response.json<ContestInfo>();
             setContest(data);
-            setProblems(data.problems);
+            setForbidden(false);
         } catch (error) {
             console.error('Error fetching contest:', error);
         }
@@ -89,7 +98,7 @@ export default function ViewContestPage() {
     );
 
     const problemTable = useReactTable({
-        data: problems,
+        data: contest?.problems || [],
         columns: problemColumns,
         getCoreRowModel: getCoreRowModel(),
         getSortedRowModel: getCoreRowModel(),
@@ -97,7 +106,9 @@ export default function ViewContestPage() {
         manualPagination: true,
     });
 
-    return (
+    return forbidden ? (
+        <Forbidden />
+    ) : (
         <Container size='lg'>
             <Flex justify='left'>
                 <Group
@@ -125,22 +136,21 @@ export default function ViewContestPage() {
                     </Text>
                 </Group>
             </Flex>
-            <Title mt={8} order={1}>
-                {contest?.name}
-            </Title>
-            {/* remove the close button */}
-            <Notification
-                mt={4}
-                p={20}
-                title={notificationTitle}
-                color={theme.primaryColor}
-                withCloseButton={false}
-            />
 
+            <Flex align='end'>
+                <Title mt={8} order={1}>
+                    {contest?.name}
+                </Title>
+                <Badge size='lg' m='sm' p='xs' color='gray'>
+                    {notificationTitle}
+                </Badge>
+                {/* <Text p='xs' c='dimmed'>{notificationTitle}</Text> */}
+            </Flex>
             <Space h='xl' />
-            <Text mt={4} size='md'>
+
+            <Blockquote my={4} color='gray' icon={<FaInfo />} iconSize={30}>
                 {contest?.description}
-            </Text>
+            </Blockquote>
 
             <Space h='xl' />
 
@@ -203,7 +213,9 @@ export default function ViewContestPage() {
                 </Grid.Col>
                 <Grid.Col span={6}>
                     <Title order={4}>Leaderboard</Title>
-                    <Text size='md'>Contest leaderboard goes here</Text>
+                    <Text size='md'>
+                        Contest leaderboard will be available here
+                    </Text>
                 </Grid.Col>
             </Grid>
         </Container>
