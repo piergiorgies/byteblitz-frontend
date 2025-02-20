@@ -1,6 +1,7 @@
 import api from '@/utils/ky';
-import { Button, Group, Modal, TextInput } from '@mantine/core';
+import { Button, Group, Modal, TextInput, Text } from '@mantine/core';
 import { useForm } from '@mantine/form';
+import { HTTPError } from 'ky';
 import { useState } from 'react';
 
 export default function ResetPasswordModal({
@@ -11,6 +12,7 @@ export default function ResetPasswordModal({
     closeModal: () => void;
 }) {
     const [successMessage, setSuccessMessage] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
     const resetForm = useForm({
         initialValues: {
             email: '',
@@ -31,7 +33,9 @@ export default function ResetPasswordModal({
                 'If this email exists, a reset link has been sent.',
             );
         } catch (error) {
-            console.log(error);
+            if (error instanceof HTTPError && error.response.status === 400) {
+                setErrorMessage('Email already sent. Check your inbox.');
+            }
         }
     };
 
@@ -47,7 +51,14 @@ export default function ResetPasswordModal({
                 />
 
                 {successMessage && (
-                    <p style={{ color: 'green' }}>{successMessage}</p>
+                    <Text c='green' mt='sm'>
+                        {successMessage}
+                    </Text>
+                )}
+                {errorMessage && (
+                    <Text c='red' mt='sm'>
+                        {errorMessage}
+                    </Text>
                 )}
 
                 <Group mt='md'>
