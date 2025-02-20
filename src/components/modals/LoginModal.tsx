@@ -1,5 +1,12 @@
 import api from '@/utils/ky';
-import { Button, Group, Modal, PasswordInput, Text, TextInput } from '@mantine/core';
+import {
+    Button,
+    Group,
+    Modal,
+    PasswordInput,
+    Text,
+    TextInput,
+} from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -9,9 +16,11 @@ type onModalClose = () => void;
 export default function LoginModal({
     showModal,
     closeModal,
+    openResetModal,
 }: {
     showModal: boolean;
     closeModal: onModalClose;
+    openResetModal: () => void;
 }) {
     const router = useRouter();
     const [errorMessage, setErrorMessage] = useState('');
@@ -46,7 +55,9 @@ export default function LoginModal({
             router.refresh();
             closeModal();
         } catch (error) {
-            setErrorMessage('Login failed. Please try again.');
+            setErrorMessage(
+                (error as Error).message || 'Login failed. Please try again.',
+            );
         }
     };
 
@@ -54,31 +65,41 @@ export default function LoginModal({
         <Modal opened={showModal} onClose={closeModal}>
             <form onSubmit={loginForm.onSubmit(doLogin)}>
                 <TextInput
-                    label="Email"
-                    placeholder="Enter your email"
+                    label='Email'
+                    placeholder='Enter your email'
                     required
-                    mb="sm"
+                    mb='sm'
                     key={loginForm.key('username')}
                     {...loginForm.getInputProps('username')}
                 />
                 <PasswordInput
-                    label="Password"
-                    placeholder="Enter your password"
+                    label='Password'
+                    placeholder='Enter your password'
                     required
-                    mb="sm"
+                    mb='xs'
                     key={loginForm.key('password')}
                     {...loginForm.getInputProps('password')}
                 />
 
+                {/* Forgot Password Link */}
+                <Text
+                    size='sm'
+                    color='blue'
+                    style={{ cursor: 'pointer' }}
+                    onClick={openResetModal} // Open reset modal
+                >
+                    Forgot your password?
+                </Text>
+
                 {errorMessage && (
-                    <Text c="red" size="sm" mb="sm">
+                    <Text color='red' size='sm' mt='sm'>
                         {errorMessage}
                     </Text>
                 )}
 
-                <Group mt="md">
+                <Group mt='md'>
                     <Button onClick={closeModal}>Cancel</Button>
-                    <Button type="submit">Login</Button>
+                    <Button type='submit'>Login</Button>
                 </Group>
             </form>
         </Modal>
