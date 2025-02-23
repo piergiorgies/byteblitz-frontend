@@ -1,5 +1,6 @@
 'use client';
 
+import ContestHeader from '@/components/contests/ContestHeader';
 import Forbidden from '@/components/global/Forbidden';
 import { Contest, ContestProblem, ContestInfo } from '@/models/Contest';
 import api from '@/utils/ky';
@@ -135,14 +136,16 @@ export default function ViewContestPage() {
                     </Text>
                 </Group>
             </Flex>
-            <Flex>
-                <Title mt={8} order={1}>
-                    {contest?.name}
-                </Title>
-                <Badge size='lg' m='sm' p='xs' color='gray'>
-                    The contest is ended{' '}
-                </Badge>
-            </Flex>
+
+            <Space h='xl' />
+
+            <ContestHeader
+                title={contest?.name || ''}
+                startDatetime={contest?.start_datetime ? new Date(contest.start_datetime).toISOString() : undefined}
+                endDatetime={contest?.end_datetime ? new Date(contest.end_datetime).toISOString() : undefined}
+            />
+
+
 
             <Space h='xl' />
             <Blockquote my={4} color='gray' icon={<FaInfo />} iconSize={30}>
@@ -172,7 +175,7 @@ export default function ViewContestPage() {
                                                             <FaSort />
                                                         </span>
                                                     ) : header.column.getIsSorted() ===
-                                                      'desc' ? (
+                                                        'desc' ? (
                                                         <span className='me-1 text-slate-400'>
                                                             <FaSortDown />
                                                         </span>

@@ -1,5 +1,6 @@
 'use client';
 
+import ContestHeader from '@/components/contests/ContestHeader';
 import Forbidden from '@/components/global/Forbidden';
 import { Contest, ContestProblem, ContestInfo } from '@/models/Contest';
 import api from '@/utils/ky';
@@ -17,6 +18,7 @@ import {
     Badge,
     Grid,
     Blockquote,
+    Card,
 } from '@mantine/core';
 import {
     flexRender,
@@ -29,6 +31,7 @@ import { useEffect, useMemo, useState } from 'react';
 import {
     FaCaretLeft,
     FaInfo,
+    FaRegClock,
     FaSort,
     FaSortDown,
     FaSortUp,
@@ -137,16 +140,14 @@ export default function ViewContestPage() {
                 </Group>
             </Flex>
 
-            <Flex align='end'>
-                <Title mt={8} order={1}>
-                    {contest?.name}
-                </Title>
-                <Badge size='lg' m='sm' p='xs' color='gray'>
-                    {notificationTitle}
-                </Badge>
-                {/* <Text p='xs' c='dimmed'>{notificationTitle}</Text> */}
-            </Flex>
+            <ContestHeader
+                title={contest?.name || ''}
+                startDatetime={contest?.start_datetime ? new Date(contest?.start_datetime).toISOString() : undefined}
+                endDatetime={contest?.end_datetime ? new Date(contest?.end_datetime).toISOString() : undefined}
+            />
+
             <Space h='xl' />
+
 
             <Blockquote my={4} color='gray' icon={<FaInfo />} iconSize={30}>
                 {contest?.description}
@@ -175,7 +176,7 @@ export default function ViewContestPage() {
                                                             <FaSort />
                                                         </span>
                                                     ) : header.column.getIsSorted() ===
-                                                      'desc' ? (
+                                                        'desc' ? (
                                                         <span className='me-1 text-slate-400'>
                                                             <FaSortDown />
                                                         </span>

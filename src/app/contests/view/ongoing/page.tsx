@@ -1,9 +1,10 @@
 'use client';
 
+import ContestHeader from '@/components/contests/ContestHeader';
 import Forbidden from '@/components/global/Forbidden';
 import { ContestInfo } from '@/models/Contest';
 import api from '@/utils/ky';
-import { Anchor, Badge, Blockquote, Container, Flex, Grid, Group, Space, Table, Text, Title, useMantineTheme } from '@mantine/core';
+import { Anchor, Badge, Blockquote, Container, Flex, Grid, Group, Notification, Space, Table, Text, Title, useMantineTheme } from '@mantine/core';
 import { flexRender, getCoreRowModel, getFilteredRowModel, useReactTable } from '@tanstack/react-table';
 import { HTTPError } from 'ky';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -50,20 +51,24 @@ export default function OngoingContests() {
         if (!contest?.end_datetime) return;
 
         const updateCountdown = () => {
-            const endTime = new Date(contest.end_datetime).getTime();
+            const endTime = new Date(contest.end_datetime);
+            if (isNaN(endTime.getTime())) return;  // Check if the date is valid
+
             const now = new Date().getTime();
-            const difference = endTime - now;
+            const difference = endTime.getTime() - now;
 
             if (difference <= 0) {
                 setTimeLeft("Contest has ended");
                 return;
             }
 
+            const days = Math.floor(difference / (1000 * 60 * 60 * 24));
             const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
             const minutes = Math.floor((difference / (1000 * 60)) % 60);
             const seconds = Math.floor((difference / 1000) % 60);
 
-            setTimeLeft(`${hours}h ${minutes}m ${seconds}s`);
+            const timeString = `${days > 0 ? `${days}d ` : ''}${hours}h ${minutes}m ${seconds}s`;
+            setTimeLeft(timeString);
         };
 
         const timer = setInterval(updateCountdown, 1000);
@@ -144,12 +149,20 @@ export default function OngoingContests() {
                     </Text>
                 </Group>
             </Flex>
-            <Flex>
-                <Title mt={8} order={1}>
-                    {contest?.name}
-                </Title>
-                <Badge size='xl' m='sm' p='xs' color='green'>Contest end in {timeLeft}</Badge>
-            </Flex>
+
+            <ContestHeader
+                title={contest?.name || 'Contest'}
+                startDatetime={contest?.start_datetime ? new Date(contest.start_datetime).toISOString() : undefined}
+                endDatetime={contest?.end_datetime ? new Date(contest.end_datetime).toISOString() : undefined}
+            />
+
+            {/* Notification for time left */}
+            <Space h="md" />
+            <Notification closeButtonProps={{ 'hidden': 'true' }} title='Contest ends in:' color='green'>
+                <Text size="xl">
+                    {timeLeft}
+                </Text>
+            </Notification>
 
             <Space h="xl" />
             <Blockquote my={4} color='gray' icon={<FaInfo />} iconSize={30}>
@@ -217,5 +230,4 @@ export default function OngoingContests() {
             </Grid>
         </Container>
     );
-
 }
