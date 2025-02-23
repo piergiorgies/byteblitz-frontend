@@ -1,18 +1,23 @@
 'use client';
 
-import { Flex, Group, Text, Title, Badge, useMantineTheme } from '@mantine/core';
+import api from '@/utils/ky';
+import { Flex, Group, Text, Title, Badge, useMantineTheme, Grid, Button } from '@mantine/core';
 import { FaRegClock } from 'react-icons/fa6';
 
 interface ContestHeaderProps {
     title: string;
     startDatetime?: string;
     endDatetime?: string;
+    isRegistratioOpen?: boolean;
+    handleUserRegistration?: () => void;
 }
 
 export default function ContestHeader({
     title,
     startDatetime,
     endDatetime,
+    isRegistratioOpen,
+    handleUserRegistration,
 }: ContestHeaderProps) {
     const theme = useMantineTheme();
 
@@ -51,14 +56,30 @@ export default function ContestHeader({
             dynamicBadgeColor = 'gray';  // Fallback
     }
 
+    const showRegistration = currentStatus === 'upcoming' && isRegistratioOpen;
+
     return (
         <Flex direction="column" align="start" mt={8} gap="xs">
-            {/* Contest Title with Badge */}
-            <Flex align="center">
-                <Title order={1}>{title}</Title>
-                <Badge color={dynamicBadgeColor} variant="light" ml={10}>
-                    {dynamicBadgeText}
-                </Badge>
+
+            <Flex justify="space-between" align="center" style={{ width: '100%' }}>
+                <Flex align="center">
+                    <Title order={1}>{title}</Title>
+                    <Badge color={dynamicBadgeColor} variant="light" ml={10}>
+                        {dynamicBadgeText}
+                    </Badge>
+                </Flex>
+
+                {/* Registration Button (Positioned top-right) */}
+                {showRegistration && (
+                    <Button
+                        size="sm"
+                        color="blue"
+                        variant="outline"
+                        onClick={handleUserRegistration}
+                    >
+                        Register Now
+                    </Button>
+                )}
             </Flex>
 
             {/* Date-Time Info */}

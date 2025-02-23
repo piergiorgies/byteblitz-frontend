@@ -20,12 +20,14 @@ import {
     Blockquote,
     Card,
 } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
 import {
     flexRender,
     getCoreRowModel,
     getFilteredRowModel,
     useReactTable,
 } from '@tanstack/react-table';
+import { HTTPError } from 'ky';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import {
@@ -47,10 +49,6 @@ export default function ViewContestPage() {
     const [forbidden, setForbidden] = useState(true);
 
     const theme = useMantineTheme();
-
-    const contestStart = new Date(contest?.start_datetime || '');
-    const notificationTitle =
-        'Contest start at ' + contestStart.toLocaleString();
 
     const fetchContest = async () => {
         try {
@@ -109,6 +107,31 @@ export default function ViewContestPage() {
         manualPagination: true,
     });
 
+    const handleUserRegistration = async () => {
+        try {
+            const response = await api.post(`contests/${contestId}/register`);
+            const data: any = await response.json();
+
+            notifications.show({
+                title: 'Success',
+                message: data.message,
+                color: 'green',
+            });
+        }
+        catch (error) {
+            if (error instanceof HTTPError) {
+                const errorData = await error.response.json();
+                const errorMessage = errorData.message || 'Failed to register for contest';
+                notifications.show({
+                    title: 'Error',
+                    message: errorMessage,
+                    color: 'red',
+                });
+            }
+        }
+    };
+
+
     return forbidden ? (
         <Forbidden />
     ) : (
@@ -144,6 +167,8 @@ export default function ViewContestPage() {
                 title={contest?.name || ''}
                 startDatetime={contest?.start_datetime ? new Date(contest?.start_datetime).toISOString() : undefined}
                 endDatetime={contest?.end_datetime ? new Date(contest?.end_datetime).toISOString() : undefined}
+                isRegistratioOpen={contest?.is_registration_open || false}
+                handleUserRegistration={handleUserRegistration}
             />
 
             <Space h='xl' />
