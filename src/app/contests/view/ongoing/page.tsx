@@ -2,10 +2,28 @@
 
 import ContestHeader from '@/components/contests/ContestHeader';
 import Forbidden from '@/components/global/Forbidden';
-import { ContestInfo } from '@/models/Contest';
+import { ContestInfo, PastContest } from '@/models/Contest';
 import api from '@/utils/ky';
-import { Anchor, Badge, Blockquote, Container, Flex, Grid, Group, Notification, Space, Table, Text, Title, useMantineTheme } from '@mantine/core';
-import { flexRender, getCoreRowModel, getFilteredRowModel, useReactTable } from '@tanstack/react-table';
+import {
+    Anchor,
+    Badge,
+    Blockquote,
+    Container,
+    Flex,
+    Grid,
+    Group,
+    Space,
+    Table,
+    Text,
+    Title,
+    useMantineTheme,
+} from '@mantine/core';
+import {
+    flexRender,
+    getCoreRowModel,
+    getFilteredRowModel,
+    useReactTable,
+} from '@tanstack/react-table';
 import { HTTPError } from 'ky';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
@@ -18,7 +36,7 @@ import {
 } from 'react-icons/fa6';
 
 export default function OngoingContests() {
-    const [contest, setContest] = useState<ContestInfo>();
+    const [contest, setContest] = useState<PastContest>();
     const searchParams = useSearchParams();
     const contestId = searchParams.get('id');
     const router = useRouter();
@@ -33,7 +51,7 @@ export default function OngoingContests() {
     const fetchContest = async () => {
         try {
             const response = await api.get(`contests/${contestId}/ongoing`);
-            const data = await response.json<ContestInfo>();
+            const data = await response.json<PastContest>();
             setContest(data);
             setForbidden(false);
         } catch (error: unknown) {
@@ -122,6 +140,15 @@ export default function OngoingContests() {
         [],
     );
 
+    const problemTable = useReactTable({
+        data: contest?.problems || [],
+        columns: problemColumns,
+        getCoreRowModel: getCoreRowModel(),
+        getSortedRowModel: getCoreRowModel(),
+        getFilteredRowModel: getFilteredRowModel(),
+        manualPagination: true,
+    });
+
     return forbidden ? (
         <Forbidden />
     ) : (
@@ -159,13 +186,6 @@ export default function OngoingContests() {
                 endDatetime={contest?.end_datetime ? new Date(contest.end_datetime).toISOString() : undefined}
             />
 
-            {/* Notification for time left */}
-            <Space h="md" />
-            <Notification closeButtonProps={{ 'hidden': 'true' }} title='Contest ends in:' color='green'>
-                <Text size="xl">
-                    {timeLeft}
-                </Text>
-            </Notification>
 
             <Space h='xl' />
             <Blockquote my={4} color='gray' icon={<FaInfo />} iconSize={30}>
@@ -177,11 +197,64 @@ export default function OngoingContests() {
             <Grid gutter={{ base: 5, xs: 'md', md: 'xl', xl: 50 }}>
                 <Grid.Col span={6}>
                     <Title order={4}>Problems</Title>
+                    <Table highlightOnHover>
+                        <Table.Thead>
+                            {problemTable
+                                .getHeaderGroups()
+                                .map((headerGroup) => (
+                                    <Table.Tr key={headerGroup.id}>
+                                        {headerGroup.headers.map((header) => (
+                                            <Table.Th
+                                                key={header.id}
+                                                onClick={header.column.getToggleSortingHandler()}
+                                                style={{ cursor: 'pointer' }}
+                                            >
+                                                <div className='flex items-center'>
+                                                    {!header.column.getIsSorted() ? (
+                                                        <span className='me-1 text-slate-400'>
+                                                            <FaSort />
+                                                        </span>
+                                                    ) : header.column.getIsSorted() ===
+                                                        'desc' ? (
+                                                        <span className='me-1 text-slate-400'>
+                                                            <FaSortDown />
+                                                        </span>
+                                                    ) : (
+                                                        <span className='me-1 text-slate-400'>
+                                                            <FaSortUp />
+                                                        </span>
+                                                    )}
+                                                    {flexRender(
+                                                        header.column.columnDef
+                                                            .header,
+                                                        header.getContext(),
+                                                    )}
+                                                </div>
+                                            </Table.Th>
+                                        ))}
+                                    </Table.Tr>
+                                ))}
+                        </Table.Thead>
+                        <Table.Tbody>
+                            {problemTable.getRowModel().rows.map((row) => (
+                                <Table.Tr key={row.id}>
+                                    {row.getVisibleCells().map((cell) => (
+                                        <Table.Td key={cell.id}>
+                                            {flexRender(
+                                                cell.column.columnDef.cell,
+                                                cell.getContext(),
+                                            )}
+                                        </Table.Td>
+                                    ))}
+                                </Table.Tr>
+                            ))}
+                        </Table.Tbody>
+                    </Table>
                 </Grid.Col>
                 <Grid.Col span={6}>
                     <Title order={4}>Leaderboard</Title>
                 </Grid.Col>
             </Grid>
-        </Container>
+        </Container >
     );
 }
