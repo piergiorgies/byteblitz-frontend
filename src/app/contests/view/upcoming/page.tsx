@@ -1,5 +1,6 @@
 'use client';
 
+import ContestHeader from '@/components/contests/ContestHeader';
 import Forbidden from '@/components/global/Forbidden';
 import { Contest, ContestProblem, ContestInfo } from '@/models/Contest';
 import api from '@/utils/ky';
@@ -17,18 +18,22 @@ import {
     Badge,
     Grid,
     Blockquote,
+    Card,
 } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
 import {
     flexRender,
     getCoreRowModel,
     getFilteredRowModel,
     useReactTable,
 } from '@tanstack/react-table';
+import { HTTPError } from 'ky';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import {
     FaCaretLeft,
     FaInfo,
+    FaRegClock,
     FaSort,
     FaSortDown,
     FaSortUp,
@@ -44,10 +49,6 @@ export default function ViewContestPage() {
     const [forbidden, setForbidden] = useState(true);
 
     const theme = useMantineTheme();
-
-    const contestStart = new Date(contest?.start_datetime || '');
-    const notificationTitle =
-        'Contest start at ' + contestStart.toLocaleString();
 
     const fetchContest = async () => {
         try {
@@ -97,14 +98,30 @@ export default function ViewContestPage() {
         [],
     );
 
-    const problemTable = useReactTable({
-        data: contest?.problems || [],
-        columns: problemColumns,
-        getCoreRowModel: getCoreRowModel(),
-        getSortedRowModel: getCoreRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
-        manualPagination: true,
-    });
+    const handleUserRegistration = async () => {
+        try {
+            const response = await api.post(`contests/${contestId}/register`);
+            const data: any = await response.json();
+
+            notifications.show({
+                title: 'Success',
+                message: data.message,
+                color: 'green',
+            });
+        }
+        catch (error) {
+            if (error instanceof HTTPError) {
+                const errorData = await error.response.json();
+                const errorMessage = errorData.message || 'Failed to register for contest';
+                notifications.show({
+                    title: 'Error',
+                    message: errorMessage,
+                    color: 'red',
+                });
+            }
+        }
+    };
+
 
     return forbidden ? (
         <Forbidden />
@@ -137,16 +154,16 @@ export default function ViewContestPage() {
                 </Group>
             </Flex>
 
-            <Flex align='end'>
-                <Title mt={8} order={1}>
-                    {contest?.name}
-                </Title>
-                <Badge size='lg' m='sm' p='xs' color='gray'>
-                    {notificationTitle}
-                </Badge>
-                {/* <Text p='xs' c='dimmed'>{notificationTitle}</Text> */}
-            </Flex>
+            <ContestHeader
+                title={contest?.name || ''}
+                startDatetime={contest?.start_datetime ? new Date(contest?.start_datetime).toISOString() : undefined}
+                endDatetime={contest?.end_datetime ? new Date(contest?.end_datetime).toISOString() : undefined}
+                isRegistratioOpen={contest?.is_registration_open || false}
+                handleUserRegistration={handleUserRegistration}
+            />
+
             <Space h='xl' />
+
 
             <Blockquote my={4} color='gray' icon={<FaInfo />} iconSize={30}>
                 {contest?.description}
@@ -157,67 +174,14 @@ export default function ViewContestPage() {
             <Grid gutter={{ base: 5, xs: 'md', md: 'xl', xl: 50 }}>
                 <Grid.Col span={6}>
                     <Title order={4}>Problems</Title>
-                    <Table highlightOnHover>
-                        <Table.Thead>
-                            {problemTable
-                                .getHeaderGroups()
-                                .map((headerGroup) => (
-                                    <Table.Tr key={headerGroup.id}>
-                                        {headerGroup.headers.map((header) => (
-                                            <Table.Th
-                                                key={header.id}
-                                                onClick={header.column.getToggleSortingHandler()}
-                                                style={{ cursor: 'pointer' }}
-                                            >
-                                                <div className='flex items-center'>
-                                                    {!header.column.getIsSorted() ? (
-                                                        <span className='me-1 text-slate-400'>
-                                                            <FaSort />
-                                                        </span>
-                                                    ) : header.column.getIsSorted() ===
-                                                      'desc' ? (
-                                                        <span className='me-1 text-slate-400'>
-                                                            <FaSortDown />
-                                                        </span>
-                                                    ) : (
-                                                        <span className='me-1 text-slate-400'>
-                                                            <FaSortUp />
-                                                        </span>
-                                                    )}
-                                                    {flexRender(
-                                                        header.column.columnDef
-                                                            .header,
-                                                        header.getContext(),
-                                                    )}
-                                                </div>
-                                            </Table.Th>
-                                        ))}
-                                    </Table.Tr>
-                                ))}
-                        </Table.Thead>
-                        <Table.Tbody>
-                            {problemTable.getRowModel().rows.map((row) => (
-                                <Table.Tr key={row.id}>
-                                    {row.getVisibleCells().map((cell) => (
-                                        <Table.Td key={cell.id}>
-                                            {flexRender(
-                                                cell.column.columnDef.cell,
-                                                cell.getContext(),
-                                            )}
-                                        </Table.Td>
-                                    ))}
-                                </Table.Tr>
-                            ))}
-                        </Table.Tbody>
-                    </Table>
                 </Grid.Col>
                 <Grid.Col span={6}>
                     <Title order={4}>Leaderboard</Title>
                     <Text size='md'>
                         Contest leaderboard will be available here
                     </Text>
-                </Grid.Col>
-            </Grid>
-        </Container>
+                </Grid.Col >
+            </Grid >
+        </Container >
     );
 }

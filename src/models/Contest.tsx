@@ -27,7 +27,7 @@ export interface ContestUser {
     id: number;
     username: string;
 }
-export interface ContestInfo extends Contest {
+export interface PastContest extends Contest {
     duration: number;
     n_submissions: number;
     problems: ContestProblem[];

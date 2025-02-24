@@ -251,7 +251,7 @@ export default function ProblemsTable({
                                                 <FaSort />
                                             </span>
                                         ) : header.column.getIsSorted() ===
-                                          'desc' ? (
+                                            'desc' ? (
                                             <span className='me-1 text-slate-400'>
                                                 <FaSortDown />
                                             </span>
@@ -345,7 +345,7 @@ export default function ProblemsTable({
                                                     !selectedProblem.some(
                                                         (p) =>
                                                             p.problem_id ===
-                                                                problemId ||
+                                                            problemId ||
                                                             false,
                                                     )
                                                 }
@@ -366,12 +366,12 @@ export default function ProblemsTable({
                                                         selectedProblem.map(
                                                             (p) =>
                                                                 p.problem_id ===
-                                                                problemId
+                                                                    problemId
                                                                     ? {
-                                                                          ...p,
-                                                                          publication_delay:
-                                                                              numericValue,
-                                                                      }
+                                                                        ...p,
+                                                                        publication_delay:
+                                                                            numericValue,
+                                                                    }
                                                                     : p,
                                                         );
 
