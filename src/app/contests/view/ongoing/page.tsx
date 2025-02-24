@@ -1,22 +1,21 @@
 'use client';
 
 import Forbidden from '@/components/global/Forbidden';
-import { Contest, ContestProblem, ContestInfo } from '@/models/Contest';
+import { ContestInfo } from '@/models/Contest';
 import api from '@/utils/ky';
 import {
+    Anchor,
+    Badge,
+    Blockquote,
     Container,
-    Center,
     Flex,
+    Grid,
     Group,
-    Text,
-    Title,
-    Notification,
-    useMantineTheme,
     Space,
     Table,
-    Badge,
-    Grid,
-    Blockquote,
+    Text,
+    Title,
+    useMantineTheme,
 } from '@mantine/core';
 import {
     flexRender,
@@ -24,7 +23,8 @@ import {
     getFilteredRowModel,
     useReactTable,
 } from '@tanstack/react-table';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { HTTPError } from 'ky';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import {
     FaCaretLeft,
@@ -34,7 +34,7 @@ import {
     FaSortUp,
 } from 'react-icons/fa6';
 
-export default function ViewContestPage() {
+export default function OngoingContests() {
     const [contest, setContest] = useState<ContestInfo>();
     const searchParams = useSearchParams();
     const contestId = searchParams.get('id');
@@ -43,35 +43,73 @@ export default function ViewContestPage() {
 
     const [forbidden, setForbidden] = useState(true);
 
-    const theme = useMantineTheme();
+    const [timeLeft, setTimeLeft] = useState<string>('');
 
-    const contestStart = new Date(contest?.start_datetime || '');
-    const notificationTitle =
-        'Contest start at ' + contestStart.toLocaleString();
+    const theme = useMantineTheme();
 
     const fetchContest = async () => {
         try {
-            const response = await api.get(`contests/${contestId}/upcoming`);
+            const response = await api.get(`contests/${contestId}/ongoing`);
             const data = await response.json<ContestInfo>();
             setContest(data);
             setForbidden(false);
-        } catch (error) {
-            console.error('Error fetching contest:', error);
+        } catch (error: unknown) {
+            if (error instanceof HTTPError && error.response.status === 403) {
+                setForbidden(true);
+            } else {
+                console.log('Error fetching contest:', error);
+            }
         }
+    };
 
-        console.log(contest);
+    const handleProblemClick = (id: number) => {
+        router.push(`/submission/${id}`);
     };
 
     useEffect(() => {
         fetchContest();
     }, [contestId]);
 
+    useEffect(() => {
+        if (!contest?.end_datetime) return;
+
+        const updateCountdown = () => {
+            const endTime = new Date(contest.end_datetime).getTime();
+            const now = new Date().getTime();
+            const difference = endTime - now;
+
+            if (difference <= 0) {
+                setTimeLeft('Contest has ended');
+                return;
+            }
+
+            const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((difference / (1000 * 60)) % 60);
+            const seconds = Math.floor((difference / 1000) % 60);
+
+            setTimeLeft(`${hours}h ${minutes}m ${seconds}s`);
+        };
+
+        const timer = setInterval(updateCountdown, 1000);
+        updateCountdown();
+
+        return () => clearInterval(timer);
+    }, [contest?.end_datetime]);
+
     const problemColumns = useMemo(
         () => [
             {
                 header: 'Title',
                 accessorKey: 'title',
-                cell: (info: any) => <Text>{info.getValue()}</Text>,
+                cell: (info: any) => (
+                    <Text
+                        c='blue'
+                        onClick={() => handleProblemClick(info.row.original.id)}
+                        style={{ cursor: 'pointer' }}
+                    >
+                        {info.getValue()}
+                    </Text>
+                ),
             },
             {
                 header: 'Points',
@@ -136,18 +174,16 @@ export default function ViewContestPage() {
                     </Text>
                 </Group>
             </Flex>
-
-            <Flex align='end'>
+            <Flex>
                 <Title mt={8} order={1}>
                     {contest?.name}
                 </Title>
-                <Badge size='lg' m='sm' p='xs' color='gray'>
-                    {notificationTitle}
+                <Badge size='xl' m='sm' p='xs' color='green'>
+                    Contest end in {timeLeft}
                 </Badge>
-                {/* <Text p='xs' c='dimmed'>{notificationTitle}</Text> */}
             </Flex>
-            <Space h='xl' />
 
+            <Space h='xl' />
             <Blockquote my={4} color='gray' icon={<FaInfo />} iconSize={30}>
                 {contest?.description}
             </Blockquote>
@@ -213,9 +249,6 @@ export default function ViewContestPage() {
                 </Grid.Col>
                 <Grid.Col span={6}>
                     <Title order={4}>Leaderboard</Title>
-                    <Text size='md'>
-                        Contest leaderboard will be available here
-                    </Text>
                 </Grid.Col>
             </Grid>
         </Container>
