@@ -6,10 +6,13 @@ import {
     PasswordInput,
     Text,
     TextInput,
+    Divider,
+    Space,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { FaGithub } from 'react-icons/fa6';
 
 type onModalClose = () => void;
 
@@ -33,6 +36,7 @@ export default function LoginModal({
         },
     });
 
+    // Standard login with email/password
     const doLogin = async (values: typeof loginForm.values) => {
         setErrorMessage('');
 
@@ -61,6 +65,18 @@ export default function LoginModal({
         }
     };
 
+    // Redirect to GitHub OAuth
+    const loginWithGitHub = async () => {
+        try {
+            const response = await api.get("auth/github");
+            const data: { auth_url: string } = await response.json();
+            window.location.href = data.auth_url;
+        } catch (error) {
+            setErrorMessage("GitHub login failed. Please try again.");
+        }
+    };
+
+
     return (
         <Modal opened={showModal} onClose={closeModal}>
             <form onSubmit={loginForm.onSubmit(doLogin)}>
@@ -81,26 +97,37 @@ export default function LoginModal({
                     {...loginForm.getInputProps('password')}
                 />
 
-                {/* Forgot Password Link */}
                 <Text
                     size='sm'
-                    color='blue'
+                    c='blue'
                     style={{ cursor: 'pointer' }}
-                    onClick={openResetModal} // Open reset modal
+                    onClick={openResetModal}
                 >
                     Forgot your password?
                 </Text>
 
                 {errorMessage && (
-                    <Text color='red' size='sm' mt='sm'>
+                    <Text c='red' size='sm' mt='sm'>
                         {errorMessage}
                     </Text>
                 )}
 
-                <Group mt='md'>
+                <Group grow mt='md'>
                     <Button onClick={closeModal}>Cancel</Button>
                     <Button type='submit'>Login</Button>
                 </Group>
+
+                <Divider my='md' label='OR' labelPosition='center' />
+
+                <Button
+                    fullWidth
+                    variant='default'
+                    onClick={loginWithGitHub}
+                >
+                    Login with GitHub
+                    <Space w='xs' />
+                    <FaGithub size={20} />
+                </Button>
             </form>
         </Modal>
     );
