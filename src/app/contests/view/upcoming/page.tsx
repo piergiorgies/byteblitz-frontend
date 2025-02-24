@@ -97,15 +97,6 @@ export default function ViewContestPage() {
         [],
     );
 
-    const problemTable = useReactTable({
-        data: contest?.problems || [],
-        columns: problemColumns,
-        getCoreRowModel: getCoreRowModel(),
-        getSortedRowModel: getCoreRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
-        manualPagination: true,
-    });
-
     return forbidden ? (
         <Forbidden />
     ) : (
@@ -157,67 +148,14 @@ export default function ViewContestPage() {
             <Grid gutter={{ base: 5, xs: 'md', md: 'xl', xl: 50 }}>
                 <Grid.Col span={6}>
                     <Title order={4}>Problems</Title>
-                    <Table highlightOnHover>
-                        <Table.Thead>
-                            {problemTable
-                                .getHeaderGroups()
-                                .map((headerGroup) => (
-                                    <Table.Tr key={headerGroup.id}>
-                                        {headerGroup.headers.map((header) => (
-                                            <Table.Th
-                                                key={header.id}
-                                                onClick={header.column.getToggleSortingHandler()}
-                                                style={{ cursor: 'pointer' }}
-                                            >
-                                                <div className='flex items-center'>
-                                                    {!header.column.getIsSorted() ? (
-                                                        <span className='me-1 text-slate-400'>
-                                                            <FaSort />
-                                                        </span>
-                                                    ) : header.column.getIsSorted() ===
-                                                      'desc' ? (
-                                                        <span className='me-1 text-slate-400'>
-                                                            <FaSortDown />
-                                                        </span>
-                                                    ) : (
-                                                        <span className='me-1 text-slate-400'>
-                                                            <FaSortUp />
-                                                        </span>
-                                                    )}
-                                                    {flexRender(
-                                                        header.column.columnDef
-                                                            .header,
-                                                        header.getContext(),
-                                                    )}
-                                                </div>
-                                            </Table.Th>
-                                        ))}
-                                    </Table.Tr>
-                                ))}
-                        </Table.Thead>
-                        <Table.Tbody>
-                            {problemTable.getRowModel().rows.map((row) => (
-                                <Table.Tr key={row.id}>
-                                    {row.getVisibleCells().map((cell) => (
-                                        <Table.Td key={cell.id}>
-                                            {flexRender(
-                                                cell.column.columnDef.cell,
-                                                cell.getContext(),
-                                            )}
-                                        </Table.Td>
-                                    ))}
-                                </Table.Tr>
-                            ))}
-                        </Table.Tbody>
-                    </Table>
                 </Grid.Col>
                 <Grid.Col span={6}>
                     <Title order={4}>Leaderboard</Title>
                     <Text size='md'>
                         Contest leaderboard will be available here
                     </Text>
-                </Grid.Col>
-            </Grid>
-        </Container>
+                </Grid.Col >
+            </Grid >
+        </Container >
     );
 }
