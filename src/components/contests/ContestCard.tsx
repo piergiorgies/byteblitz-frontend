@@ -34,7 +34,7 @@ export default function ContestCard({ contest }: ContestCardProps) {
     if (now.isBefore(start)) {
         actionButton = (
             <Button color='blue' onClick={handleRegister}>
-                Register Now
+                View More
             </Button>
         );
     } else if (now.isAfter(start) && now.isBefore(end)) {
