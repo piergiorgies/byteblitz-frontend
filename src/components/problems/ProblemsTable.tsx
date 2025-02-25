@@ -261,7 +261,7 @@ export default function ProblemsTable({
                                                 <FaSort />
                                             </span>
                                         ) : header.column.getIsSorted() ===
-                                          'desc' ? (
+                                            'desc' ? (
                                             <span className='me-1 text-slate-400'>
                                                 <FaSortDown />
                                             </span>

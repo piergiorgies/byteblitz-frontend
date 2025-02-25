@@ -14,7 +14,6 @@ import { useEffect, useState } from 'react';
 import api from '@/utils/ky';
 import ContestCard from '@/components/contests/ContestCard';
 import { ContestInfo } from '@/models/Contest';
-import { User } from '@/models/User';
 
 export default function Contests() {
     const [contests, setContests] = useState<{
@@ -27,22 +26,6 @@ export default function Contests() {
         past: [],
     });
     const [loading, setLoading] = useState(true);
-    // const [user, setUser] = useState(null as User | null);
-
-    // useEffect(() => {
-    //     const fetchUser = async () => {
-    //         try {
-    //             const response = await api.get('users/me');
-    //             response.json<User>().then((data) => {
-    //                 setUser(data);
-    //             });
-    //         } catch (error) {
-    //             setUser(null);
-    //         }
-    //     };
-
-    //     fetchUser();
-    // }, []);
 
     useEffect(() => {
         const fetchContests = async () => {
@@ -119,11 +102,7 @@ export default function Contests() {
     );
 }
 
-function ContestList({
-    contests,
-}: {
-    contests: ContestInfo[];
-}) {
+function ContestList({ contests }: { contests: ContestInfo[] }) {
     if (contests.length === 0) {
         return <Text mt='md'>No contests available</Text>;
     }

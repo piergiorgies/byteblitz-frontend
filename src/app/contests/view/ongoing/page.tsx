@@ -2,22 +2,21 @@
 
 import ContestHeader from '@/components/contests/ContestHeader';
 import Forbidden from '@/components/global/Forbidden';
-import { Contest, ContestProblem, ContestInfo, PastContest } from '@/models/Contest';
+import { ContestInfo, PastContest } from '@/models/Contest';
 import api from '@/utils/ky';
 import {
+    Anchor,
+    Badge,
+    Blockquote,
     Container,
-    Center,
     Flex,
+    Grid,
     Group,
-    Text,
-    Title,
-    Notification,
-    useMantineTheme,
     Space,
     Table,
-    Badge,
-    Grid,
-    Blockquote,
+    Text,
+    Title,
+    useMantineTheme,
 } from '@mantine/core';
 import {
     flexRender,
@@ -26,7 +25,7 @@ import {
     useReactTable,
 } from '@tanstack/react-table';
 import { HTTPError } from 'ky';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import {
     FaCaretLeft,
@@ -36,7 +35,7 @@ import {
     FaSortUp,
 } from 'react-icons/fa6';
 
-export default function ViewContestPage() {
+export default function OngoingContests() {
     const [contest, setContest] = useState<PastContest>();
     const searchParams = useSearchParams();
     const contestId = searchParams.get('id');
@@ -45,11 +44,13 @@ export default function ViewContestPage() {
 
     const [forbidden, setForbidden] = useState(true);
 
+    const [timeLeft, setTimeLeft] = useState<string>('');
+
     const theme = useMantineTheme();
 
     const fetchContest = async () => {
         try {
-            const response = await api.get(`contests/${contestId}/past`);
+            const response = await api.get(`contests/${contestId}/ongoing`);
             const data = await response.json<PastContest>();
             setContest(data);
             setForbidden(false);
@@ -62,16 +63,58 @@ export default function ViewContestPage() {
         }
     };
 
+    const handleProblemClick = (id: number) => {
+        router.push(`/submission/${id}`);
+    };
+
     useEffect(() => {
         fetchContest();
     }, [contestId]);
+
+    useEffect(() => {
+        if (!contest?.end_datetime) return;
+
+        const updateCountdown = () => {
+            const endTime = new Date(contest.end_datetime);
+            if (isNaN(endTime.getTime())) return;  // Check if the date is valid
+
+            const now = new Date().getTime();
+            const difference = endTime.getTime() - now;
+
+            if (difference <= 0) {
+                setTimeLeft('Contest has ended');
+                return;
+            }
+
+            const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((difference / (1000 * 60)) % 60);
+            const seconds = Math.floor((difference / 1000) % 60);
+
+            const timeString = `${days > 0 ? `${days}d ` : ''}${hours}h ${minutes}m ${seconds}s`;
+            setTimeLeft(timeString);
+        };
+
+        const timer = setInterval(updateCountdown, 1000);
+        updateCountdown();
+
+        return () => clearInterval(timer);
+    }, [contest?.end_datetime]);
 
     const problemColumns = useMemo(
         () => [
             {
                 header: 'Title',
                 accessorKey: 'title',
-                cell: (info: any) => <Text>{info.getValue()}</Text>,
+                cell: (info: any) => (
+                    <Text
+                        c='blue'
+                        onClick={() => handleProblemClick(info.row.original.id)}
+                        style={{ cursor: 'pointer' }}
+                    >
+                        {info.getValue()}
+                    </Text>
+                ),
             },
             {
                 header: 'Points',
@@ -137,14 +180,11 @@ export default function ViewContestPage() {
                 </Group>
             </Flex>
 
-            <Space h='xl' />
-
             <ContestHeader
-                title={contest?.name || ''}
+                title={contest?.name || 'Contest'}
                 startDatetime={contest?.start_datetime ? new Date(contest.start_datetime).toISOString() : undefined}
                 endDatetime={contest?.end_datetime ? new Date(contest.end_datetime).toISOString() : undefined}
             />
-
 
 
             <Space h='xl' />
@@ -215,6 +255,6 @@ export default function ViewContestPage() {
                     <Title order={4}>Leaderboard</Title>
                 </Grid.Col>
             </Grid>
-        </Container>
+        </Container >
     );
 }

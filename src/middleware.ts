@@ -2,11 +2,30 @@ import { NextRequest, NextResponse } from 'next/server';
 import { extractJWTPayload } from './utils/jwt';
 
 export async function middleware(request: NextRequest) {
+    const url = request.nextUrl;
     const tokenWrapper = request.cookies.get('token');
     const token = tokenWrapper?.value;
+
+    if (url.pathname.startsWith('/auth/callback')) {
+        const tokenFromQuery = url.searchParams.get('token');
+
+        if (tokenFromQuery) {
+            const response = NextResponse.redirect(new URL('/', request.url));
+            response.cookies.set({
+                name: 'token',
+                value: tokenFromQuery,
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production', // Use HTTPS in production
+                path: '/',
+                maxAge: 60 * 60 * 24 * 7,
+            });
+            return response;
+        }
+    }
+
     const decodedJwt = await extractJWTPayload(token);
 
-    if (request.nextUrl.pathname.startsWith('/admin')) {
+    if (url.pathname.startsWith('/admin')) {
         if (decodedJwt == null || decodedJwt.user_permissions < 2) {
             return NextResponse.redirect(new URL('/', request.url));
         }

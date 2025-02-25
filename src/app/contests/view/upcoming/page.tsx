@@ -1,6 +1,8 @@
 'use client';
 
-import { Contest, ContestProblem, PastContest } from '@/models/Contest';
+import ContestHeader from '@/components/contests/ContestHeader';
+import Forbidden from '@/components/global/Forbidden';
+import { Contest, ContestProblem, ContestInfo } from '@/models/Contest';
 import api from '@/utils/ky';
 import {
     Container,
@@ -15,37 +17,45 @@ import {
     Table,
     Badge,
     Grid,
+    Blockquote,
+    Card,
 } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
 import {
     flexRender,
     getCoreRowModel,
     getFilteredRowModel,
     useReactTable,
 } from '@tanstack/react-table';
+import { HTTPError } from 'ky';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-import { FaCaretLeft, FaSort, FaSortDown, FaSortUp } from 'react-icons/fa6';
+import {
+    FaCaretLeft,
+    FaInfo,
+    FaRegClock,
+    FaSort,
+    FaSortDown,
+    FaSortUp,
+} from 'react-icons/fa6';
 
 export default function ViewContestPage() {
-    const [contest, setContest] = useState<PastContest>();
-    const [problems, setProblems] = useState<ContestProblem[]>([]);
+    const [contest, setContest] = useState<ContestInfo>();
     const searchParams = useSearchParams();
     const contestId = searchParams.get('id');
     const router = useRouter();
     const [isHovered, setIsHovered] = useState(false);
 
-    const theme = useMantineTheme();
+    const [forbidden, setForbidden] = useState(true);
 
-    const contestStart = new Date(contest?.start_datetime || '');
-    const notificationTitle =
-        'Contest start at ' + contestStart.toLocaleString();
+    const theme = useMantineTheme();
 
     const fetchContest = async () => {
         try {
             const response = await api.get(`contests/${contestId}/upcoming`);
-            const data = await response.json<PastContest>();
+            const data = await response.json<ContestInfo>();
             setContest(data);
-            setProblems(data.problems);
+            setForbidden(false);
         } catch (error) {
             console.error('Error fetching contest:', error);
         }
@@ -88,16 +98,34 @@ export default function ViewContestPage() {
         [],
     );
 
-    const problemTable = useReactTable({
-        data: problems,
-        columns: problemColumns,
-        getCoreRowModel: getCoreRowModel(),
-        getSortedRowModel: getCoreRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
-        manualPagination: true,
-    });
+    const handleUserRegistration = async () => {
+        try {
+            const response = await api.post(`contests/${contestId}/register`);
+            const data: any = await response.json();
 
-    return (
+            notifications.show({
+                title: 'Success',
+                message: data.message,
+                color: 'green',
+            });
+        }
+        catch (error) {
+            if (error instanceof HTTPError) {
+                const errorData = await error.response.json();
+                const errorMessage = errorData.message || 'Failed to register for contest';
+                notifications.show({
+                    title: 'Error',
+                    message: errorMessage,
+                    color: 'red',
+                });
+            }
+        }
+    };
+
+
+    return forbidden ? (
+        <Forbidden />
+    ) : (
         <Container size='lg'>
             <Flex justify='left'>
                 <Group
@@ -125,87 +153,35 @@ export default function ViewContestPage() {
                     </Text>
                 </Group>
             </Flex>
-            <Title mt={8} order={1}>
-                {contest?.name}
-            </Title>
-            {/* remove the close button */}
-            <Notification
-                mt={4}
-                p={20}
-                title={notificationTitle}
-                color={theme.primaryColor}
-                withCloseButton={false}
+
+            <ContestHeader
+                title={contest?.name || ''}
+                startDatetime={contest?.start_datetime ? new Date(contest?.start_datetime).toISOString() : undefined}
+                endDatetime={contest?.end_datetime ? new Date(contest?.end_datetime).toISOString() : undefined}
+                isRegistratioOpen={contest?.is_registration_open || false}
+                handleUserRegistration={handleUserRegistration}
             />
 
             <Space h='xl' />
-            <Text mt={4} size='md'>
+
+
+            <Blockquote my={4} color='gray' icon={<FaInfo />} iconSize={30}>
                 {contest?.description}
-            </Text>
+            </Blockquote>
 
             <Space h='xl' />
 
             <Grid gutter={{ base: 5, xs: 'md', md: 'xl', xl: 50 }}>
                 <Grid.Col span={6}>
                     <Title order={4}>Problems</Title>
-                    <Table highlightOnHover>
-                        <Table.Thead>
-                            {problemTable
-                                .getHeaderGroups()
-                                .map((headerGroup) => (
-                                    <Table.Tr key={headerGroup.id}>
-                                        {headerGroup.headers.map((header) => (
-                                            <Table.Th
-                                                key={header.id}
-                                                onClick={header.column.getToggleSortingHandler()}
-                                                style={{ cursor: 'pointer' }}
-                                            >
-                                                <div className='flex items-center'>
-                                                    {!header.column.getIsSorted() ? (
-                                                        <span className='me-1 text-slate-400'>
-                                                            <FaSort />
-                                                        </span>
-                                                    ) : header.column.getIsSorted() ===
-                                                      'desc' ? (
-                                                        <span className='me-1 text-slate-400'>
-                                                            <FaSortDown />
-                                                        </span>
-                                                    ) : (
-                                                        <span className='me-1 text-slate-400'>
-                                                            <FaSortUp />
-                                                        </span>
-                                                    )}
-                                                    {flexRender(
-                                                        header.column.columnDef
-                                                            .header,
-                                                        header.getContext(),
-                                                    )}
-                                                </div>
-                                            </Table.Th>
-                                        ))}
-                                    </Table.Tr>
-                                ))}
-                        </Table.Thead>
-                        <Table.Tbody>
-                            {problemTable.getRowModel().rows.map((row) => (
-                                <Table.Tr key={row.id}>
-                                    {row.getVisibleCells().map((cell) => (
-                                        <Table.Td key={cell.id}>
-                                            {flexRender(
-                                                cell.column.columnDef.cell,
-                                                cell.getContext(),
-                                            )}
-                                        </Table.Td>
-                                    ))}
-                                </Table.Tr>
-                            ))}
-                        </Table.Tbody>
-                    </Table>
                 </Grid.Col>
                 <Grid.Col span={6}>
                     <Title order={4}>Leaderboard</Title>
-                    <Text size='md'>Contest leaderboard goes here</Text>
-                </Grid.Col>
-            </Grid>
-        </Container>
+                    <Text size='md'>
+                        Contest leaderboard will be available here
+                    </Text>
+                </Grid.Col >
+            </Grid >
+        </Container >
     );
 }
