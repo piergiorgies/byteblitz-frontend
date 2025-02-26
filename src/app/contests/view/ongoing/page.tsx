@@ -5,7 +5,7 @@ import Forbidden from '@/components/global/Forbidden';
 import { ContestInfo, PastContest } from '@/models/Contest';
 import api from '@/utils/ky';
 import {
-    Anchor,
+    Notification,
     Badge,
     Blockquote,
     Container,
@@ -186,6 +186,15 @@ export default function OngoingContests() {
                 endDatetime={contest?.end_datetime ? new Date(contest.end_datetime).toISOString() : undefined}
             />
 
+            <Space h='lg' />
+            <Notification color='green' closeButtonProps={{ 'hidden': 'true' }}>
+                <Text c='dimmed'>
+                    Ends in:
+                </Text>
+                <Text>
+                    {timeLeft}
+                </Text>
+            </Notification>
 
             <Space h='xl' />
             <Blockquote my={4} color='gray' icon={<FaInfo />} iconSize={30}>
