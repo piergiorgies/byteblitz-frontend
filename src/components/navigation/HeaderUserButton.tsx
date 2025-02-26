@@ -56,7 +56,6 @@ export default function HeaderUserButton({
             await api.get('auth/logout', {
                 credentials: 'include',
             });
-            localStorage.removeItem('token');
             router.refresh();
         } catch (error) {
             console.log(error);

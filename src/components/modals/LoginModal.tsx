@@ -55,7 +55,6 @@ export default function LoginModal({
             }
 
             const data: { access_token: string } = await response.json();
-            localStorage.setItem('token', data.access_token);
             router.refresh();
             closeModal();
         } catch (error) {

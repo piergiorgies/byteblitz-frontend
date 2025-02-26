@@ -84,13 +84,12 @@ export default function Submission() {
 
     const handleSubmit = async (code: string) => {
         try {
-            console.log(params.problemId, selectedLanguage?.id, code);
-
             const response = await api.post('submissions', {
                 json: {
                     problem_id: params.problemId,
                     language_id: (selectedLanguage?.id ?? 1).toString(),
                     submitted_code: code,
+                    notes: '',
                 },
             });
 
