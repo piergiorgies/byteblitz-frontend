@@ -40,6 +40,9 @@ import {
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 import { useRouter } from 'next/navigation';
+import { access } from 'fs';
+import Difficulty from './Difficulty';
+import { Complexity } from '@/models/Difficulty';
 
 type ProblemTableProps = {
     filter: string;
@@ -203,6 +206,13 @@ export default function ProblemsTable({
                     ),
                 },
                 {
+                    accessorKey: 'difficulty',
+                    header: 'Difficulty',
+                    cell: (info: CellContext<Problem, string>) => (
+                        <Difficulty difficulty={info.getValue() as Complexity} />
+                    ),
+                },
+                {
                     accessorKey: 'is_public',
                     header: 'Public?',
                     cell: (info: CellContext<Problem, boolean>) =>
@@ -251,7 +261,7 @@ export default function ProblemsTable({
                                                 <FaSort />
                                             </span>
                                         ) : header.column.getIsSorted() ===
-                                          'desc' ? (
+                                            'desc' ? (
                                             <span className='me-1 text-slate-400'>
                                                 <FaSortDown />
                                             </span>

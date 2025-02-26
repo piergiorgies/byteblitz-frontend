@@ -35,6 +35,7 @@ import api from '@/utils/ky';
 import '@mantine/tiptap/styles.css';
 import '@mantine/dropzone/styles.css';
 import { parseTestCasesZipFile } from '@/utils/files';
+import { Complexity } from '@/models/Difficulty';
 
 type onProblemSave = (problem: Problem) => Promise<void>;
 
@@ -61,6 +62,7 @@ export default function EditProblem({
             description: savedProblem?.description ?? '',
             timeLimit: 1000,
             memoryLimit: 256,
+            difficulty: savedProblem?.difficulty ?? 'easy',
         },
     });
 
@@ -116,6 +118,9 @@ export default function EditProblem({
     };
 
     const saveProblem = async (values: typeof problemInfoForm.values) => {
+
+
+        console.log('values', values);
         setIsProblemSaving(true);
 
         const limits = new Map<number, ConstraintsInfoInForm>();
@@ -165,8 +170,11 @@ export default function EditProblem({
             isPublic: values.isPublic,
             constraints: mergedLimits,
             testCases: problemTestCases,
+            difficulty: values.difficulty,
         };
 
+
+        console.log('problem', problem);
         await onProblemSave(problem);
 
         setIsProblemSaving(false);
@@ -236,6 +244,17 @@ export default function EditProblem({
                         placeholder='1'
                         key={problemInfoForm.key('versionNumber')}
                         {...problemInfoForm.getInputProps('versionNumber')}
+                    />
+                    <Select
+                        label='Difficulty'
+                        placeholder='Select difficulty'
+                        data={[
+                            { value: Complexity.Easy, label: 'Easy' },
+                            { value: Complexity.Medium, label: 'Medium' },
+                            { value: Complexity.Hard, label: 'Hard' },
+                        ]}
+                        key={problemInfoForm.key('difficulty')}
+                        {...problemInfoForm.getInputProps('difficulty')}
                     />
 
                     <Flex justify='center' align='center'>

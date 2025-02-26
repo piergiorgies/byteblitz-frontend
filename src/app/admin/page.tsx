@@ -5,3 +5,5 @@ export default async function AdminHome() {
 
     return <>{headersList.get('X-LOGGED-USER')}</>;
 }
+
+

@@ -14,6 +14,7 @@ export interface Problem {
     isPublic: boolean;
     constraints?: ConstraintsInfoInForm[];
     testCases?: ProblemTestCase[];
+    difficulty: string;
 }
 
 export interface ConstraintsInfoInForm {

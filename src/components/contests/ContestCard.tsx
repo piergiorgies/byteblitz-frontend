@@ -21,11 +21,10 @@ export default function ContestCard({ contest }: ContestCardProps) {
 
     const handleRegister = () => {
         router.push(`/contests/view/upcoming?id=${contest.id}`);
-        console.log('Registering for contest');
     };
 
     const handleJoin = () => {
-        console.log('Joining contest');
+        router.push(`/contests/view/ongoing?id=${contest.id}`);
     };
 
     const handleViewResults = () => {
@@ -35,7 +34,7 @@ export default function ContestCard({ contest }: ContestCardProps) {
     if (now.isBefore(start)) {
         actionButton = (
             <Button color='blue' onClick={handleRegister}>
-                Register Now
+                View More
             </Button>
         );
     } else if (now.isAfter(start) && now.isBefore(end)) {

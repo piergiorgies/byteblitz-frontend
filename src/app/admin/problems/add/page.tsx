@@ -13,8 +13,8 @@ export default function AddProblemPage() {
 
     const saveProblem = async (problem: Problem) => {
         try {
+
             const toSubmit = objectToSnake(problem);
-            console.log(toSubmit);
             const response = await api.post('admin/problems', {
                 json: toSubmit,
             });

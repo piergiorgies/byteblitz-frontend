@@ -10,6 +10,7 @@ import {
     FaUser,
 } from 'react-icons/fa6';
 import LoginModal from '../modals/LoginModal';
+import ResetPasswordModal from '../modals/ResetPasswordModal';
 import api from '@/utils/ky';
 
 export default function HeaderUserButton({
@@ -22,6 +23,8 @@ export default function HeaderUserButton({
     const router = useRouter();
     const [loginModalOpened, { open: openLoginModal, close: closeLoginModal }] =
         useDisclosure(false);
+    const [resetModalOpened, { open: openResetModal, close: closeResetModal }] =
+        useDisclosure(false);
 
     if (username == null || userPermissions == null) {
         return (
@@ -29,6 +32,14 @@ export default function HeaderUserButton({
                 <LoginModal
                     showModal={loginModalOpened}
                     closeModal={closeLoginModal}
+                    openResetModal={() => {
+                        closeLoginModal();
+                        openResetModal();
+                    }}
+                />
+                <ResetPasswordModal
+                    showModal={resetModalOpened}
+                    closeModal={closeResetModal}
                 />
                 <Button
                     leftSection={<FaArrowRightToBracket />}
@@ -73,9 +84,7 @@ export default function HeaderUserButton({
                     >
                         Admin
                     </Menu.Item>
-                ) : (
-                    <></>
-                )}
+                ) : null}
 
                 <Menu.Divider />
 
