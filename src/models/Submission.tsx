@@ -4,7 +4,7 @@ export interface TestCaseSubmission {
     notes: string;
     time: number;
     memory: number;
-    resultId: number;
+    result_id: number;
 }
 
 export interface SubmissionResult {

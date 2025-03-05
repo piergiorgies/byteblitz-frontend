@@ -180,7 +180,9 @@ function ResultsWindow({
 
     useEffect(() => {
         if (lastMessage !== null) {
-          console.log(lastMessage);
+            const submission: TestCaseSubmission = JSON.parse(lastMessage.data);
+            console.log(submission)
+            setSumbissions((prev) => [...prev, submission]);
         }
       }, [lastMessage]);
 
@@ -249,30 +251,6 @@ function ResultsWindow({
                 submissionResultsDict[submissionResult.id] = submissionResult;
             }
             setSubmissionResults(submissionResultsDict);
-
-            // setSumbissions([
-            //     { number: 1, notes: '', time: 10, memory: 10, resultId: 1 },
-            //     { number: 1, notes: '', time: 10, memory: 10, resultId: 2 },
-            //     { number: 1, notes: '', time: 10, memory: 10, resultId: 3 },
-            //     { number: 1, notes: '', time: 10, memory: 10, resultId: 4 },
-            //     { number: 1, notes: '', time: 10, memory: 10, resultId: 5 },
-            //     { number: 1, notes: '', time: 10, memory: 10, resultId: 1 },
-            //     { number: 1, notes: '', time: 10, memory: 10, resultId: 1 },
-            //     { number: 1, notes: '', time: 10, memory: 10, resultId: 1 },
-            //     { number: 1, notes: '', time: 10, memory: 10, resultId: 1 },
-            //     { number: 1, notes: '', time: 10, memory: 10, resultId: 1 },
-            //     { number: 1, notes: '', time: 10, memory: 10, resultId: 1 },
-            //     { number: 1, notes: '', time: 10, memory: 10, resultId: 1 },
-            //     { number: 1, notes: '', time: 10, memory: 10, resultId: 1 },
-            //     { number: 1, notes: '', time: 10, memory: 10, resultId: 1 },
-            //     { number: 1, notes: '', time: 10, memory: 10, resultId: 1 },
-            //     { number: 1, notes: '', time: 10, memory: 10, resultId: 1 },
-            //     { number: 1, notes: '', time: 10, memory: 10, resultId: 1 },
-            //     { number: 1, notes: '', time: 10, memory: 10, resultId: 1 },
-            //     { number: 1, notes: '', time: 10, memory: 10, resultId: 1 },
-            //     { number: 1, notes: '', time: 10, memory: 10, resultId: 1 },
-            //     { number: 1, notes: '', time: 10, memory: 10, resultId: 1 },
-            // ]);
         } catch (error) {
             console.log(error);
         }
@@ -283,7 +261,7 @@ function ResultsWindow({
     }, [getSubmissionResults]);
 
     const submitCode = async () => {
-        console.log('Submitting Code:', code);
+        setSumbissions([]);
         handleSubmit(code);
     };
 
@@ -332,14 +310,14 @@ function ResultsWindow({
                                                 {submission.number}
                                             </Table.Td>
                                             <Table.Td>
-                                                {submission.time} ms
+                                                {submission.time.toFixed(6)} s
                                             </Table.Td>
                                             <Table.Td>
-                                                {submission.memory} MB
+                                                {(submission.memory / 1024).toFixed(2)} MB
                                             </Table.Td>
                                             <Table.Td>
                                                 {getSubmissionResultIcon(
-                                                    submission.resultId,
+                                                    submission.result_id,
                                                 )}
                                             </Table.Td>
                                         </Table.Tr>
