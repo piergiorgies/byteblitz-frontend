@@ -10,6 +10,7 @@ import {
 } from 'react';
 
 import dynamic from 'next/dynamic';
+import useWebSocket, { ReadyState } from 'react-use-websocket';
 
 const Mosaic = dynamic(
     () => import('react-mosaic-component').then((mod) => mod.Mosaic),
@@ -173,6 +174,15 @@ function ResultsWindow({
     const [submissionResults, setSubmissionResults] = useState<{
         [key: number]: SubmissionResult;
     } | null>(null);
+
+    const websocketUrl = `ws://localhost:9000/general/ws`;
+    const { sendMessage, lastMessage, readyState } = useWebSocket(websocketUrl);
+
+    useEffect(() => {
+        if (lastMessage !== null) {
+          console.log(lastMessage);
+        }
+      }, [lastMessage]);
 
     const getSubmissionResultIcon = (resultId: number) => {
         if (submissionResults == null) return <></>;
