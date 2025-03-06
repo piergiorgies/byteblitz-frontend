@@ -41,6 +41,7 @@ import {
     Flex,
     ScrollArea,
     Table,
+    Tabs,
     Text,
     Title,
     Tooltip,
@@ -148,14 +149,41 @@ function ProblemWindow({
     path: MosaicBranch[];
     problemInfo: any;
 }) {
-    return (
-        <MosaicWindow additionalControls={[]} title='Problem' path={path}>
-            <Container fluid bg='white' h='100%'>
-                <Center>
-                    <Title fs='italic'>{problemInfo?.title ?? ''}</Title>
-                </Center>
+    const [activeTab, setActiveTab] = useState<string | null>('first');
 
-                <Markdown>{problemInfo?.description ?? ''}</Markdown>
+    return (
+        <MosaicWindow 
+            additionalControls={[]} 
+            title='Problem' 
+            path={path}
+            renderToolbar={() => (
+                <div className='w-full'>
+                    <Flex w='100%'>
+                        <Tabs value={activeTab} onChange={setActiveTab}>
+                            <Tabs.List>
+                                <Tabs.Tab value='first'>Problem</Tabs.Tab>
+                                <Tabs.Tab value='second'>Submissions</Tabs.Tab>
+                            </Tabs.List>
+                        </Tabs>
+                    </Flex>
+                </div>
+            )}
+        >
+            <Container fluid bg='white' h='100%'>
+                <Tabs value={activeTab} onChange={setActiveTab}>
+                    <Tabs.Panel value='first'>
+                        <Center>
+                            <Title fs='italic'>{problemInfo?.title ?? ''}</Title>
+                        </Center>
+                        <Markdown>{problemInfo?.description ?? ''}</Markdown>
+                    </Tabs.Panel>
+                    <Tabs.Panel value='second'>
+                        <Center>
+                            <Title fs='italic'>Submissions</Title>
+                        </Center>
+                        <p>Submissions content goes here...</p>
+                    </Tabs.Panel>
+                </Tabs>
             </Container>
         </MosaicWindow>
     );
