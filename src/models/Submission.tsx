@@ -12,3 +12,14 @@ export interface SubmissionResult {
     code: string;
     description: string;
 }
+
+export interface ProblemSubmission {
+    id: number;
+    user_id: number;
+    problem_id: number;
+    language_id: number;
+    submitted_code: string;
+    submission_result_id: number;
+    created_at: string;
+    score: number;
+}
