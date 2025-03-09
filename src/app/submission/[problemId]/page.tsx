@@ -152,9 +152,9 @@ function ProblemWindow({
     const [activeTab, setActiveTab] = useState<string | null>('first');
 
     return (
-        <MosaicWindow 
-            additionalControls={[]} 
-            title='Problem' 
+        <MosaicWindow
+            additionalControls={[]}
+            title='Problem'
             path={path}
             renderToolbar={() => (
                 <div className='w-full'>
@@ -203,16 +203,17 @@ function ResultsWindow({
         [key: number]: SubmissionResult;
     } | null>(null);
 
-    const websocketUrl = `ws://localhost:9000/general/ws`;
+    const websocketUrl = `ws://localhost:9010/general/ws`;
     const { sendMessage, lastMessage, readyState } = useWebSocket(websocketUrl);
 
     useEffect(() => {
         if (lastMessage !== null) {
+            console.log(lastMessage);
             const submission: TestCaseSubmission = JSON.parse(lastMessage.data);
-            console.log(submission)
+            // console.log(submission)
             setSumbissions((prev) => [...prev, submission]);
         }
-      }, [lastMessage]);
+    }, [lastMessage]);
 
     const getSubmissionResultIcon = (resultId: number) => {
         if (submissionResults == null) return <></>;
@@ -386,8 +387,11 @@ function MonacoWindow({
                 await response.json<Language[]>(),
             );
             setLanguages(returnedLanguages);
-            if (returnedLanguages.length > 0)
-                setSelectedLanguage(returnedLanguages[0]);
+            if (returnedLanguages.length > 0) {
+                const selectedLanguageId = localStorage.getItem('selectedLanguage') ?? '1';
+                setSelectedLanguage(returnedLanguages.find(lang => lang.id.toString() === selectedLanguageId) ?? returnedLanguages[0]);
+            }
+            // setSelectedLanguage(returnedLanguages[0]);
         } catch (error) {
             console.log(error);
         }
@@ -411,6 +415,7 @@ function MonacoWindow({
                             ) || null,
                         );
                         combobox.closeDropdown();
+                        localStorage.setItem('selectedLanguage', value);
                     }}
                 >
                     <Combobox.Target>
