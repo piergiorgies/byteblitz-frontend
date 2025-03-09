@@ -4,6 +4,7 @@ import { Editor } from '@monaco-editor/react';
 import {
     Dispatch,
     SetStateAction,
+    use,
     useCallback,
     useEffect,
     useState,
@@ -60,6 +61,7 @@ import {
     FaUpload,
 } from 'react-icons/fa6';
 import { SubmissionResult, TestCaseSubmission } from '@/models/Submission';
+import { useDebouncedCallback } from '@mantine/hooks';
 
 export default function Submission() {
     const params = useParams();
@@ -204,7 +206,11 @@ function ResultsWindow({
     } | null>(null);
 
     const websocketUrl = `ws://localhost:9010/general/ws`;
-    const { sendMessage, lastMessage, readyState } = useWebSocket(websocketUrl);
+    const { sendMessage, lastMessage, readyState } = useWebSocket(websocketUrl, {
+        shouldReconnect: () => true,
+        reconnectAttempts: 10,
+        reconnectInterval: 2000,
+    });
 
     useEffect(() => {
         if (lastMessage !== null) {
@@ -376,9 +382,23 @@ function MonacoWindow({
 }) {
     const [languages, setLanguages] = useState<Language[]>([]);
 
+    const saveCode = useDebouncedCallback((code: string) => {
+        localStorage.setItem('savedCode', code);
+        setSaved(true);
+    }, 1000);
+
+    const [saved, setSaved] = useState(false);
+
     const combobox = useCombobox({
         onDropdownClose: () => combobox.resetSelectedOption(),
     });
+
+    useEffect(() => {
+        const savedCode = localStorage.getItem('savedCode');
+        if (savedCode) {
+            setCode(savedCode);
+        }
+    }, []);
 
     const getLanguages = useCallback(async () => {
         try {
@@ -391,7 +411,6 @@ function MonacoWindow({
                 const selectedLanguageId = localStorage.getItem('selectedLanguage') ?? '1';
                 setSelectedLanguage(returnedLanguages.find(lang => lang.id.toString() === selectedLanguageId) ?? returnedLanguages[0]);
             }
-            // setSelectedLanguage(returnedLanguages[0]);
         } catch (error) {
             console.log(error);
         }
@@ -449,6 +468,13 @@ function MonacoWindow({
                 </Combobox>
 
                 <Flex>
+                    {saved && (
+                        <Tooltip label='Code saved locally'>
+                            <Button size='xs' color='green' variant='subtle'>
+                                <FaRegCircleCheck />
+                            </Button>
+                        </Tooltip>
+                    )}
                     <Tooltip label='Load code'>
                         <Button size='xs' color='gray' variant='subtle'>
                             <FaUpload />
@@ -461,7 +487,12 @@ function MonacoWindow({
                 theme='vs-dark'
                 language={selectedLanguage?.code ?? 'cpp'}
                 value={code}
-                onChange={(value) => setCode(value || '')}
+                onChange={(value) => {
+                    setSaved(false);
+                    setCode(value || '')
+                    saveCode(value || '');
+                }
+                }
             />
         </MosaicWindow>
     );
