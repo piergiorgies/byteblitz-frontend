@@ -50,16 +50,17 @@ import {
 import { Language } from '@/models/Language';
 import {
     FaChevronDown,
+    FaCloud,
     FaCode,
-    FaMemory,
     FaRegCircleCheck,
-    FaRegCircleXmark,
-    FaRegClock,
-    FaRegFileExcel,
     FaRegPaperPlane,
     FaUpload,
 } from 'react-icons/fa6';
 import { SubmissionResult, TestCaseSubmission } from '@/models/Submission';
+import { useDebouncedCallback } from '@mantine/hooks';
+import SubmissionResultIcon from '@/components/submission/SubmissionResult';
+import SubmissionTable from '@/components/submission/SubmissionTable';
+import { IoCloudDoneOutline } from "react-icons/io5";
 
 export default function Submission() {
     const params = useParams();
@@ -103,7 +104,7 @@ export default function Submission() {
 
     const windows: { [key: string]: (path: MosaicBranch[]) => JSX.Element } = {
         '0': (path: MosaicBranch[]) => (
-            <ProblemWindow path={path} problemInfo={problemInfo} />
+            <ProblemWindow path={path} problemInfo={problemInfo} setCode={setCode} />
         ),
         '1': (path: MosaicBranch[]) => (
             <MonacoWindow
@@ -145,16 +146,18 @@ export default function Submission() {
 function ProblemWindow({
     path,
     problemInfo,
+    setCode,
 }: {
     path: MosaicBranch[];
     problemInfo: any;
+    setCode: Dispatch<SetStateAction<string>>;
 }) {
     const [activeTab, setActiveTab] = useState<string | null>('first');
 
     return (
-        <MosaicWindow 
-            additionalControls={[]} 
-            title='Problem' 
+        <MosaicWindow
+            additionalControls={[]}
+            title='Problem'
             path={path}
             renderToolbar={() => (
                 <div className='w-full'>
@@ -181,7 +184,10 @@ function ProblemWindow({
                         <Center>
                             <Title fs='italic'>Submissions</Title>
                         </Center>
-                        <p>Submissions content goes here...</p>
+                        <SubmissionTable
+                            setCode={setCode}
+                            problemId={problemInfo?.id ?? 0}
+                        />
                     </Tabs.Panel>
                 </Tabs>
             </Container>
@@ -203,69 +209,20 @@ function ResultsWindow({
         [key: number]: SubmissionResult;
     } | null>(null);
 
-    const websocketUrl = `ws://localhost:9000/general/ws`;
-    const { sendMessage, lastMessage, readyState } = useWebSocket(websocketUrl);
+    const websocketUrl = `ws://localhost:9010/general/ws`;
+    const { sendMessage, lastMessage, readyState } = useWebSocket(websocketUrl, {
+        shouldReconnect: () => true,
+        reconnectAttempts: 10,
+        reconnectInterval: 2000,
+    });
 
     useEffect(() => {
         if (lastMessage !== null) {
+            console.log(lastMessage);
             const submission: TestCaseSubmission = JSON.parse(lastMessage.data);
-            console.log(submission)
             setSumbissions((prev) => [...prev, submission]);
         }
-      }, [lastMessage]);
-
-    const getSubmissionResultIcon = (resultId: number) => {
-        if (submissionResults == null) return <></>;
-        const resultCode = submissionResults[resultId].code;
-
-        if (resultCode === 'AC') {
-            return (
-                <Tooltip position='top-start' label='Accepted Answer'>
-                    <Flex direction='row' align='center' gap='xs' c='green'>
-                        <Text>AC</Text> <FaRegCircleCheck />
-                    </Flex>
-                </Tooltip>
-            );
-        } else if (resultCode === 'WA') {
-            return (
-                <Tooltip position='top-start' label='Wrong Answer'>
-                    <Flex direction='row' align='center' gap='xs' c='red'>
-                        <Text>WA</Text>
-                        <FaRegCircleXmark />
-                    </Flex>
-                </Tooltip>
-            );
-        } else if (resultCode === 'TLE') {
-            return (
-                <Tooltip position='top-start' label='Time Limit'>
-                    <Flex direction='row' align='center' gap='xs' c='orange'>
-                        <Text>TLE</Text>
-                        <FaRegClock />
-                    </Flex>
-                </Tooltip>
-            );
-        } else if (resultCode === 'MLE') {
-            return (
-                <Tooltip position='top-start' label='Memory Limit'>
-                    <Flex direction='row' align='center' gap='xs' c='orange'>
-                        <Text>MLE</Text>
-                        <FaMemory />
-                    </Flex>
-                </Tooltip>
-            );
-        } else if (resultCode === 'CE') {
-            return (
-                <Tooltip position='top-start' label='Compilation Error'>
-                    <Flex direction='row' align='center' gap='xs' c='red'>
-                        <Text>CE</Text>
-                        <FaRegFileExcel />
-                    </Flex>
-                </Tooltip>
-            );
-        }
-
-        return <></>;
-    };
+    }, [lastMessage]);
 
     const getSubmissionResults = useCallback(async () => {
         try {
@@ -344,9 +301,10 @@ function ResultsWindow({
                                                 {(submission.memory / 1024).toFixed(2)} MB
                                             </Table.Td>
                                             <Table.Td>
-                                                {getSubmissionResultIcon(
-                                                    submission.result_id,
-                                                )}
+                                                <SubmissionResultIcon
+                                                    resultId={submission.result_id}
+                                                    submissionResults={submissionResults}
+                                                />
                                             </Table.Td>
                                         </Table.Tr>
                                     ))}
@@ -375,9 +333,23 @@ function MonacoWindow({
 }) {
     const [languages, setLanguages] = useState<Language[]>([]);
 
+    const saveCode = useDebouncedCallback((code: string) => {
+        localStorage.setItem('savedCode', code);
+        setSaved(true);
+    }, 1000);
+
+    const [saved, setSaved] = useState(false);
+
     const combobox = useCombobox({
         onDropdownClose: () => combobox.resetSelectedOption(),
     });
+
+    useEffect(() => {
+        const savedCode = localStorage.getItem('savedCode');
+        if (savedCode) {
+            setCode(savedCode);
+        }
+    }, []);
 
     const getLanguages = useCallback(async () => {
         try {
@@ -386,8 +358,10 @@ function MonacoWindow({
                 await response.json<Language[]>(),
             );
             setLanguages(returnedLanguages);
-            if (returnedLanguages.length > 0)
-                setSelectedLanguage(returnedLanguages[0]);
+            if (returnedLanguages.length > 0) {
+                const selectedLanguageId = localStorage.getItem('selectedLanguage') ?? '1';
+                setSelectedLanguage(returnedLanguages.find(lang => lang.id.toString() === selectedLanguageId) ?? returnedLanguages[0]);
+            }
         } catch (error) {
             console.log(error);
         }
@@ -411,6 +385,7 @@ function MonacoWindow({
                             ) || null,
                         );
                         combobox.closeDropdown();
+                        localStorage.setItem('selectedLanguage', value);
                     }}
                 >
                     <Combobox.Target>
@@ -444,8 +419,15 @@ function MonacoWindow({
                 </Combobox>
 
                 <Flex>
+                    {saved && (
+                        <Tooltip label='Code saved locally'>
+                            <Button color='green' variant='subtle'>
+                                <IoCloudDoneOutline />
+                            </Button>
+                        </Tooltip>
+                    )}
                     <Tooltip label='Load code'>
-                        <Button size='xs' color='gray' variant='subtle'>
+                        <Button color='gray' variant='subtle'>
                             <FaUpload />
                         </Button>
                     </Tooltip>
@@ -456,7 +438,12 @@ function MonacoWindow({
                 theme='vs-dark'
                 language={selectedLanguage?.code ?? 'cpp'}
                 value={code}
-                onChange={(value) => setCode(value || '')}
+                onChange={(value) => {
+                    setSaved(false);
+                    setCode(value || '')
+                    saveCode(value || '');
+                }
+                }
             />
         </MosaicWindow>
     );
