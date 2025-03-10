@@ -2,7 +2,7 @@ import { ProblemSubmission, SubmissionResult } from "@/models/Submission";
 import api from "@/utils/ky";
 import { CellContext, flexRender, getCoreRowModel, getFilteredRowModel, getSortedRowModel, SortingState, useReactTable } from "@tanstack/react-table";
 import { use, useCallback, useEffect, useMemo, useState } from "react";
-import { Box, Button, Flex, Table, Text, Tooltip } from "@mantine/core";
+import { Box, Button, Divider, Flex, Pagination, Select, Table, Text, Tooltip } from "@mantine/core";
 import dayjs from "dayjs";
 import SubmissionResultIcon from "./SubmissionResult";
 import { FaSort, FaSortDown, FaSortUp, FaUpload } from "react-icons/fa6";
@@ -247,6 +247,33 @@ export default function SubmissionTable({ problemId, setCode }: SubmissionTableP
                     ))}
                 </Table.Tbody>
             </Table>
+
+            <Divider my='md' />
+
+            <Flex justify='space-between'>
+                <Select
+                    data={[
+                        { value: '5', label: '5' },
+                        { value: '10', label: '10' },
+                        { value: '15', label: '15' },
+                    ]}
+                    value={pageSize.toString()}
+                    onChange={(value, _) =>
+                        setPageSize(value == null ? 10 : parseInt(value))
+                    }
+                />
+
+                <Pagination
+                    value={pagination.pageIndex + 1}
+                    total={table.getPageCount()}
+                    onChange={(page) =>
+                        setPagination((prev) => ({
+                            ...prev,
+                            pageIndex: page - 1,
+                        }))
+                    }
+                />
+            </Flex>
         </Box>
     );
 }
