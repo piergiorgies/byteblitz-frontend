@@ -40,6 +40,7 @@ import {
     Divider,
     Flex,
     ScrollArea,
+    Space,
     Table,
     Tabs,
     Text,
@@ -52,6 +53,7 @@ import {
     FaChevronDown,
     FaCloud,
     FaCode,
+    FaPlay,
     FaRegCircleCheck,
     FaRegPaperPlane,
     FaUpload,
@@ -85,7 +87,7 @@ export default function Submission() {
         getProblemInfo();
     }, [getProblemInfo]);
 
-    const handleSubmit = async (code: string) => {
+    const handleSubmit = async (code: string, pretest: boolean) => {
         try {
             const response = await api.post('submissions', {
                 json: {
@@ -93,6 +95,7 @@ export default function Submission() {
                     language_id: (selectedLanguage?.id ?? 1).toString(),
                     submitted_code: code,
                     notes: '',
+                    is_pretest_run: pretest,
                 },
             });
 
@@ -120,6 +123,7 @@ export default function Submission() {
                 path={path}
                 code={code}
                 handleSubmit={handleSubmit}
+                handleExampleSubmit={handleSubmit}
             />
         ),
     };
@@ -199,10 +203,12 @@ function ResultsWindow({
     path,
     code,
     handleSubmit,
+    handleExampleSubmit,
 }: {
     path: MosaicBranch[];
     code: string;
-    handleSubmit: (code: string) => void;
+    handleSubmit: (code: string, pretest: boolean) => void;
+    handleExampleSubmit: (code: string, pretest: boolean) => void;
 }) {
     const [submissions, setSumbissions] = useState<TestCaseSubmission[]>([]);
     const [submissionResults, setSubmissionResults] = useState<{
@@ -247,13 +253,26 @@ function ResultsWindow({
 
     const submitCode = async () => {
         setSumbissions([]);
-        handleSubmit(code);
+        handleSubmit(code, false);
+    };
+
+    const submitCodeExample = async () => {
+        setSumbissions([]);
+        handleExampleSubmit(code, true);
     };
 
     return (
         <MosaicWindow additionalControls={[]} title='Submissions' path={path}>
             <Flex direction='column' h='100%' bg='white'>
                 <Flex p='xs' justify='end'>
+                    <Button
+                        leftSection={<FaPlay />}
+                        onClick={submitCodeExample}
+                        variant='light'
+                    >
+                        Run Example
+                    </Button>
+                    <Space w={5} />
                     <Button
                         leftSection={<FaRegPaperPlane />}
                         onClick={submitCode}
