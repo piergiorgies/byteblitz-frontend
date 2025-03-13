@@ -23,3 +23,10 @@ export interface ProblemSubmission {
     created_at: string;
     score: number;
 }
+
+export interface TotalResult {
+    type: string;
+    submission_id: number;
+    score: number;
+    result: string;
+}

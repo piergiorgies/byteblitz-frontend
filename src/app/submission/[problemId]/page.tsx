@@ -34,6 +34,7 @@ import { Problem } from '@/models/Problem';
 import { objectToCamel } from 'ts-case-convert';
 import {
     Button,
+    Card,
     Center,
     Combobox,
     Container,
@@ -58,7 +59,7 @@ import {
     FaRegPaperPlane,
     FaUpload,
 } from 'react-icons/fa6';
-import { SubmissionResult, TestCaseSubmission } from '@/models/Submission';
+import { SubmissionResult, TestCaseSubmission, TotalResult } from '@/models/Submission';
 import { useDebouncedCallback } from '@mantine/hooks';
 import SubmissionResultIcon from '@/components/submission/SubmissionResult';
 import SubmissionTable from '@/components/submission/SubmissionTable';
@@ -98,8 +99,6 @@ export default function Submission() {
                     is_pretest_run: pretest,
                 },
             });
-
-            console.log(response);
         } catch (error) {
             console.log(error);
         }
@@ -211,6 +210,7 @@ function ResultsWindow({
     handleExampleSubmit: (code: string, pretest: boolean) => void;
 }) {
     const [submissions, setSumbissions] = useState<TestCaseSubmission[]>([]);
+    const [result, setResult] = useState<TotalResult | null>(null);
     const [submissionResults, setSubmissionResults] = useState<{
         [key: number]: SubmissionResult;
     } | null>(null);
@@ -224,9 +224,20 @@ function ResultsWindow({
 
     useEffect(() => {
         if (lastMessage !== null) {
-            console.log(lastMessage);
-            const submission: TestCaseSubmission = JSON.parse(lastMessage.data);
-            setSumbissions((prev) => [...prev, submission]);
+            try {
+                const message = JSON.parse(lastMessage.data);
+                if (message.type && message.type === 'total') {
+                    const totalResult: TotalResult = message;
+                    setResult(totalResult);
+                }
+                else {
+                    const submission: TestCaseSubmission = message;
+                    setSumbissions((prev) => [...prev, submission]);
+                }
+            }
+            catch (error) {
+                console.log(error);
+            }
         }
     }, [lastMessage]);
 
@@ -253,11 +264,13 @@ function ResultsWindow({
 
     const submitCode = async () => {
         setSumbissions([]);
+        setResult(null);
         handleSubmit(code, false);
     };
 
     const submitCodeExample = async () => {
         setSumbissions([]);
+        setResult(null);
         handleExampleSubmit(code, true);
     };
 
@@ -283,57 +296,71 @@ function ResultsWindow({
 
                 <Divider />
 
-                <Flex h='100%' p='xs'>
-                    {submissions.length === 0 ? (
-                        <Flex
-                            direction='column'
-                            justify='center'
-                            align='center'
-                            w='100%'
-                        >
-                            <FaCode color='gray' fontSize='4em' />
-                            <Text c='dimmed' mt='xs'>
-                                Submit the code to see the results!
-                            </Text>
-                        </Flex>
-                    ) : (
-                        <ScrollArea h='95%' w='100%'>
-                            <Table stickyHeader>
-                                <Table.Thead>
-                                    <Table.Tr>
-                                        <Table.Th>#</Table.Th>
-                                        <Table.Th>Time</Table.Th>
-                                        <Table.Th>Memory</Table.Th>
-                                        <Table.Th>Result</Table.Th>
-                                    </Table.Tr>
-                                </Table.Thead>
-                                <Table.Tbody>
-                                    {submissions.map((submission) => (
-                                        <Table.Tr key={submission.number}>
-                                            <Table.Td>
-                                                {submission.number}
-                                            </Table.Td>
-                                            <Table.Td>
-                                                {submission.time.toFixed(6)} s
-                                            </Table.Td>
-                                            <Table.Td>
-                                                {(submission.memory / 1024).toFixed(2)} MB
-                                            </Table.Td>
-                                            <Table.Td>
-                                                <SubmissionResultIcon
-                                                    resultId={submission.result_id}
-                                                    submissionResults={submissionResults}
-                                                />
-                                            </Table.Td>
+                <Flex direction='column' h='100%'>
+                    <ScrollArea h='95%' w='100%'>
+                        <Flex h='100%' p='xs'>
+                            {submissions.length === 0 ? (
+                                <Flex
+                                    direction='column'
+                                    justify='center'
+                                    align='center'
+                                    w='100%'
+                                    p='md'
+                                >
+                                    <FaCode color='gray' fontSize='4em' />
+                                    <Text c='dimmed' mt='xs'>
+                                        Submit the code to see the results!
+                                    </Text>
+                                </Flex>
+
+                            ) : (
+                                <Table stickyHeader>
+                                    <Table.Thead>
+                                        <Table.Tr>
+                                            <Table.Th>#</Table.Th>
+                                            <Table.Th>Time</Table.Th>
+                                            <Table.Th>Memory</Table.Th>
+                                            <Table.Th>Result</Table.Th>
                                         </Table.Tr>
-                                    ))}
-                                </Table.Tbody>
-                            </Table>
-                        </ScrollArea>
-                    )}
+                                    </Table.Thead>
+                                    <Table.Tbody>
+                                        {submissions.map((submission) => (
+                                            <Table.Tr key={submission.number}>
+                                                <Table.Td>
+                                                    {submission.number}
+                                                </Table.Td>
+                                                <Table.Td>
+                                                    {submission.time.toFixed(6)} s
+                                                </Table.Td>
+                                                <Table.Td>
+                                                    {(submission.memory / 1024).toFixed(2)} MB
+                                                </Table.Td>
+                                                <Table.Td>
+                                                    <SubmissionResultIcon
+                                                        resultId={submission.result_id}
+                                                        submissionResults={submissionResults}
+                                                    />
+                                                </Table.Td>
+                                            </Table.Tr>
+                                        ))}
+                                    </Table.Tbody>
+                                </Table>
+                            )}
+                        </Flex>
+
+                        {result && (
+                            <Card shadow='sm' p='lg' radius='md' withBorder bg={result.result && result.result !== '' ? 'red-100' : 'white'}>
+                                <Text w={700} size='lg'>Total Result</Text>
+                                <Text size='md' mt='xs'>Score: <b>{result.score}</b></Text>
+                                {result.result && result.result !== '' && (
+                                    <Text c='red' size='md' mt='xs'>Error: {result.result}</Text>
+                                )}
+                            </Card>
+                        )}
+                    </ScrollArea>
                 </Flex>
             </Flex>
-        </MosaicWindow>
+        </MosaicWindow >
     );
 }
 
