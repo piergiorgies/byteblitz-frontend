@@ -106,37 +106,27 @@ export default function ResultsWindow({
 
         if (result.result_id === 1) {
             return (
-                <Card bg='green-100' p='md' radius='md' withBorder>
-                    <Text size='md' c='green'>Correct</Text>
-                </Card>
+                <Text size='md' c='green'>Correct</Text>
             );
         }
         else if (result.result_id === 2) {
             return (
-                <Card bg='red-100' p='md' radius='md' withBorder>
-                    <Text size='md' c='red'>Wrong Answer</Text>
-                </Card>
+                <Text size='md' c='red'>Wrong Answer</Text>
             );
         }
         else if (result.result_id === 3) {
             return (
-                <Card bg='yellow-100' p='md' radius='md' withBorder>
-                    <Text size='md' c='yellow'>Time Limit Exceeded</Text>
-                </Card>
+                <Text size='md' c='yellow'>Time Limit Exceeded</Text>
             );
         }
         else if (result.result_id === 4) {
             return (
-                <Card bg='blue-100' p='md' radius='md' withBorder>
-                    <Text size='md' c='blue'>Memory Limit Exceeded</Text>
-                </Card>
+                <Text size='md' c='blue'>Memory Limit Exceeded</Text>
             );
         }
         else if (result.result_id === 5) {
             return (
-                <Card bg='blue-100' p='md' radius='md' withBorder>
-                    <Text size='md' c='blue'>Compilation Error</Text>
-                </Card>
+                <Text size='md' c='blue'>Compilation Error</Text>
             );
         }
     };
@@ -221,32 +211,35 @@ export default function ResultsWindow({
 
                                         return (
                                             <Tabs.Panel key={index} value={`case-${index + 1}`} p="md">
-
-                                                {result && (
-                                                    getResultString(result)
-                                                )}
-                                                <Box>
-                                                    <Text size="sm" c="gray">Input =</Text>
-                                                    <Box bg="gray.1" p="xs" style={{ borderRadius: '10px' }}>
-                                                        {test.input}
-                                                    </Box>
-                                                </Box>
-
-                                                <Box mt="md">
-                                                    <Text size="sm" c="gray">Target =</Text>
-
-                                                    <Box bg="gray.1" p="xs">
-                                                        {test.output}
-                                                    </Box>
-                                                </Box>
-                                                {result && (
-                                                    <Box mt="md">
-                                                        <Text size="sm" c="gray">Result =</Text>
-                                                        <Box bg="gray.1" p="xs">
-                                                            {result.output}
+                                                <ScrollArea>
+                                                    {result && (
+                                                        <Box mb="md">
+                                                            {getResultString(result)}
+                                                        </Box>
+                                                    )}
+                                                    <Box>
+                                                        <Text size="sm" c="gray">Input =</Text>
+                                                        <Box bg="gray.1" p="xs" style={{ borderRadius: '10px' }}>
+                                                            {test.input}
                                                         </Box>
                                                     </Box>
-                                                )}
+
+                                                    <Box mt="md">
+                                                        <Text size="sm" c="gray">Target =</Text>
+
+                                                        <Box bg="gray.1" p="xs" style={{ borderRadius: '10px' }}>
+                                                            {test.output}
+                                                        </Box>
+                                                    </Box>
+                                                    {result && (
+                                                        <Box mt="md">
+                                                            <Text size="sm" c="gray">Result =</Text>
+                                                            <Box bg="gray.1" p="xs" style={{ borderRadius: '10px' }}>
+                                                                {result.output}
+                                                            </Box>
+                                                        </Box>
+                                                    )}
+                                                </ScrollArea>
                                             </Tabs.Panel>
                                         )
                                     }
