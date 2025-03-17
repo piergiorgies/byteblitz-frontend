@@ -29,6 +29,7 @@
     "@tiptap/react": "^2.10.3",
     "@tiptap/starter-kit": "^2.10.3",
     "dayjs": "^1.11.13",
+    "flexlayout-react": "^0.8.6",
     "jose": "^5.9.6",
     "jszip": "^3.10.1",
     "ky": "^1.7.2",
