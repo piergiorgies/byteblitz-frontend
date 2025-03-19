@@ -5,6 +5,8 @@ export interface TestCaseSubmission {
     time: number;
     memory: number;
     result_id: number;
+    is_pretest_run: boolean;
+    output: string;
 }
 
 export interface SubmissionResult {
@@ -22,4 +24,11 @@ export interface ProblemSubmission {
     submission_result_id: number;
     created_at: string;
     score: number;
+}
+
+export interface TotalResult {
+    type: string;
+    submission_id: number;
+    score: number;
+    result: string;
 }

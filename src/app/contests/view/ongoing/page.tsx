@@ -187,7 +187,7 @@ export default function OngoingContests() {
             />
 
             <Space h='lg' />
-            <Notification color='green' closeButtonProps={{ 'hidden': 'true' }}>
+            <Notification color='green' closeButtonProps={{ 'hidden': true }}>
                 <Text c='dimmed'>
                     Ends in:
                 </Text>

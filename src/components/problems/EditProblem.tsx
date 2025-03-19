@@ -19,10 +19,11 @@ import {
 import { Dropzone, FileWithPath, MIME_TYPES } from '@mantine/dropzone';
 import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import Image from '@tiptap/extension-image';
 import { useForm } from '@mantine/form';
-import { RichTextEditor } from '@mantine/tiptap';
+import { RichTextEditor, useRichTextEditorContext } from '@mantine/tiptap';
 import { Markdown } from 'tiptap-markdown';
-import { FaPlus, FaRegFileZipper, FaX } from 'react-icons/fa6';
+import { FaImage, FaPlus, FaRegFileZipper, FaX } from 'react-icons/fa6';
 import { useEffect, useState } from 'react';
 import {
     ConstraintsInfoInForm,
@@ -36,8 +37,54 @@ import '@mantine/tiptap/styles.css';
 import '@mantine/dropzone/styles.css';
 import { parseTestCasesZipFile } from '@/utils/files';
 import { Complexity } from '@/models/Difficulty';
+import { showNotification } from '@mantine/notifications';
 
 type onProblemSave = (problem: Problem) => Promise<void>;
+
+function ImageControl() {
+    const { editor } = useRichTextEditorContext();
+    return (
+        <RichTextEditor.Control
+            onClick={() => {
+                const input = document.createElement("input");
+                input.type = "file";
+                input.accept = "image/*";
+
+                input.onchange = (event) => {
+                    const file = (event.target as HTMLInputElement).files?.[0];
+
+                    if (file) {
+                        if (!file.type.startsWith("image/")) {
+                            showNotification({
+                                title: "Invalid file type",
+                                message: "Only images are allowed",
+                                color: "red",
+                            });
+                            return;
+                        }
+
+                        const reader = new FileReader();
+                        reader.onload = () => {
+                            const base64String = reader.result as string;
+                            editor?.commands.setImage({ src: base64String });
+                        };
+
+                        reader.readAsDataURL(file);
+                    }
+                };
+
+                input.click();
+            }}
+            aria-label="Insert image"
+            title="Insert image"
+        >
+            <span className="text-slate-500">
+                <FaImage />
+            </span>
+        </RichTextEditor.Control>
+
+    );
+}
 
 export default function EditProblem({
     onProblemSave,
@@ -47,7 +94,15 @@ export default function EditProblem({
     savedProblem?: Problem;
 }) {
     const problemTextEditor = useEditor({
-        extensions: [StarterKit, Markdown],
+        extensions:
+            [
+                StarterKit,
+                Markdown,
+                Image.configure({
+                    inline: true,
+                    allowBase64: true
+                }),
+            ],
         content: savedProblem?.description ?? '',
         immediatelyRender: false,
     });
@@ -281,6 +336,7 @@ export default function EditProblem({
                             <RichTextEditor.ClearFormatting />
                             <RichTextEditor.Highlight />
                             <RichTextEditor.Code />
+                            <ImageControl />
                         </RichTextEditor.ControlsGroup>
                     </RichTextEditor.Toolbar>
 
