@@ -50,7 +50,7 @@ export default function MainLayout({
                         </Flex>
                     </Group>
                 </AppShell.Header>
-                <AppShell.Main className='bg-slate-100'>
+                <AppShell.Main style={{ 'padding-left': 0, 'padding-right': 0, 'padding-bottom': 0, 'padding-top': '60px' }} className='bg-slate-100'>
                     {children}
                 </AppShell.Main>
             </AppShell>

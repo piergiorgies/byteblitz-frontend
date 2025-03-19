@@ -3,6 +3,7 @@ import api from '@/utils/ky';
 import { Button, Center, SimpleGrid, Space } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { FaRepeat } from 'react-icons/fa6';
 
 export default function Home() {
     const router = useRouter();
@@ -29,6 +30,7 @@ export default function Home() {
                         View Contests
                     </Button>
                 </div>
+                <Button leftSection={<FaRepeat/>} mt='md' size='xl'>Go to miner</Button>
             </div>
         </Center>
     );
