@@ -30,7 +30,6 @@ export default function Home() {
                         View Contests
                     </Button>
                 </div>
-                <Button leftSection={<FaRepeat/>} mt='md' size='xl'>Go to miner</Button>
             </div>
         </Center>
     );
