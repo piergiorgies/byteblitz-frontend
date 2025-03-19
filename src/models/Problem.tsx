@@ -24,7 +24,7 @@ export interface ConstraintsInfoInForm {
 }
 
 export interface ProblemTestCase {
-    id?: number;
+    number?: number;
     input: string;
     output: string;
     points: number;
