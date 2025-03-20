@@ -1,7 +1,16 @@
 'use client';
 
 import api from '@/utils/ky';
-import { Flex, Group, Text, Title, Badge, useMantineTheme, Grid, Button } from '@mantine/core';
+import {
+    Flex,
+    Group,
+    Text,
+    Title,
+    Badge,
+    useMantineTheme,
+    Grid,
+    Button,
+} from '@mantine/core';
 import { FaRegClock } from 'react-icons/fa6';
 
 interface ContestHeaderProps {
@@ -28,9 +37,9 @@ export default function ContestHeader({
         const start = new Date(startDatetime).getTime();
         const end = new Date(endDatetime).getTime();
 
-        if (now < start) return 'upcoming';  // Contest has not started yet
-        if (now >= start && now <= end) return 'ongoing';  // Contest is currently ongoing
-        return 'past';  // Contest has ended
+        if (now < start) return 'upcoming'; // Contest has not started yet
+        if (now >= start && now <= end) return 'ongoing'; // Contest is currently ongoing
+        return 'past'; // Contest has ended
     };
 
     const currentStatus = getStatus();
@@ -52,19 +61,22 @@ export default function ContestHeader({
             dynamicBadgeColor = 'gray';
             break;
         default:
-            dynamicBadgeText = 'No Status';  // Fallback if something goes wrong
-            dynamicBadgeColor = 'gray';  // Fallback
+            dynamicBadgeText = 'No Status'; // Fallback if something goes wrong
+            dynamicBadgeColor = 'gray'; // Fallback
     }
 
     const showRegistration = currentStatus === 'upcoming' && isRegistratioOpen;
 
     return (
-        <Flex direction="column" align="start" mt={8} gap="xs">
-
-            <Flex justify="space-between" align="center" style={{ width: '100%' }}>
-                <Flex align="center">
+        <Flex direction='column' align='start' mt={8} gap='xs'>
+            <Flex
+                justify='space-between'
+                align='center'
+                style={{ width: '100%' }}
+            >
+                <Flex align='center'>
                     <Title order={1}>{title}</Title>
-                    <Badge color={dynamicBadgeColor} variant="light" ml={10}>
+                    <Badge color={dynamicBadgeColor} variant='light' ml={10}>
                         {dynamicBadgeText}
                     </Badge>
                 </Flex>
@@ -72,9 +84,9 @@ export default function ContestHeader({
                 {/* Registration Button (Positioned top-right) */}
                 {showRegistration && (
                     <Button
-                        size="sm"
-                        color="blue"
-                        variant="outline"
+                        size='sm'
+                        color='blue'
+                        variant='outline'
                         onClick={handleUserRegistration}
                     >
                         Register Now
@@ -83,12 +95,17 @@ export default function ContestHeader({
             </Flex>
 
             {/* Date-Time Info */}
-            <Flex direction="row" gap="lg" align="center">
+            <Flex direction='row' gap='lg' align='center'>
                 {startDatetime && (
-                    <Group gap="xs">
-                        <FaRegClock size={18} style={{ color: theme.colors.gray[6] }} />
-                        <Text size="sm" c="dimmed">Starts:</Text>
-                        <Text size="sm" fw={600} c="gray.9">
+                    <Group gap='xs'>
+                        <FaRegClock
+                            size={18}
+                            style={{ color: theme.colors.gray[6] }}
+                        />
+                        <Text size='sm' c='dimmed'>
+                            Starts:
+                        </Text>
+                        <Text size='sm' fw={600} c='gray.9'>
                             {new Date(startDatetime).toLocaleString('en-US', {
                                 weekday: 'short',
                                 month: 'long',
@@ -102,10 +119,15 @@ export default function ContestHeader({
                 )}
 
                 {endDatetime && (
-                    <Group gap="xs">
-                        <FaRegClock size={18} style={{ color: theme.colors.gray[6] }} />
-                        <Text size="sm" c="dimmed">Ends:</Text>
-                        <Text size="sm" fw={600} c="gray.9">
+                    <Group gap='xs'>
+                        <FaRegClock
+                            size={18}
+                            style={{ color: theme.colors.gray[6] }}
+                        />
+                        <Text size='sm' c='dimmed'>
+                            Ends:
+                        </Text>
+                        <Text size='sm' fw={600} c='gray.9'>
                             {new Date(endDatetime).toLocaleString('en-US', {
                                 weekday: 'short',
                                 month: 'long',

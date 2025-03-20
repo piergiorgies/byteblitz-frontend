@@ -2,6 +2,7 @@
 
 import ContestHeader from '@/components/contests/ContestHeader';
 import Forbidden from '@/components/global/Forbidden';
+import Difficulty from '@/components/problems/Difficulty';
 import { ContestInfo, PastContest } from '@/models/Contest';
 import api from '@/utils/ky';
 import {
@@ -76,7 +77,7 @@ export default function OngoingContests() {
 
         const updateCountdown = () => {
             const endTime = new Date(contest.end_datetime);
-            if (isNaN(endTime.getTime())) return;  // Check if the date is valid
+            if (isNaN(endTime.getTime())) return;
 
             const now = new Date().getTime();
             const difference = endTime.getTime() - now;
@@ -136,6 +137,13 @@ export default function OngoingContests() {
                     </Group>
                 ),
             },
+            {
+                header: 'Difficulty',
+                accessorKey: 'difficulty',
+                cell: (info: any) => (
+                    <Difficulty difficulty={info.getValue()} />
+                ),
+            },
         ],
         [],
     );
@@ -155,6 +163,7 @@ export default function OngoingContests() {
         <Container size='lg'>
             <Flex justify='left'>
                 <Group
+                    pt={15}
                     gap='xs'
                     onClick={() => router.back()}
                     style={{
@@ -182,18 +191,22 @@ export default function OngoingContests() {
 
             <ContestHeader
                 title={contest?.name || 'Contest'}
-                startDatetime={contest?.start_datetime ? new Date(contest.start_datetime).toISOString() : undefined}
-                endDatetime={contest?.end_datetime ? new Date(contest.end_datetime).toISOString() : undefined}
+                startDatetime={
+                    contest?.start_datetime
+                        ? new Date(contest.start_datetime).toISOString()
+                        : undefined
+                }
+                endDatetime={
+                    contest?.end_datetime
+                        ? new Date(contest.end_datetime).toISOString()
+                        : undefined
+                }
             />
 
             <Space h='lg' />
-            <Notification color='green' closeButtonProps={{ 'hidden': true }}>
-                <Text c='dimmed'>
-                    Ends in:
-                </Text>
-                <Text>
-                    {timeLeft}
-                </Text>
+            <Notification color='green' closeButtonProps={{ hidden: true }}>
+                <Text c='dimmed'>Ends in:</Text>
+                <Text>{timeLeft}</Text>
             </Notification>
 
             <Space h='xl' />
@@ -264,6 +277,6 @@ export default function OngoingContests() {
                     <Title order={4}>Leaderboard</Title>
                 </Grid.Col>
             </Grid>
-        </Container >
+        </Container>
     );
 }

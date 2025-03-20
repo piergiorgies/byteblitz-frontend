@@ -67,14 +67,13 @@ export default function LoginModal({
     // Redirect to GitHub OAuth
     const loginWithGitHub = async () => {
         try {
-            const response = await api.get("auth/github");
+            const response = await api.get('auth/github');
             const data: { auth_url: string } = await response.json();
             window.location.href = data.auth_url;
         } catch (error) {
-            setErrorMessage("GitHub login failed. Please try again.");
+            setErrorMessage('GitHub login failed. Please try again.');
         }
     };
-
 
     return (
         <Modal opened={showModal} onClose={closeModal}>
@@ -118,11 +117,7 @@ export default function LoginModal({
 
                 <Divider my='md' label='OR' labelPosition='center' />
 
-                <Button
-                    fullWidth
-                    variant='default'
-                    onClick={loginWithGitHub}
-                >
+                <Button fullWidth variant='default' onClick={loginWithGitHub}>
                     Login with GitHub
                     <Space w='xs' />
                     <FaGithub size={20} />

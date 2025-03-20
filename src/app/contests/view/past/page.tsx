@@ -2,7 +2,12 @@
 
 import ContestHeader from '@/components/contests/ContestHeader';
 import Forbidden from '@/components/global/Forbidden';
-import { Contest, ContestProblem, ContestInfo, PastContest } from '@/models/Contest';
+import {
+    Contest,
+    ContestProblem,
+    ContestInfo,
+    PastContest,
+} from '@/models/Contest';
 import api from '@/utils/ky';
 import {
     Container,
@@ -141,11 +146,17 @@ export default function ViewContestPage() {
 
             <ContestHeader
                 title={contest?.name || ''}
-                startDatetime={contest?.start_datetime ? new Date(contest.start_datetime).toISOString() : undefined}
-                endDatetime={contest?.end_datetime ? new Date(contest.end_datetime).toISOString() : undefined}
+                startDatetime={
+                    contest?.start_datetime
+                        ? new Date(contest.start_datetime).toISOString()
+                        : undefined
+                }
+                endDatetime={
+                    contest?.end_datetime
+                        ? new Date(contest.end_datetime).toISOString()
+                        : undefined
+                }
             />
-
-
 
             <Space h='xl' />
             <Blockquote my={4} color='gray' icon={<FaInfo />} iconSize={30}>

@@ -1,9 +1,5 @@
 'use client';
-import {
-    useCallback,
-    useEffect,
-    useState,
-} from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import dynamic from 'next/dynamic';
 
@@ -75,7 +71,11 @@ export default function Submission() {
 
     const windows: { [key: string]: (path: MosaicBranch[]) => JSX.Element } = {
         '0': (path: MosaicBranch[]) => (
-            <ProblemWindow path={path} problemInfo={problemInfo} setCode={setCode} />
+            <ProblemWindow
+                path={path}
+                problemInfo={problemInfo}
+                setCode={setCode}
+            />
         ),
         '1': (path: MosaicBranch[]) => (
             <MonacoWindow
@@ -108,18 +108,34 @@ export default function Submission() {
         splitPercentage: 45,
     };
     const savedWindowsLayoutJson = localStorage.getItem('windowLayout');
-    const [savedWindowsLayout, setSavedWindowsLayout] = useState(savedWindowsLayoutJson != null ? JSON.parse(savedWindowsLayoutJson) : defaultLayout);
+    const [savedWindowsLayout, setSavedWindowsLayout] = useState(
+        savedWindowsLayoutJson != null
+            ? JSON.parse(savedWindowsLayoutJson)
+            : defaultLayout,
+    );
 
     const resetDefaultWindowLayout = () => {
         setSavedWindowsLayout(defaultLayout);
         localStorage.setItem('windowLayout', JSON.stringify(defaultLayout));
-    }
+    };
 
     return (
-        <Flex className='w-100 relative' style={{ height: 'calc(100vh - 60px)' }}>
+        <Flex
+            className='w-100 relative'
+            style={{ height: 'calc(100vh - 60px)' }}
+        >
             <Flex className='absolute bottom-4 left-4 z-10'>
-                <Tooltip label='Reset default layout' position='right' withArrow>
-                    <ActionIcon variant='light' radius='xl' size='xl' onClick={resetDefaultWindowLayout}>
+                <Tooltip
+                    label='Reset default layout'
+                    position='right'
+                    withArrow
+                >
+                    <ActionIcon
+                        variant='light'
+                        radius='xl'
+                        size='xl'
+                        onClick={resetDefaultWindowLayout}
+                    >
                         <FaRotateLeft />
                     </ActionIcon>
                 </Tooltip>
@@ -128,7 +144,9 @@ export default function Submission() {
                 renderTile={(count, path) => windows[count.toString()](path)}
                 value={savedWindowsLayout}
                 initialValue={savedWindowsLayout}
-                onChange={(layout) => localStorage.setItem('windowLayout', JSON.stringify(layout))}
+                onChange={(layout) =>
+                    localStorage.setItem('windowLayout', JSON.stringify(layout))
+                }
             />
         </Flex>
     );
