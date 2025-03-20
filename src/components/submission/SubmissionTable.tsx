@@ -1,21 +1,41 @@
-import { ProblemSubmission, SubmissionResult } from "@/models/Submission";
-import api from "@/utils/ky";
-import { CellContext, flexRender, getCoreRowModel, getFilteredRowModel, getSortedRowModel, SortingState, useReactTable } from "@tanstack/react-table";
-import { use, useCallback, useEffect, useMemo, useState } from "react";
-import { Box, Button, Divider, Flex, Pagination, Select, Table, Text, Tooltip } from "@mantine/core";
-import dayjs from "dayjs";
-import SubmissionResultIcon from "./SubmissionResult";
-import { FaSort, FaSortDown, FaSortUp, FaUpload } from "react-icons/fa6";
-import { Language } from "@/models/Language";
-import { objectToCamel } from "ts-case-convert";
+import { ProblemSubmission, SubmissionResult } from '@/models/Submission';
+import api from '@/utils/ky';
+import {
+    CellContext,
+    flexRender,
+    getCoreRowModel,
+    getFilteredRowModel,
+    getSortedRowModel,
+    SortingState,
+    useReactTable,
+} from '@tanstack/react-table';
+import { use, useCallback, useEffect, useMemo, useState } from 'react';
+import {
+    Box,
+    Button,
+    Divider,
+    Flex,
+    Pagination,
+    Select,
+    Table,
+    Text,
+    Tooltip,
+} from '@mantine/core';
+import dayjs from 'dayjs';
+import SubmissionResultIcon from './SubmissionResult';
+import { FaSort, FaSortDown, FaSortUp, FaUpload } from 'react-icons/fa6';
+import { Language } from '@/models/Language';
+import { objectToCamel } from 'ts-case-convert';
 
 type SubmissionTableProps = {
     problemId: number;
     setCode: (code: string) => void;
 };
 
-export default function SubmissionTable({ problemId, setCode }: SubmissionTableProps) {
-
+export default function SubmissionTable({
+    problemId,
+    setCode,
+}: SubmissionTableProps) {
     const [submissions, setSubmissions] = useState<ProblemSubmission[]>([]);
     const [pageSize, setPageSize] = useState(10);
     const [sorting, setSorting] = useState<SortingState>([]);
@@ -87,7 +107,8 @@ export default function SubmissionTable({ problemId, setCode }: SubmissionTableP
             setRowCount(submissions.count);
 
             if (
-                pagination.pageIndex * pagination.pageSize >= submissions.count &&
+                pagination.pageIndex * pagination.pageSize >=
+                    submissions.count &&
                 pagination.pageIndex !== 0
             ) {
                 setPagination({
@@ -95,14 +116,12 @@ export default function SubmissionTable({ problemId, setCode }: SubmissionTableP
                     pageSize: pagination.pageSize,
                 });
             }
-        }
-        catch (error) {
+        } catch (error) {
             console.log(error);
         }
 
         setAreSubmissionsLoading(false);
     };
-
 
     useEffect(() => {
         setAreSubmissionsLoading(true);
@@ -120,7 +139,7 @@ export default function SubmissionTable({ problemId, setCode }: SubmissionTableP
                 header: '#',
                 cell: (info: CellContext<ProblemSubmission, number>) => (
                     <Text>{info.getValue()}</Text>
-                )
+                ),
             },
             {
                 accessorKey: 'submission_result_id',
@@ -133,18 +152,20 @@ export default function SubmissionTable({ problemId, setCode }: SubmissionTableP
                             submissionResults={submissionResults}
                         />
                     );
-                }
+                },
             },
             {
                 accessorKey: 'language_id',
                 header: 'Language',
                 cell: (info: CellContext<ProblemSubmission, number>) => (
                     <Text>
-                        {languages.find(
-                            (language) => language.id === info.getValue()
-                        )?.name}
+                        {
+                            languages.find(
+                                (language) => language.id === info.getValue(),
+                            )?.name
+                        }
                     </Text>
-                )
+                ),
             },
             {
                 accessorKey: 'created_at',
@@ -155,13 +176,11 @@ export default function SubmissionTable({ problemId, setCode }: SubmissionTableP
                         ? dayjs(rawDate).format('YYYY-MM-DD HH:mm:ss')
                         : 'N/A';
                     return <Text>{formattedDate}</Text>;
-                }
-            }
+                },
+            },
         ],
-        [submissionResults]
+        [submissionResults],
     );
-
-
 
     const table = useReactTable({
         data: submissions,
@@ -177,7 +196,7 @@ export default function SubmissionTable({ problemId, setCode }: SubmissionTableP
         getFilteredRowModel: getFilteredRowModel(),
         manualPagination: true,
         rowCount,
-    })
+    });
     return (
         <Box>
             <Table highlightOnHover>
@@ -196,7 +215,7 @@ export default function SubmissionTable({ problemId, setCode }: SubmissionTableP
                                                 <FaSort />
                                             </span>
                                         ) : header.column.getIsSorted() ===
-                                            'desc' ? (
+                                          'desc' ? (
                                             <span className='me-1 text-slate-400'>
                                                 <FaSortDown />
                                             </span>
@@ -223,7 +242,7 @@ export default function SubmissionTable({ problemId, setCode }: SubmissionTableP
                                 <Table.Td key={cell.id}>
                                     {flexRender(
                                         cell.column.columnDef.cell,
-                                        cell.getContext()
+                                        cell.getContext(),
                                     )}
                                 </Table.Td>
                             ))}
@@ -235,7 +254,9 @@ export default function SubmissionTable({ problemId, setCode }: SubmissionTableP
                                             variant='subtle'
                                             color='grey'
                                             onClick={() => {
-                                                setCode(row.original.submitted_code);
+                                                setCode(
+                                                    row.original.submitted_code,
+                                                );
                                             }}
                                         >
                                             <FaUpload />

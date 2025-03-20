@@ -1,10 +1,18 @@
-import { Box, Center, Container, Divider, Flex, Tabs, Title } from "@mantine/core";
-import { MosaicBranch, MosaicWindow } from "react-mosaic-component";
-import SubmissionTable from "./SubmissionTable";
-import { Dispatch, SetStateAction, useState } from "react";
-import { RichTextEditor } from "@mantine/tiptap";
-import { useEditor } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
+import {
+    Box,
+    Center,
+    Container,
+    Divider,
+    Flex,
+    Tabs,
+    Title,
+} from '@mantine/core';
+import { MosaicBranch, MosaicWindow } from 'react-mosaic-component';
+import SubmissionTable from './SubmissionTable';
+import { Dispatch, SetStateAction, useState } from 'react';
+import { RichTextEditor } from '@mantine/tiptap';
+import { useEditor } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
 import { Markdown } from 'tiptap-markdown';
 
@@ -20,23 +28,21 @@ export default function ProblemWindow({
     const [activeTab, setActiveTab] = useState<string | null>('first');
 
     const problemTextEditor = useEditor({
-        extensions:
-            [
-                StarterKit,
-                Markdown,
-                Image.configure({
-                    inline: true,
-                    allowBase64: true
-                }),
-            ],
+        extensions: [
+            StarterKit,
+            Markdown,
+            Image.configure({
+                inline: true,
+                allowBase64: true,
+            }),
+        ],
         content: problemInfo?.description,
         immediatelyRender: false,
         editable: false,
     });
 
     const handleTabChange = (value: string | null) => {
-        if (value)
-            setActiveTab(value);
+        if (value) setActiveTab(value);
     };
 
     return (
@@ -59,14 +65,25 @@ export default function ProblemWindow({
         >
             <Container fluid bg='white' py='xs' h='100%'>
                 <Tabs value={activeTab} onChange={handleTabChange} h='100%'>
-                    <Tabs.Panel value="first" h='100%'>
-                        <Flex direction='column' h='100%' style={{ overflowY: 'auto' }}>
+                    <Tabs.Panel value='first' h='100%'>
+                        <Flex
+                            direction='column'
+                            h='100%'
+                            style={{ overflowY: 'auto' }}
+                        >
                             <Center>
-                                <Title fs="italic">{problemInfo?.title ?? ''}</Title>
+                                <Title fs='italic'>
+                                    {problemInfo?.title ?? ''}
+                                </Title>
                             </Center>
-                            <Divider my='xs'/>
+                            <Divider my='xs' />
                             <Box>
-                                <RichTextEditor mt='md' style={{ border: 0 }} editor={problemTextEditor} mih='30em'>
+                                <RichTextEditor
+                                    mt='md'
+                                    style={{ border: 0 }}
+                                    editor={problemTextEditor}
+                                    mih='30em'
+                                >
                                     <RichTextEditor.Content />
                                 </RichTextEditor>
                             </Box>

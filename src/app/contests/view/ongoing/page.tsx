@@ -2,7 +2,7 @@
 
 import ContestHeader from '@/components/contests/ContestHeader';
 import Forbidden from '@/components/global/Forbidden';
-import { ContestInfo, PastContest } from '@/models/Contest';
+import { PastContest } from '@/models/Contest';
 import api from '@/utils/ky';
 import {
     Notification,
@@ -76,7 +76,7 @@ export default function OngoingContests() {
 
         const updateCountdown = () => {
             const endTime = new Date(contest.end_datetime);
-            if (isNaN(endTime.getTime())) return;  // Check if the date is valid
+            if (isNaN(endTime.getTime())) return; // Check if the date is valid
 
             const now = new Date().getTime();
             const difference = endTime.getTime() - now;
@@ -152,118 +152,129 @@ export default function OngoingContests() {
     return forbidden ? (
         <Forbidden />
     ) : (
-        <Container size='lg'>
-            <Flex justify='left'>
-                <Group
-                    gap='xs'
-                    onClick={() => router.back()}
-                    style={{
-                        cursor: 'pointer',
-                        transition: 'color 0.2s ease-in-out',
-                    }}
-                    onMouseOver={() => setIsHovered(true)}
-                    onMouseOut={() => setIsHovered(false)}
-                >
-                    <FaCaretLeft
-                        color={
-                            isHovered
-                                ? theme.colors[theme.primaryColor][6]
-                                : 'gray'
-                        }
-                    />
-                    <Text
-                        size='md'
-                        c={isHovered ? theme.primaryColor : 'dimmed'}
+        <Container size='lg' py='md' fluid>
+            <Flex bg='white' direction='column' p='xl'>
+                <Flex justify='left'>
+                    <Group
+                        gap='xs'
+                        onClick={() => router.back()}
+                        style={{
+                            cursor: 'pointer',
+                            transition: 'color 0.2s ease-in-out',
+                        }}
+                        onMouseOver={() => setIsHovered(true)}
+                        onMouseOut={() => setIsHovered(false)}
                     >
-                        Back to contest
-                    </Text>
-                </Group>
-            </Flex>
+                        <FaCaretLeft
+                            color={
+                                isHovered
+                                    ? theme.colors[theme.primaryColor][6]
+                                    : 'gray'
+                            }
+                        />
+                        <Text
+                            size='md'
+                            c={isHovered ? theme.primaryColor : 'dimmed'}
+                        >
+                            Back to contest
+                        </Text>
+                    </Group>
+                </Flex>
 
-            <ContestHeader
-                title={contest?.name || 'Contest'}
-                startDatetime={contest?.start_datetime ? new Date(contest.start_datetime).toISOString() : undefined}
-                endDatetime={contest?.end_datetime ? new Date(contest.end_datetime).toISOString() : undefined}
-            />
+                <ContestHeader
+                    title={contest?.name || 'Contest'}
+                    startDatetime={
+                        contest?.start_datetime
+                            ? new Date(contest.start_datetime).toISOString()
+                            : undefined
+                    }
+                    endDatetime={
+                        contest?.end_datetime
+                            ? new Date(contest.end_datetime).toISOString()
+                            : undefined
+                    }
+                />
 
-            <Space h='lg' />
-            <Notification color='green' closeButtonProps={{ 'hidden': true }}>
-                <Text c='dimmed'>
-                    Ends in:
-                </Text>
-                <Text>
-                    {timeLeft}
-                </Text>
-            </Notification>
+                <Space h='lg' />
+                <Notification color='green' closeButtonProps={{ hidden: true }}>
+                    <Text c='dimmed'>Ends in:</Text>
+                    <Text>{timeLeft}</Text>
+                </Notification>
 
-            <Space h='xl' />
-            <Blockquote my={4} color='gray' icon={<FaInfo />} iconSize={30}>
-                {contest?.description}
-            </Blockquote>
+                <Space h='xl' />
+                <Blockquote my={4} color='gray' icon={<FaInfo />} iconSize={30}>
+                    {contest?.description}
+                </Blockquote>
 
-            <Space h='xl' />
+                <Space h='xl' />
 
-            <Grid gutter={{ base: 5, xs: 'md', md: 'xl', xl: 50 }}>
-                <Grid.Col span={6}>
-                    <Title order={4}>Problems</Title>
-                    <Table highlightOnHover>
-                        <Table.Thead>
-                            {problemTable
-                                .getHeaderGroups()
-                                .map((headerGroup) => (
-                                    <Table.Tr key={headerGroup.id}>
-                                        {headerGroup.headers.map((header) => (
-                                            <Table.Th
-                                                key={header.id}
-                                                onClick={header.column.getToggleSortingHandler()}
-                                                style={{ cursor: 'pointer' }}
-                                            >
-                                                <div className='flex items-center'>
-                                                    {!header.column.getIsSorted() ? (
-                                                        <span className='me-1 text-slate-400'>
-                                                            <FaSort />
-                                                        </span>
-                                                    ) : header.column.getIsSorted() ===
-                                                        'desc' ? (
-                                                        <span className='me-1 text-slate-400'>
-                                                            <FaSortDown />
-                                                        </span>
-                                                    ) : (
-                                                        <span className='me-1 text-slate-400'>
-                                                            <FaSortUp />
-                                                        </span>
-                                                    )}
-                                                    {flexRender(
-                                                        header.column.columnDef
-                                                            .header,
-                                                        header.getContext(),
-                                                    )}
-                                                </div>
-                                            </Table.Th>
+                <Grid gutter={{ base: 5, xs: 'md', md: 'xl', xl: 50 }}>
+                    <Grid.Col span={6}>
+                        <Title order={4}>Problems</Title>
+                        <Table highlightOnHover>
+                            <Table.Thead>
+                                {problemTable
+                                    .getHeaderGroups()
+                                    .map((headerGroup) => (
+                                        <Table.Tr key={headerGroup.id}>
+                                            {headerGroup.headers.map(
+                                                (header) => (
+                                                    <Table.Th
+                                                        key={header.id}
+                                                        onClick={header.column.getToggleSortingHandler()}
+                                                        style={{
+                                                            cursor: 'pointer',
+                                                        }}
+                                                    >
+                                                        <div className='flex items-center'>
+                                                            {!header.column.getIsSorted() ? (
+                                                                <span className='me-1 text-slate-400'>
+                                                                    <FaSort />
+                                                                </span>
+                                                            ) : header.column.getIsSorted() ===
+                                                              'desc' ? (
+                                                                <span className='me-1 text-slate-400'>
+                                                                    <FaSortDown />
+                                                                </span>
+                                                            ) : (
+                                                                <span className='me-1 text-slate-400'>
+                                                                    <FaSortUp />
+                                                                </span>
+                                                            )}
+                                                            {flexRender(
+                                                                header.column
+                                                                    .columnDef
+                                                                    .header,
+                                                                header.getContext(),
+                                                            )}
+                                                        </div>
+                                                    </Table.Th>
+                                                ),
+                                            )}
+                                        </Table.Tr>
+                                    ))}
+                            </Table.Thead>
+                            <Table.Tbody>
+                                {problemTable.getRowModel().rows.map((row) => (
+                                    <Table.Tr key={row.id}>
+                                        {row.getVisibleCells().map((cell) => (
+                                            <Table.Td key={cell.id}>
+                                                {flexRender(
+                                                    cell.column.columnDef.cell,
+                                                    cell.getContext(),
+                                                )}
+                                            </Table.Td>
                                         ))}
                                     </Table.Tr>
                                 ))}
-                        </Table.Thead>
-                        <Table.Tbody>
-                            {problemTable.getRowModel().rows.map((row) => (
-                                <Table.Tr key={row.id}>
-                                    {row.getVisibleCells().map((cell) => (
-                                        <Table.Td key={cell.id}>
-                                            {flexRender(
-                                                cell.column.columnDef.cell,
-                                                cell.getContext(),
-                                            )}
-                                        </Table.Td>
-                                    ))}
-                                </Table.Tr>
-                            ))}
-                        </Table.Tbody>
-                    </Table>
-                </Grid.Col>
-                <Grid.Col span={6}>
-                    <Title order={4}>Leaderboard</Title>
-                </Grid.Col>
-            </Grid>
-        </Container >
+                            </Table.Tbody>
+                        </Table>
+                    </Grid.Col>
+                    <Grid.Col span={6}>
+                        <Title order={4}>Leaderboard</Title>
+                    </Grid.Col>
+                </Grid>
+            </Flex>
+        </Container>
     );
 }

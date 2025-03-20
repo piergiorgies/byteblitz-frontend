@@ -16,7 +16,6 @@ export default function EditProblemPage() {
     const [problem, setProblem] = useState<Problem | null>(null);
 
     const saveProblem = async (editedProblem: Problem) => {
-
         console.log(editedProblem);
         if (problem == null) return;
 
@@ -30,7 +29,6 @@ export default function EditProblemPage() {
                 message: 'Problem updated succesfully!',
                 color: 'green',
             });
-
         } catch (error: unknown) {
             if (error instanceof HTTPError && error.response.status === 409) {
                 notifications.show({

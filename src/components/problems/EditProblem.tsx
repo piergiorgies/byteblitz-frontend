@@ -46,19 +46,19 @@ function ImageControl() {
     return (
         <RichTextEditor.Control
             onClick={() => {
-                const input = document.createElement("input");
-                input.type = "file";
-                input.accept = "image/*";
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = 'image/*';
 
                 input.onchange = (event) => {
                     const file = (event.target as HTMLInputElement).files?.[0];
 
                     if (file) {
-                        if (!file.type.startsWith("image/")) {
+                        if (!file.type.startsWith('image/')) {
                             showNotification({
-                                title: "Invalid file type",
-                                message: "Only images are allowed",
-                                color: "red",
+                                title: 'Invalid file type',
+                                message: 'Only images are allowed',
+                                color: 'red',
                             });
                             return;
                         }
@@ -75,14 +75,13 @@ function ImageControl() {
 
                 input.click();
             }}
-            aria-label="Insert image"
-            title="Insert image"
+            aria-label='Insert image'
+            title='Insert image'
         >
-            <span className="text-slate-500">
+            <span className='text-slate-500'>
                 <FaImage />
             </span>
         </RichTextEditor.Control>
-
     );
 }
 
@@ -94,17 +93,16 @@ export default function EditProblem({
     savedProblem?: Problem;
 }) {
     const problemTextEditor = useEditor({
-        extensions:
-            [
-                StarterKit,
-                Markdown.configure({
-                    transformPastedText: true,
-                }),
-                Image.configure({
-                    inline: true,
-                    allowBase64: true
-                }),
-            ],
+        extensions: [
+            StarterKit,
+            Markdown.configure({
+                transformPastedText: true,
+            }),
+            Image.configure({
+                inline: true,
+                allowBase64: true,
+            }),
+        ],
         content: savedProblem?.description ?? '',
         immediatelyRender: false,
     });
@@ -175,8 +173,6 @@ export default function EditProblem({
     };
 
     const saveProblem = async (values: typeof problemInfoForm.values) => {
-
-
         console.log('values', values);
         setIsProblemSaving(true);
 
@@ -229,7 +225,6 @@ export default function EditProblem({
             testCases: problemTestCases,
             difficulty: values.difficulty,
         };
-
 
         console.log('problem', problem);
         await onProblemSave(problem);

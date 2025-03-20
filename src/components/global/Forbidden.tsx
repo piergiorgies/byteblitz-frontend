@@ -1,4 +1,4 @@
-import { Alert, Center, Text } from "@mantine/core";
+import { Alert, Center, Text } from '@mantine/core';
 
 export default function Forbidden() {
     return (

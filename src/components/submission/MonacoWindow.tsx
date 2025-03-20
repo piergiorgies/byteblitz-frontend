@@ -1,13 +1,26 @@
-import { Language } from "@/models/Language";
-import api from "@/utils/ky";
-import { Button, Combobox, Flex, useCombobox, Text, Tooltip } from "@mantine/core";
-import { useDebouncedCallback } from "@mantine/hooks";
-import { Editor } from "@monaco-editor/react";
-import { Dispatch, SetStateAction, useCallback, useEffect, useState } from "react";
-import { FaChevronDown, FaUpload } from "react-icons/fa6";
-import { IoCloudDoneOutline } from "react-icons/io5";
-import { MosaicBranch, MosaicWindow } from "react-mosaic-component";
-import { objectToCamel } from "ts-case-convert";
+import { Language } from '@/models/Language';
+import api from '@/utils/ky';
+import {
+    Button,
+    Combobox,
+    Flex,
+    useCombobox,
+    Text,
+    Tooltip,
+} from '@mantine/core';
+import { useDebouncedCallback } from '@mantine/hooks';
+import { Editor } from '@monaco-editor/react';
+import {
+    Dispatch,
+    SetStateAction,
+    useCallback,
+    useEffect,
+    useState,
+} from 'react';
+import { FaChevronDown, FaUpload } from 'react-icons/fa6';
+import { IoCloudDoneOutline } from 'react-icons/io5';
+import { MosaicBranch, MosaicWindow } from 'react-mosaic-component';
+import { objectToCamel } from 'ts-case-convert';
 
 export default function MonacoWindow({
     path,
@@ -50,8 +63,13 @@ export default function MonacoWindow({
             );
             setLanguages(returnedLanguages);
             if (returnedLanguages.length > 0) {
-                const selectedLanguageId = localStorage.getItem('selectedLanguage') ?? '1';
-                setSelectedLanguage(returnedLanguages.find(lang => lang.id.toString() === selectedLanguageId) ?? returnedLanguages[0]);
+                const selectedLanguageId =
+                    localStorage.getItem('selectedLanguage') ?? '1';
+                setSelectedLanguage(
+                    returnedLanguages.find(
+                        (lang) => lang.id.toString() === selectedLanguageId,
+                    ) ?? returnedLanguages[0],
+                );
             }
         } catch (error) {
             console.log(error);
@@ -131,10 +149,9 @@ export default function MonacoWindow({
                 value={code}
                 onChange={(value) => {
                     setSaved(false);
-                    setCode(value || '')
+                    setCode(value || '');
                     saveCode(value || '');
-                }
-                }
+                }}
             />
         </MosaicWindow>
     );
