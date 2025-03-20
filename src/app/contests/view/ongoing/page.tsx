@@ -64,7 +64,8 @@ export default function OngoingContests() {
     };
 
     const handleProblemClick = (id: number) => {
-        router.push(`/submission/${id}`);
+        if (contest == null) return;
+        router.push(`/contests/${contest.id}/submission/${id}`);
     };
 
     useEffect(() => {

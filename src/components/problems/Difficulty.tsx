@@ -1,13 +1,14 @@
 'use client';
 
 import { Complexity } from '@/models/Difficulty';
-import { Badge, Center } from '@mantine/core';
+import { Badge, MantineSize } from '@mantine/core';
 
 type DifficultyProps = {
     difficulty: Complexity;
+    size?: MantineSize | (string & {});
 };
 
-export default function Difficulty({ difficulty }: DifficultyProps) {
+export default function Difficulty({ difficulty, size }: DifficultyProps) {
     return (
         <Badge
             color={
@@ -17,6 +18,7 @@ export default function Difficulty({ difficulty }: DifficultyProps) {
                       ? 'orange'
                       : 'red'
             }
+            size={size}
         >
             {difficulty}
         </Badge>

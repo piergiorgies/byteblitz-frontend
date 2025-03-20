@@ -6,7 +6,7 @@ import ProblemSubmission from '@/components/submission/ProblemSubmission';
 
 export default function SubmissionPage() {
     const params = useParams();
-    const { problemId } = params;
+    const { problemId, contestId } = params;
 
     const submitSolution = async (
         code: string,
@@ -21,6 +21,7 @@ export default function SubmissionPage() {
                     submitted_code: code,
                     notes: '',
                     is_pretest_run: pretest,
+                    contest_id: contestId,
                 },
             });
         } catch (error) {
@@ -32,7 +33,7 @@ export default function SubmissionPage() {
         <ProblemSubmission
             problemId={Number(problemId)}
             submitSolution={submitSolution}
-            goBackUrl='/'
+            goBackUrl='/contests'
         />
     );
 }
