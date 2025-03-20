@@ -108,7 +108,7 @@ export default function SubmissionTable({
 
             if (
                 pagination.pageIndex * pagination.pageSize >=
-                    submissions.count &&
+                submissions.count &&
                 pagination.pageIndex !== 0
             ) {
                 setPagination({
@@ -134,13 +134,6 @@ export default function SubmissionTable({
 
     const columns = useMemo(
         () => [
-            {
-                accessorKey: 'id',
-                header: '#',
-                cell: (info: CellContext<ProblemSubmission, number>) => (
-                    <Text>{info.getValue()}</Text>
-                ),
-            },
             {
                 accessorKey: 'submission_result_id',
                 header: 'Result',
@@ -177,6 +170,13 @@ export default function SubmissionTable({
                         : 'N/A';
                     return <Text>{formattedDate}</Text>;
                 },
+            },
+            {
+                accessorKey: 'score',
+                header: 'Score',
+                cell: (info: CellContext<ProblemSubmission, number>) => (
+                    <Text>{info.getValue()} pts</Text>
+                ),
             },
         ],
         [submissionResults],
@@ -215,7 +215,7 @@ export default function SubmissionTable({
                                                 <FaSort />
                                             </span>
                                         ) : header.column.getIsSorted() ===
-                                          'desc' ? (
+                                            'desc' ? (
                                             <span className='me-1 text-slate-400'>
                                                 <FaSortDown />
                                             </span>

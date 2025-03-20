@@ -6,9 +6,11 @@ import {
 } from '@/models/Submission';
 import api from '@/utils/ky';
 import {
+    Blockquote,
     Box,
     Button,
     Card,
+    Container,
     Flex,
     FloatingIndicator,
     Indicator,
@@ -19,7 +21,7 @@ import {
     Text,
 } from '@mantine/core';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { FaCode, FaPlay, FaRegPaperPlane } from 'react-icons/fa6';
+import { FaCode, FaPlay, FaRegPaperPlane, FaXmark } from 'react-icons/fa6';
 import { MosaicBranch, MosaicWindow } from 'react-mosaic-component';
 import useWebSocket from 'react-use-websocket';
 import SubmissionResultIcon from './SubmissionResult';
@@ -62,21 +64,14 @@ export default function ResultsWindow({
         if (lastMessage !== null) {
             try {
                 const message = JSON.parse(lastMessage.data);
-                console.log(message);
                 if (message.type && message.type === 'total') {
                     const totalResult: TotalResult = message;
                     setResult(totalResult);
                 } else {
                     const submission: TestCaseSubmission = message;
                     if (submission.is_pretest_run) {
-                        if (activeTab === 'second') {
-                            setActiveTab('first');
-                        }
                         setPretestResults((prev) => [...prev, submission]);
                     } else {
-                        if (activeTab === 'first') {
-                            setActiveTab('second');
-                        }
                         setSumbissions((prev) => [...prev, submission]);
                     }
                 }
@@ -108,9 +103,12 @@ export default function ResultsWindow({
     }, []);
 
     const [rootRef, setRootRef] = useState<HTMLDivElement | null>(null);
-    const [value, setValue] = useState<string | null>(
-        testCases ? `case-${testCases[0].number}` : null,
-    );
+    const [value, setValue] = useState<string | null>();
+
+    useEffect(() => {
+        setValue(testCases ? `case-${testCases[0].number}` : null);
+    }, [testCases]);
+
     const controlsRefs = useRef<Record<string, HTMLButtonElement | null>>({});
 
     const setControlRef = (val: string) => (node: HTMLButtonElement | null) => {
@@ -161,12 +159,18 @@ export default function ResultsWindow({
         setSumbissions([]);
         setResult(null);
         handleSubmit(code, false);
+        if (activeTab === 'first') {
+            setActiveTab('second');
+        }
     };
 
     const submitCodeExample = async () => {
         setPretestResults([]);
         setResult(null);
         handleExampleSubmit(code, true);
+        if (activeTab === 'second') {
+            setActiveTab('first');
+        }
     };
 
     return (
@@ -260,8 +264,8 @@ export default function ResultsWindow({
                                             target={
                                                 value
                                                     ? controlsRefs.current[
-                                                          value
-                                                      ]
+                                                    value
+                                                    ]
                                                     : null
                                             }
                                             parent={rootRef}
@@ -270,7 +274,7 @@ export default function ResultsWindow({
                                     </Tabs.List>
 
                                     {testCases.map((test, index) => {
-                                        const result = pretestResults.find(
+                                        const partialResult = pretestResults.find(
                                             (submission) =>
                                                 submission.number ===
                                                 test.number,
@@ -283,12 +287,17 @@ export default function ResultsWindow({
                                                 px='md'
                                             >
                                                 <ScrollArea>
-                                                    {result && (
+                                                    {partialResult && (
                                                         <Box mb='md'>
                                                             {getResultString(
-                                                                result,
+                                                                partialResult,
                                                             )}
                                                         </Box>
+                                                    )}
+                                                    {(partialResult?.notes && partialResult.notes !== '') || (result && result.is_pretest_run && result.result !== '') && (
+                                                        <Blockquote c={'red'} color='red'>
+                                                            {partialResult?.notes ?? result?.result}
+                                                        </Blockquote>
                                                     )}
                                                     <Box>
                                                         <Text
@@ -302,7 +311,7 @@ export default function ResultsWindow({
                                                             p='xs'
                                                             style={{
                                                                 borderRadius:
-                                                                    '10px',
+                                                                    '6px',
                                                             }}
                                                         >
                                                             {test.input}
@@ -322,13 +331,13 @@ export default function ResultsWindow({
                                                             p='xs'
                                                             style={{
                                                                 borderRadius:
-                                                                    '10px',
+                                                                    '6px',
                                                             }}
                                                         >
                                                             {test.output}
                                                         </Box>
                                                     </Box>
-                                                    {result && (
+                                                    {partialResult && partialResult.notes === '' && (
                                                         <Box mt='md'>
                                                             <Text
                                                                 size='sm'
@@ -341,10 +350,10 @@ export default function ResultsWindow({
                                                                 p='xs'
                                                                 style={{
                                                                     borderRadius:
-                                                                        '10px',
+                                                                        '6px',
                                                                 }}
                                                             >
-                                                                {result.output}
+                                                                {partialResult.output}
                                                             </Box>
                                                         </Box>
                                                     )}
@@ -361,7 +370,7 @@ export default function ResultsWindow({
                         <Flex direction='column' h='100%'>
                             <ScrollArea h='95%' w='100%'>
                                 <Flex h='100%' p='xs'>
-                                    {submissions.length === 0 ? (
+                                    {submissions.length === 0 && result === null ? (
                                         <Flex
                                             direction='column'
                                             justify='center'
@@ -391,7 +400,6 @@ export default function ResultsWindow({
                                             <Table.Tbody>
                                                 {submissions.map(
                                                     (submission) => (
-                                                        console.log(submission),
                                                         (
                                                             <Table.Tr
                                                                 key={
@@ -436,34 +444,36 @@ export default function ResultsWindow({
                                         </Table>
                                     )}
                                 </Flex>
-
-                                {result && (
-                                    <Card
-                                        shadow='sm'
-                                        p='lg'
-                                        radius='md'
-                                        withBorder
-                                        bg={
-                                            result.result &&
-                                            result.result !== ''
-                                                ? 'red-100'
-                                                : 'white'
-                                        }
-                                    >
-                                        <Text w={700} size='lg'>
-                                            Total Result
-                                        </Text>
-                                        <Text size='md' mt='xs'>
-                                            Score: <b>{result.score}</b>
-                                        </Text>
-                                        {result.result &&
-                                            result.result !== '' && (
-                                                <Text c='red' size='md' mt='xs'>
-                                                    Error: {result.result}
-                                                </Text>
-                                            )}
-                                    </Card>
-                                )}
+                                <Container h='100%' p='xs'>
+                                    {result && result.result &&
+                                        result.result !== '' && (
+                                            <Blockquote c='red' color='red'>
+                                                {result.result}
+                                            </Blockquote>
+                                        )}
+                                    <Space h='md' />
+                                    {result && !result.is_pretest_run && (
+                                        <Card
+                                            shadow='sm'
+                                            p='lg'
+                                            radius='xs'
+                                            withBorder
+                                            bg={
+                                                result.result &&
+                                                    result.result !== ''
+                                                    ? 'red-100'
+                                                    : 'white'
+                                            }
+                                        >
+                                            <Text w={700} size='lg'>
+                                                Total Result
+                                            </Text>
+                                            <Text size='md' mt='xs'>
+                                                Score: <b>{result.score}</b>
+                                            </Text>
+                                        </Card>
+                                    )}
+                                </Container>
                             </ScrollArea>
                         </Flex>
                     </Tabs.Panel>

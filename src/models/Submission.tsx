@@ -31,4 +31,5 @@ export interface TotalResult {
     submission_id: number;
     score: number;
     result: string;
+    is_pretest_run: boolean;
 }
