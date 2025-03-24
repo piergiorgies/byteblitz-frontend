@@ -64,7 +64,7 @@ export default function ProblemWindow({
                             <Center>
                                 <Title fs="italic">{problemInfo?.title ?? ''}</Title>
                             </Center>
-                            <Divider my='xs'/>
+                            <Divider my='xs' />
                             <Box>
                                 <RichTextEditor mt='md' style={{ border: 0 }} editor={problemTextEditor} mih='30em'>
                                     <RichTextEditor.Content />

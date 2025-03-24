@@ -18,7 +18,7 @@ import 'react-mosaic-component/react-mosaic-component.css';
 import api from '@/utils/ky';
 import { MosaicBranch } from 'react-mosaic-component';
 import { useParams } from 'next/navigation';
-import { Problem } from '@/models/Problem';
+import { Problem, ProblemTestCase } from '@/models/Problem';
 import { objectToCamel } from 'ts-case-convert';
 import { Language } from '@/models/Language';
 

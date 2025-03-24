@@ -31,7 +31,7 @@ export default function ResultsWindow({
     } | null>(null);
 
     const [activeTab, setActiveTab] = useState<string | null>('first');
-    const websocketUrl = `ws://localhost:9000/general/ws`;
+    const websocketUrl = `ws://localhost:9010/general/ws`;
     const { sendMessage, lastMessage, readyState } = useWebSocket(websocketUrl, {
         shouldReconnect: () => true,
         reconnectAttempts: 10,
