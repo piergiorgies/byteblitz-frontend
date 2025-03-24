@@ -13,12 +13,6 @@ const Mosaic = dynamic(
         ssr: false,
     },
 );
-const MosaicWindow = dynamic(
-    () => import('react-mosaic-component').then((mod) => mod.MosaicWindow),
-    {
-        ssr: false,
-    },
-);
 
 import 'react-mosaic-component/react-mosaic-component.css';
 import api from '@/utils/ky';
@@ -31,6 +25,8 @@ import { Language } from '@/models/Language';
 import ProblemWindow from '@/components/submission/ProblemWindow';
 import MonacoWindow from '@/components/submission/MonacoWindow';
 import ResultsWindow from '@/components/submission/ResultWindow';
+import { ActionIcon, Flex, Tooltip } from '@mantine/core';
+import { FaRotateLeft } from 'react-icons/fa6';
 
 export default function Submission() {
     const params = useParams();
@@ -95,21 +91,39 @@ export default function Submission() {
         ),
     };
 
+    const defaultLayout = {
+        direction: 'row',
+        first: '0',
+        second: {
+            direction: 'column',
+            first: '1',
+            second: '2',
+        },
+        splitPercentage: 45,
+    };
+    const savedWindowsLayoutJson = localStorage.getItem('windowLayout');
+    const [savedWindowsLayout, setSavedWindowsLayout] = useState(savedWindowsLayoutJson != null ? JSON.parse(savedWindowsLayoutJson) : defaultLayout);
+
+    const resetDefaultWindowLayout = () => {
+        setSavedWindowsLayout(defaultLayout);
+        localStorage.setItem('windowLayout', JSON.stringify(defaultLayout));
+    }
+
     return (
-        <div style={{ width: '100%', height: 'calc(100vh - 100px)' }}>
+        <Flex className='w-100 relative' style={{ height: 'calc(100vh - 60px)' }}>
+            <Flex className='absolute bottom-4 right-4 z-10'>
+                <Tooltip label='Reset default layout' position='left' withArrow>
+                    <ActionIcon variant='light' radius='xl' size='xl' onClick={resetDefaultWindowLayout}>
+                        <FaRotateLeft />
+                    </ActionIcon>
+                </Tooltip>
+            </Flex>
             <Mosaic
                 renderTile={(count, path) => windows[count.toString()](path)}
-                initialValue={{
-                    direction: 'row',
-                    first: '0',
-                    second: {
-                        direction: 'column',
-                        first: '1',
-                        second: '2',
-                    },
-                    splitPercentage: 40,
-                }}
+                value={savedWindowsLayout}
+                initialValue={savedWindowsLayout}
+                onChange={(layout) => localStorage.setItem('windowLayout', JSON.stringify(layout))}
             />
-        </div>
+        </Flex>
     );
 }

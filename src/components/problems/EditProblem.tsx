@@ -97,7 +97,9 @@ export default function EditProblem({
         extensions:
             [
                 StarterKit,
-                Markdown,
+                Markdown.configure({
+                    transformPastedText: true,
+                }),
                 Image.configure({
                     inline: true,
                     allowBase64: true
@@ -154,7 +156,7 @@ export default function EditProblem({
     const addTestCase = () => {
         setProblemTestCases((prev) => [
             ...prev,
-            { input: '', output: '', isPretest: false, points: 0 },
+            { input: '', output: '', isPretest: false, points: 0, number: 0 },
         ]);
     };
     const removeTestCase = (index: number) => {
@@ -265,6 +267,7 @@ export default function EditProblem({
                 output: testCaseFiles.results[caseName].out ?? '',
                 points: singlePoints,
                 isPretest: false,
+                number: 0,
             });
         }
 
