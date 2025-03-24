@@ -95,14 +95,17 @@ export default function EditProblem({
     savedProblem?: Problem;
 }) {
     const problemTextEditor = useEditor({
-        extensions: [
-            StarterKit,
-            Markdown,
-            Image.configure({
-                inline: true,
-                allowBase64: true,
-            }),
-        ],
+        extensions:
+            [
+                StarterKit,
+                Markdown.configure({
+                    transformPastedText: true,
+                }),
+                Image.configure({
+                    inline: true,
+                    allowBase64: true
+                }),
+            ],
         content: savedProblem?.description ?? '',
         immediatelyRender: false,
     });

@@ -9,12 +9,6 @@ const Mosaic = dynamic(
         ssr: false,
     },
 );
-const MosaicWindow = dynamic(
-    () => import('react-mosaic-component').then((mod) => mod.MosaicWindow),
-    {
-        ssr: false,
-    },
-);
 
 import 'react-mosaic-component/react-mosaic-component.css';
 import api from '@/utils/ky';
@@ -120,22 +114,10 @@ export default function Submission() {
     };
 
     return (
-        <Flex
-            className='w-100 relative'
-            style={{ height: 'calc(100vh - 60px)' }}
-        >
-            <Flex className='absolute bottom-4 left-4 z-10'>
-                <Tooltip
-                    label='Reset default layout'
-                    position='right'
-                    withArrow
-                >
-                    <ActionIcon
-                        variant='light'
-                        radius='xl'
-                        size='xl'
-                        onClick={resetDefaultWindowLayout}
-                    >
+        <Flex className='w-100 relative' style={{ height: 'calc(100vh - 60px)' }}>
+            <Flex className='absolute bottom-4 right-4 z-10'>
+                <Tooltip label='Reset default layout' position='left' withArrow>
+                    <ActionIcon variant='light' radius='xl' size='xl' onClick={resetDefaultWindowLayout}>
                         <FaRotateLeft />
                     </ActionIcon>
                 </Tooltip>
