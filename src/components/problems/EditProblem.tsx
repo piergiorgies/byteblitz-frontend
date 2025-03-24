@@ -3,6 +3,7 @@
 import {
     Box,
     Button,
+    Center,
     Checkbox,
     Divider,
     Flex,
@@ -10,6 +11,7 @@ import {
     NumberInput,
     Select,
     SimpleGrid,
+    Space,
     Table,
     Text,
     Textarea,
@@ -46,19 +48,19 @@ function ImageControl() {
     return (
         <RichTextEditor.Control
             onClick={() => {
-                const input = document.createElement("input");
-                input.type = "file";
-                input.accept = "image/*";
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = 'image/*';
 
                 input.onchange = (event) => {
                     const file = (event.target as HTMLInputElement).files?.[0];
 
                     if (file) {
-                        if (!file.type.startsWith("image/")) {
+                        if (!file.type.startsWith('image/')) {
                             showNotification({
-                                title: "Invalid file type",
-                                message: "Only images are allowed",
-                                color: "red",
+                                title: 'Invalid file type',
+                                message: 'Only images are allowed',
+                                color: 'red',
                             });
                             return;
                         }
@@ -75,14 +77,13 @@ function ImageControl() {
 
                 input.click();
             }}
-            aria-label="Insert image"
-            title="Insert image"
+            aria-label='Insert image'
+            title='Insert image'
         >
-            <span className="text-slate-500">
+            <span className='text-slate-500'>
                 <FaImage />
             </span>
         </RichTextEditor.Control>
-
     );
 }
 
@@ -165,7 +166,7 @@ export default function EditProblem({
     const updateTestCase = (
         index: number,
         key: keyof ProblemTestCase,
-        value: string | number,
+        value: string | number | boolean,
     ) => {
         setProblemTestCases((prev) =>
             prev.map((testCase, i) =>
@@ -175,8 +176,6 @@ export default function EditProblem({
     };
 
     const saveProblem = async (values: typeof problemInfoForm.values) => {
-
-
         console.log('values', values);
         setIsProblemSaving(true);
 
@@ -229,7 +228,6 @@ export default function EditProblem({
             testCases: problemTestCases,
             difficulty: values.difficulty,
         };
-
 
         console.log('problem', problem);
         await onProblemSave(problem);
@@ -490,6 +488,7 @@ export default function EditProblem({
                         <Table.Th>Input</Table.Th>
                         <Table.Th>Output</Table.Th>
                         <Table.Th>Points</Table.Th>
+                        <Table.Th>Pretest?</Table.Th>
                     </Table.Tr>
                 </Table.Thead>
                 <Table.Tbody>
@@ -543,6 +542,20 @@ export default function EditProblem({
                                         updateTestCase(index, 'points', value)
                                     }
                                 />
+                            </Table.Td>
+                            <Table.Td>
+                                <Center>
+                                    <Checkbox
+                                        checked={testCase.isPretest}
+                                        onChange={(event) =>
+                                            updateTestCase(
+                                                index,
+                                                'isPretest',
+                                                event.currentTarget.checked,
+                                            )
+                                        }
+                                    />
+                                </Center>
                             </Table.Td>
                         </Table.Tr>
                     ))}

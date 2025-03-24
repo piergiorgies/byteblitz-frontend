@@ -35,8 +35,7 @@ export default function ProblemWindow({
     });
 
     const handleTabChange = (value: string | null) => {
-        if (value)
-            setActiveTab(value);
+        if (value) setActiveTab(value);
     };
 
     return (

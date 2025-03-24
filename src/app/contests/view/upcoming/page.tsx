@@ -108,11 +108,11 @@ export default function ViewContestPage() {
                 message: data.message,
                 color: 'green',
             });
-        }
-        catch (error) {
+        } catch (error) {
             if (error instanceof HTTPError) {
                 const errorData = await error.response.json();
-                const errorMessage = errorData.message || 'Failed to register for contest';
+                const errorMessage =
+                    errorData.message || 'Failed to register for contest';
                 notifications.show({
                     title: 'Error',
                     message: errorMessage,
@@ -121,7 +121,6 @@ export default function ViewContestPage() {
             }
         }
     };
-
 
     return forbidden ? (
         <Forbidden />
@@ -156,14 +155,21 @@ export default function ViewContestPage() {
 
             <ContestHeader
                 title={contest?.name || ''}
-                startDatetime={contest?.start_datetime ? new Date(contest?.start_datetime).toISOString() : undefined}
-                endDatetime={contest?.end_datetime ? new Date(contest?.end_datetime).toISOString() : undefined}
+                startDatetime={
+                    contest?.start_datetime
+                        ? new Date(contest?.start_datetime).toISOString()
+                        : undefined
+                }
+                endDatetime={
+                    contest?.end_datetime
+                        ? new Date(contest?.end_datetime).toISOString()
+                        : undefined
+                }
                 isRegistratioOpen={contest?.is_registration_open || false}
                 handleUserRegistration={handleUserRegistration}
             />
 
             <Space h='xl' />
-
 
             <Blockquote my={4} color='gray' icon={<FaInfo />} iconSize={30}>
                 {contest?.description}
@@ -180,8 +186,8 @@ export default function ViewContestPage() {
                     <Text size='md'>
                         Contest leaderboard will be available here
                     </Text>
-                </Grid.Col >
-            </Grid >
-        </Container >
+                </Grid.Col>
+            </Grid>
+        </Container>
     );
 }
