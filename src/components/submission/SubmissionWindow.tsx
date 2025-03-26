@@ -13,12 +13,14 @@ import { use, useCallback, useEffect, useMemo, useState } from 'react';
 import {
     Box,
     Button,
+    Center,
     Divider,
     Flex,
     Pagination,
     Select,
     Table,
     Text,
+    Title,
     Tooltip,
 } from '@mantine/core';
 import dayjs from 'dayjs';
@@ -32,7 +34,7 @@ type SubmissionTableProps = {
     setCode: (code: string) => void;
 };
 
-export default function SubmissionTable({
+export default function SubmissionWindow({
     problemId,
     setCode,
 }: SubmissionTableProps) {
@@ -198,7 +200,10 @@ export default function SubmissionTable({
         rowCount,
     });
     return (
-        <Box>
+        <Box m={10}>
+            <Center>
+                <Title p={10} fs='italic'>Submissions</Title>
+            </Center>
             <Table highlightOnHover>
                 <Table.Thead>
                     {table.getHeaderGroups().map((headerGroup) => (

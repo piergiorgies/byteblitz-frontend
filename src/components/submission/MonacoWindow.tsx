@@ -7,6 +7,7 @@ import {
     useCombobox,
     Text,
     Tooltip,
+    Container,
 } from '@mantine/core';
 import { useDebouncedCallback } from '@mantine/hooks';
 import { Editor } from '@monaco-editor/react';
@@ -19,17 +20,14 @@ import {
 } from 'react';
 import { FaChevronDown, FaUpload } from 'react-icons/fa6';
 import { IoCloudDoneOutline } from 'react-icons/io5';
-import { MosaicBranch, MosaicWindow } from 'react-mosaic-component';
 import { objectToCamel } from 'ts-case-convert';
 
 export default function MonacoWindow({
-    path,
     selectedLanguage,
     code,
     setCode,
     setSelectedLanguage,
 }: {
-    path: MosaicBranch[];
     selectedLanguage: Language | null;
     code: string;
     setCode: (code: string) => void;
@@ -81,11 +79,12 @@ export default function MonacoWindow({
     }, [getLanguages]);
 
     return (
-        <MosaicWindow additionalControls={[]} title='Code' path={path}>
+        <Container>
             <Flex bg='white' justify='space-between' px='xs'>
                 <Combobox
                     store={combobox}
                     width={250}
+
                     position='bottom-start'
                     onOptionSubmit={(value) => {
                         setSelectedLanguage(
@@ -143,16 +142,23 @@ export default function MonacoWindow({
                 </Flex>
             </Flex>
 
-            <Editor
-                theme='vs-dark'
-                language={selectedLanguage?.code ?? 'cpp'}
-                value={code}
-                onChange={(value) => {
-                    setSaved(false);
-                    setCode(value || '');
-                    saveCode(value || '');
-                }}
-            />
-        </MosaicWindow>
+            <div style={{ height: 'calc(100vh - 200px)', marginTop: 10 }}>
+                <Editor
+                    height="100%"
+                    theme="vs-dark"
+                    language={selectedLanguage?.code ?? 'cpp'}
+                    value={code}
+                    onChange={(value) => {
+                        setSaved(false);
+                        setCode(value || '');
+                        saveCode(value || '');
+                    }}
+                    options={{
+                        fontSize: 16,
+                        minimap: { enabled: false },
+                    }}
+                />
+            </div>
+        </Container >
     );
 }
