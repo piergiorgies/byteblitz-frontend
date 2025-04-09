@@ -15,25 +15,18 @@ import {
     Dispatch,
     SetStateAction,
     useCallback,
+    useContext,
     useEffect,
     useState,
 } from 'react';
 import { FaChevronDown, FaUpload } from 'react-icons/fa6';
 import { IoCloudDoneOutline } from 'react-icons/io5';
 import { objectToCamel } from 'ts-case-convert';
+import { SubmissionContext } from '../contexts/SubmissionContext';
 
-export default function MonacoWindow({
-    selectedLanguage,
-    code,
-    setCode,
-    setSelectedLanguage,
-}: {
-    selectedLanguage: Language | null;
-    code: string;
-    setCode: (code: string) => void;
-    setSelectedLanguage: Dispatch<SetStateAction<Language | null>>;
-}) {
+export default function MonacoWindow() {
     const [languages, setLanguages] = useState<Language[]>([]);
+    const { code, setCode, selectedLanguage, setSelectedLanguage } = useContext(SubmissionContext);
 
     const saveCode = useDebouncedCallback((code: string) => {
         localStorage.setItem('savedCode', code);
@@ -84,7 +77,6 @@ export default function MonacoWindow({
                 <Combobox
                     store={combobox}
                     width={250}
-
                     position='bottom-start'
                     onOptionSubmit={(value) => {
                         setSelectedLanguage(
@@ -144,8 +136,8 @@ export default function MonacoWindow({
 
             <div style={{ height: 'calc(100vh - 200px)', marginTop: 10 }}>
                 <Editor
-                    height="100%"
-                    theme="vs-dark"
+                    height='100%'
+                    theme='vs-dark'
                     language={selectedLanguage?.code ?? 'cpp'}
                     value={code}
                     onChange={(value) => {
@@ -159,6 +151,6 @@ export default function MonacoWindow({
                     }}
                 />
             </div>
-        </Container >
+        </Container>
     );
 }

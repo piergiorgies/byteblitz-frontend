@@ -1,25 +1,29 @@
-import { ProblemTestCase } from "@/models/Problem";
-import { Blockquote, Box, FloatingIndicator, Indicator, ScrollArea, Tabs, Text } from "@mantine/core";
-import { useEffect, useRef, useState } from "react";
+import { ProblemTestCase } from '@/models/Problem';
+import {
+    Blockquote,
+    Box,
+    FloatingIndicator,
+    Indicator,
+    ScrollArea,
+    Tabs,
+    Text,
+} from '@mantine/core';
+import { useContext, useEffect, useRef, useState } from 'react';
 import classes from './ResultWindow.module.css';
-import { TestCaseSubmission, TotalResult } from "@/models/Submission";
-
+import { TestCaseSubmission, TotalResult } from '@/models/Submission';
+import { SubmissionContext } from '../contexts/SubmissionContext';
 
 export default function PretestWindow({
     testCases,
 }: {
     testCases: ProblemTestCase[] | null;
 }) {
-
     useEffect(() => {
         testCases?.sort((a, b) => a.number - b.number);
     }, [testCases]);
 
-    const [pretestResults, setPretestResults] = useState<TestCaseSubmission[]>(
-        [],
-    );
+    const { pretestResults, result } = useContext(SubmissionContext);
 
-    const [result, setResult] = useState<TotalResult | null>(null);
 
     const [rootRef, setRootRef] = useState<HTMLDivElement | null>(null);
     const [value, setValue] = useState<string | null>();
@@ -73,28 +77,15 @@ export default function PretestWindow({
     return (
         <Box>
             {testCases && (
-                <Tabs
-                    variant='none'
-                    value={value}
-                    onChange={setValue}
-                    py={10}
-                >
-                    <Tabs.List
-                        ref={setRootRef}
-                        className={classes.list}
-                        p={8}
-                    >
+                <Tabs variant='none' value={value} onChange={setValue} py={10}>
+                    <Tabs.List ref={setRootRef} className={classes.list} p={8}>
                         {testCases.map((test, index) => {
-                            const subResult =
-                                pretestResults.find(
-                                    (submission) =>
-                                        submission.number ===
-                                        test.number,
-                                );
+                            const subResult = pretestResults.find(
+                                (submission) =>
+                                    submission.number === test.number,
+                            );
                             const color =
-                                subResult?.result_id === 1
-                                    ? 'green'
-                                    : 'red';
+                                subResult?.result_id === 1 ? 'green' : 'red';
 
                             return (
                                 <Indicator
@@ -104,9 +95,7 @@ export default function PretestWindow({
                                     ml={10}
                                     p={2}
                                     color={color}
-                                    disabled={
-                                        subResult === undefined
-                                    }
+                                    disabled={subResult === undefined}
                                 >
                                     <Tabs.Tab
                                         value={`case-${test.number}`}
@@ -122,13 +111,7 @@ export default function PretestWindow({
                         })}
 
                         <FloatingIndicator
-                            target={
-                                value
-                                    ? controlsRefs.current[
-                                    value
-                                    ]
-                                    : null
-                            }
+                            target={value ? controlsRefs.current[value] : null}
                             parent={rootRef}
                             className={classes.indicator}
                         />
@@ -136,9 +119,7 @@ export default function PretestWindow({
 
                     {testCases.map((test, index) => {
                         const partialResult = pretestResults.find(
-                            (submission) =>
-                                submission.number ===
-                                test.number,
+                            (submission) => submission.number === test.number,
                         );
 
                         return (
@@ -150,29 +131,28 @@ export default function PretestWindow({
                                 <ScrollArea>
                                     {partialResult && (
                                         <Box mb='md'>
-                                            {getResultString(
-                                                partialResult,
-                                            )}
+                                            {getResultString(partialResult)}
                                         </Box>
                                     )}
-                                    {((partialResult?.notes != null && partialResult.notes !== '') || (result && result.is_pretest_run && result.result !== '')) && (
+                                    {((partialResult?.notes != null &&
+                                        partialResult.notes !== '') ||
+                                        (result &&
+                                            result.is_pretest_run &&
+                                            result.result !== '')) && (
                                         <Blockquote c={'red'} color='red'>
-                                            {partialResult?.notes ?? result?.result}
+                                            {partialResult?.notes ??
+                                                result?.result}
                                         </Blockquote>
                                     )}
                                     <Box>
-                                        <Text
-                                            size='sm'
-                                            c='gray'
-                                        >
+                                        <Text size='sm' c='gray'>
                                             Input =
                                         </Text>
                                         <Box
                                             bg='gray.1'
                                             p='xs'
                                             style={{
-                                                borderRadius:
-                                                    '6px',
+                                                borderRadius: '6px',
                                             }}
                                         >
                                             {test.input}
@@ -180,10 +160,7 @@ export default function PretestWindow({
                                     </Box>
 
                                     <Box mt='md'>
-                                        <Text
-                                            size='sm'
-                                            c='gray'
-                                        >
+                                        <Text size='sm' c='gray'>
                                             Target =
                                         </Text>
 
@@ -191,33 +168,29 @@ export default function PretestWindow({
                                             bg='gray.1'
                                             p='xs'
                                             style={{
-                                                borderRadius:
-                                                    '6px',
+                                                borderRadius: '6px',
                                             }}
                                         >
                                             {test.output}
                                         </Box>
                                     </Box>
-                                    {partialResult && partialResult.notes === '' && (
-                                        <Box mt='md'>
-                                            <Text
-                                                size='sm'
-                                                c='gray'
-                                            >
-                                                Result =
-                                            </Text>
-                                            <Box
-                                                bg='gray.1'
-                                                p='xs'
-                                                style={{
-                                                    borderRadius:
-                                                        '6px',
-                                                }}
-                                            >
-                                                {partialResult.output}
+                                    {partialResult &&
+                                        partialResult.notes === '' && (
+                                            <Box mt='md'>
+                                                <Text size='sm' c='gray'>
+                                                    Result =
+                                                </Text>
+                                                <Box
+                                                    bg='gray.1'
+                                                    p='xs'
+                                                    style={{
+                                                        borderRadius: '6px',
+                                                    }}
+                                                >
+                                                    {partialResult.output}
+                                                </Box>
                                             </Box>
-                                        </Box>
-                                    )}
+                                        )}
                                 </ScrollArea>
                             </Tabs.Panel>
                         );
@@ -225,5 +198,5 @@ export default function PretestWindow({
                 </Tabs>
             )}
         </Box>
-    )
+    );
 }

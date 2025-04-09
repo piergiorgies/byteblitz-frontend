@@ -110,7 +110,7 @@ export default function SubmissionWindow({
 
             if (
                 pagination.pageIndex * pagination.pageSize >=
-                submissions.count &&
+                    submissions.count &&
                 pagination.pageIndex !== 0
             ) {
                 setPagination({
@@ -202,7 +202,9 @@ export default function SubmissionWindow({
     return (
         <Box m={10}>
             <Center>
-                <Title p={10} fs='italic'>Submissions</Title>
+                <Title p={10} fs='italic'>
+                    Submissions
+                </Title>
             </Center>
             <Table highlightOnHover>
                 <Table.Thead>
@@ -220,7 +222,7 @@ export default function SubmissionWindow({
                                                 <FaSort />
                                             </span>
                                         ) : header.column.getIsSorted() ===
-                                            'desc' ? (
+                                          'desc' ? (
                                             <span className='me-1 text-slate-400'>
                                                 <FaSortDown />
                                             </span>

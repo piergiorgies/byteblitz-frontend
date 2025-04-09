@@ -28,8 +28,19 @@ const master_layout = {
                 type: 'tabset',
                 weight: 50,
                 children: [
-                    { type: 'tab', name: 'Problem', component: 'ProblemWindow', enableClose: false, enablePopoutOverlay: true },
-                    { type: 'tab', name: 'Submissions', component: 'SubmissionWindow', enableClose: false },
+                    {
+                        type: 'tab',
+                        name: 'Problem',
+                        component: 'ProblemWindow',
+                        enableClose: false,
+                        enablePopoutOverlay: true,
+                    },
+                    {
+                        type: 'tab',
+                        name: 'Submissions',
+                        component: 'SubmissionWindow',
+                        enableClose: false,
+                    },
                 ],
             },
             {
@@ -39,14 +50,31 @@ const master_layout = {
                     {
                         type: 'tabset',
                         weight: 50,
-                        children: [{ type: 'tab', name: 'Code', component: 'MonacoWindow', enableClose: false }],
+                        children: [
+                            {
+                                type: 'tab',
+                                name: 'Code',
+                                component: 'MonacoWindow',
+                                enableClose: false,
+                            },
+                        ],
                     },
                     {
                         type: 'tabset',
                         weight: 50,
                         children: [
-                            { type: 'tab', name: 'Test Case', component: 'PretestWindow', enableClose: false },
-                            { type: 'tab', name: 'Results', component: 'ResultsWindow', enableClose: false }
+                            {
+                                type: 'tab',
+                                name: 'Test Case',
+                                component: 'PretestWindow',
+                                enableClose: false,
+                            },
+                            {
+                                type: 'tab',
+                                name: 'Results',
+                                component: 'ResultsWindow',
+                                enableClose: false,
+                            },
                         ],
                     },
                 ],
@@ -58,7 +86,9 @@ const master_layout = {
 export default function Submission() {
     const params = useParams();
     const [problemInfo, setProblemInfo] = useState<Problem | null>(null);
-    const [selectedLanguage, setSelectedLanguage] = useState<Language | null>(null);
+    const [selectedLanguage, setSelectedLanguage] = useState<Language | null>(
+        null,
+    );
     const [code, setCode] = useState<string>('');
     const [model, setModel] = useState<Model | null>(null);
 
@@ -73,7 +103,9 @@ export default function Submission() {
 
                 // Attempt to load the model from localStorage
                 const savedLayout = localStorage.getItem('layout');
-                const newModel = savedLayout ? Model.fromJson(JSON.parse(savedLayout)) : Model.fromJson(master_layout);
+                const newModel = savedLayout
+                    ? Model.fromJson(JSON.parse(savedLayout))
+                    : Model.fromJson(master_layout);
                 setModel(newModel);
             } catch (error) {
                 console.error('Failed to fetch problem info:', error);
@@ -113,21 +145,12 @@ export default function Submission() {
         }
         if (component === 'MonacoWindow') {
             return (
-                <MonacoWindow
-                    selectedLanguage={selectedLanguage}
-                    setSelectedLanguage={setSelectedLanguage}
-                    code={code}
-                    setCode={setCode}
-                />
+                <MonacoWindow/>
             );
         }
         if (component === 'ResultsWindow') {
             return (
-                <ResultsWindow
-                    code={code}
-                    handleSubmit={handleSubmit}
-                    handleExampleSubmit={handleSubmit}
-                />
+                <ResultsWindow/>
             );
         }
 
@@ -142,11 +165,7 @@ export default function Submission() {
         }
 
         if (component === 'PretestWindow') {
-            return (
-                <PretestWindow
-                    testCases={problemInfo?.testCases ?? []}
-                />
-            );
+            return <PretestWindow testCases={problemInfo?.testCases ?? []} />;
         }
     };
 
@@ -160,22 +179,24 @@ export default function Submission() {
     }, [model]);
 
     return (
-        <Flex className="w-100 relative" style={{ height: 'calc(100vh - 60px)' }}>
-            <Flex className="absolute bottom-4 right-4 z-10">
-                <Tooltip label="Reset default layout" position="left" withArrow>
-                    <ActionIcon variant="light" radius="xl" size="xl" onClick={resetDefaultWindowLayout}>
+        <Flex
+            className='w-100 relative'
+            style={{ height: 'calc(100vh - 60px)' }}
+        >
+            <Flex className='absolute bottom-4 right-4 z-10'>
+                <Tooltip label='Reset default layout' position='left' withArrow>
+                    <ActionIcon
+                        variant='light'
+                        radius='xl'
+                        size='xl'
+                        onClick={resetDefaultWindowLayout}
+                    >
                         <FaRotateLeft />
                     </ActionIcon>
                 </Tooltip>
             </Flex>
 
-            {
-                model &&
-                <Layout
-                    model={model}
-                    factory={factory}
-                />
-            }
+            {model && <Layout model={model} factory={factory} />}
         </Flex>
     );
 }

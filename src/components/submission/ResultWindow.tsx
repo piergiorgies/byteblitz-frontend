@@ -16,28 +16,19 @@ import {
     Tabs,
     Text,
 } from '@mantine/core';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { FaCode, FaPlay, FaRegPaperPlane } from 'react-icons/fa6';
 import useWebSocket from 'react-use-websocket';
 import SubmissionResultIcon from './SubmissionResult';
+import { SubmissionContext } from '../contexts/SubmissionContext';
 
-export default function ResultsWindow({
-    code,
-    handleSubmit,
-    handleExampleSubmit,
-}: {
-    code: string;
-    handleSubmit: (code: string, pretest: boolean) => void;
-    handleExampleSubmit: (code: string, pretest: boolean) => void;
-}) {
-    const [submissions, setSumbissions] = useState<TestCaseSubmission[]>([]);
+export default function ResultsWindow() {
+    const { submissions, setSubmissions, result, setResult } = useContext(SubmissionContext);
 
-    const [result, setResult] = useState<TotalResult | null>(null);
     const [submissionResults, setSubmissionResults] = useState<{
         [key: number]: SubmissionResult;
     } | null>(null);
 
-    const [activeTab, setActiveTab] = useState<string | null>('first');
     const websocketUrl = `ws://localhost:9010/general/ws`;
     const { sendMessage, lastMessage, readyState } = useWebSocket(
         websocketUrl,
@@ -46,10 +37,6 @@ export default function ResultsWindow({
             reconnectAttempts: 10,
             reconnectInterval: 2000,
         },
-    );
-
-    const [pretestResults, setPretestResults] = useState<TestCaseSubmission[]>(
-        [],
     );
 
     useEffect(() => {
@@ -62,9 +49,9 @@ export default function ResultsWindow({
                 } else {
                     const submission: TestCaseSubmission = message;
                     if (submission.is_pretest_run) {
-                        setPretestResults((prev) => [...prev, submission]);
+                        // setPretestResults((prev) => [...prev, submission]);
                     } else {
-                        setSumbissions((prev) => [...prev, submission]);
+                        setSubmissions((prev) => [...prev, submission]);
                     }
                 }
             } catch (error) {
@@ -72,8 +59,6 @@ export default function ResultsWindow({
             }
         }
     }, [lastMessage]);
-
-
 
     const getSubmissionResults = useCallback(async () => {
         try {
@@ -92,50 +77,14 @@ export default function ResultsWindow({
         }
     }, []);
 
-
-
     useEffect(() => {
         getSubmissionResults();
     }, [getSubmissionResults]);
 
-    const submitCode = async () => {
-        setSumbissions([]);
-        setResult(null);
-        handleSubmit(code, false);
-        if (activeTab === 'first') {
-            setActiveTab('second');
-        }
-    };
-
-    const submitCodeExample = async () => {
-        setPretestResults([]);
-        setResult(null);
-        handleExampleSubmit(code, true);
-        if (activeTab === 'second') {
-            setActiveTab('first');
-        }
-    };
-
     return (
         <Container>
             <div className='w-full'>
-                <Flex justify='space-between' align='center' p='xs'>
-                    <Flex gap='sm'>
-                        <Button
-                            leftSection={<FaPlay />}
-                            onClick={submitCodeExample}
-                            variant='light'
-                        >
-                            Run Example
-                        </Button>
-                        <Button
-                            leftSection={<FaRegPaperPlane />}
-                            onClick={submitCode}
-                        >
-                            Submit
-                        </Button>
-                    </Flex>
-                </Flex>
+                <Flex justify='space-between' align='center' p='xs'></Flex>
             </div>
             <Flex direction='column' h='100%' bg='white'>
                 <Flex direction='column' h='100%'>
@@ -149,13 +98,9 @@ export default function ResultsWindow({
                                     w='100%'
                                     p='md'
                                 >
-                                    <FaCode
-                                        color='gray'
-                                        fontSize='4em'
-                                    />
+                                    <FaCode color='gray' fontSize='4em' />
                                     <Text c='dimmed' mt='xs'>
-                                        Submit the code to see the
-                                        results!
+                                        Submit the code to see the results!
                                     </Text>
                                 </Flex>
                             ) : (
@@ -169,54 +114,40 @@ export default function ResultsWindow({
                                         </Table.Tr>
                                     </Table.Thead>
                                     <Table.Tbody>
-                                        {submissions.map(
-                                            (submission) => (
-                                                (
-                                                    <Table.Tr
-                                                        key={
-                                                            submission.number
+                                        {submissions.map((submission) => (
+                                            <Table.Tr key={submission.number}>
+                                                <Table.Td>
+                                                    {submission.number}
+                                                </Table.Td>
+                                                <Table.Td>
+                                                    {submission.time.toFixed(6)}{' '}
+                                                    s
+                                                </Table.Td>
+                                                <Table.Td>
+                                                    {(
+                                                        submission.memory / 1024
+                                                    ).toFixed(2)}{' '}
+                                                    MB
+                                                </Table.Td>
+                                                <Table.Td>
+                                                    <SubmissionResultIcon
+                                                        resultId={
+                                                            submission.result_id
                                                         }
-                                                    >
-                                                        <Table.Td>
-                                                            {
-                                                                submission.number
-                                                            }
-                                                        </Table.Td>
-                                                        <Table.Td>
-                                                            {submission.time.toFixed(
-                                                                6,
-                                                            )}{' '}
-                                                            s
-                                                        </Table.Td>
-                                                        <Table.Td>
-                                                            {(
-                                                                submission.memory /
-                                                                1024
-                                                            ).toFixed(
-                                                                2,
-                                                            )}{' '}
-                                                            MB
-                                                        </Table.Td>
-                                                        <Table.Td>
-                                                            <SubmissionResultIcon
-                                                                resultId={
-                                                                    submission.result_id
-                                                                }
-                                                                submissionResults={
-                                                                    submissionResults
-                                                                }
-                                                            />
-                                                        </Table.Td>
-                                                    </Table.Tr>
-                                                )
-                                            ),
-                                        )}
+                                                        submissionResults={
+                                                            submissionResults
+                                                        }
+                                                    />
+                                                </Table.Td>
+                                            </Table.Tr>
+                                        ))}
                                     </Table.Tbody>
                                 </Table>
                             )}
                         </Flex>
                         <Container h='100%' p='xs'>
-                            {result && result.result &&
+                            {result &&
+                                result.result &&
                                 result.result !== '' && (
                                     <Blockquote c='red' color='red'>
                                         {result.result}
@@ -230,8 +161,7 @@ export default function ResultsWindow({
                                     radius='xs'
                                     withBorder
                                     bg={
-                                        result.result &&
-                                            result.result !== ''
+                                        result.result && result.result !== ''
                                             ? 'red-100'
                                             : 'white'
                                     }
@@ -247,7 +177,7 @@ export default function ResultsWindow({
                         </Container>
                     </ScrollArea>
                 </Flex>
-            </Flex >
-        </Container >
+            </Flex>
+        </Container>
     );
 }
