@@ -12,6 +12,7 @@ import { useContext, useEffect, useRef, useState } from 'react';
 import classes from './ResultWindow.module.css';
 import { TestCaseSubmission, TotalResult } from '@/models/Submission';
 import { SubmissionContext } from '../contexts/SubmissionContext';
+import useWebSocket from 'react-use-websocket';
 
 export default function PretestWindow({
     testCases,
@@ -22,7 +23,8 @@ export default function PretestWindow({
         testCases?.sort((a, b) => a.number - b.number);
     }, [testCases]);
 
-    const { pretestResults, result } = useContext(SubmissionContext);
+    const { pretestResults, setPretestResults, result, setResult } =
+        useContext(SubmissionContext);
 
     const [rootRef, setRootRef] = useState<HTMLDivElement | null>(null);
     const [value, setValue] = useState<string | null>();
@@ -38,6 +40,35 @@ export default function PretestWindow({
             controlsRefs.current[val] = node;
         }
     };
+    const websocketUrl = `ws://localhost:9010/general/ws`;
+    const { sendMessage, lastMessage, readyState } = useWebSocket(
+        websocketUrl,
+        {
+            shouldReconnect: () => true,
+            reconnectAttempts: 10,
+            reconnectInterval: 2000,
+            share: true,
+        },
+    );
+
+    useEffect(() => {
+        if (lastMessage !== null) {
+            try {
+                const message = JSON.parse(lastMessage.data);
+                if (message.type && message.type === 'total') {
+                    const totalResult: TotalResult = message;
+                    setResult(totalResult);
+                } else {
+                    const submission: TestCaseSubmission = message;
+                    if (submission.is_pretest_run) {
+                        setPretestResults((prev) => [...prev, submission]);
+                    }
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }, [lastMessage]);
 
     const getResultString = (result: TestCaseSubmission) => {
         if (result.result_id === 1) {

@@ -37,6 +37,7 @@ export default function ResultsWindow() {
             shouldReconnect: () => true,
             reconnectAttempts: 10,
             reconnectInterval: 2000,
+            share: true,
         },
     );
 
@@ -49,9 +50,7 @@ export default function ResultsWindow() {
                     setResult(totalResult);
                 } else {
                     const submission: TestCaseSubmission = message;
-                    if (submission.is_pretest_run) {
-                        // setPretestResults((prev) => [...prev, submission]);
-                    } else {
+                    if (!submission.is_pretest_run) {
                         setSubmissions((prev) => [...prev, submission]);
                     }
                 }

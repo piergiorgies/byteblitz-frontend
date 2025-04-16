@@ -34,6 +34,7 @@ export default function SubmissionLayoutComponent({
     const [pretestResults, setPretestResults] = useState<TestCaseSubmission[]>(
         [],
     );
+    const [openedWindow, setOpenedWindow] = useState(false);
 
     const handleSubmit = async (code: string, pretest: boolean) => {
         try {
@@ -46,6 +47,7 @@ export default function SubmissionLayoutComponent({
                     is_pretest_run: pretest,
                 },
             });
+            setOpenedWindow(pretest);
         } catch (error) {
             console.error('Submission error:', error);
         }
@@ -133,6 +135,8 @@ export default function SubmissionLayoutComponent({
                             setResult,
                             pretestResults,
                             setPretestResults,
+                            openedWindow,
+                            setOpenedWindow
                         }}
                     >
                         {children}
