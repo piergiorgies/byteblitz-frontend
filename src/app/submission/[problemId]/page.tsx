@@ -1,5 +1,5 @@
 'use client';
-import { use, useEffect, useState } from 'react';
+import { use, useContext, useEffect, useState } from 'react';
 import api from '@/utils/ky';
 import { useParams } from 'next/navigation';
 import { Problem } from '@/models/Problem';
@@ -16,6 +16,7 @@ import { ActionIcon, Flex, Tooltip } from '@mantine/core';
 import { FaRotateLeft } from 'react-icons/fa6';
 import SubmissionWindow from '@/components/submission/SubmissionWindow';
 import PretestWindow from '@/components/submission/PretestWindow';
+import { SubmissionContext } from '@/components/contexts/SubmissionContext';
 
 const master_layout = {
     global: {},
@@ -86,11 +87,11 @@ const master_layout = {
 export default function Submission() {
     const params = useParams();
     const [problemInfo, setProblemInfo] = useState<Problem | null>(null);
-    const [selectedLanguage, setSelectedLanguage] = useState<Language | null>(
-        null,
-    );
-    const [code, setCode] = useState<string>('');
+
     const [model, setModel] = useState<Model | null>(null);
+
+    const { openedWindow, setOpenedWindow, code, setCode } =
+        useContext(SubmissionContext);
 
     // Fetch problem info and initialize layout model after data is retrieved
     useEffect(() => {
@@ -117,24 +118,8 @@ export default function Submission() {
 
     const resetDefaultWindowLayout = () => {
         if (model) {
-            const newModel = Model.fromJson(master_layout); // Reset to default layout
-            setModel(newModel); // Update the state with the new model
-        }
-    };
-
-    const handleSubmit = async (code: string, pretest: boolean) => {
-        try {
-            await api.post('submissions', {
-                json: {
-                    problem_id: params.problemId,
-                    language_id: (selectedLanguage?.id ?? 1).toString(),
-                    submitted_code: code,
-                    notes: '',
-                    is_pretest_run: pretest,
-                },
-            });
-        } catch (error) {
-            console.error('Submission error:', error);
+            const newModel = Model.fromJson(master_layout);
+            setModel(newModel);
         }
     };
 
@@ -144,14 +129,10 @@ export default function Submission() {
             return <ProblemWindow problemInfo={problemInfo} />;
         }
         if (component === 'MonacoWindow') {
-            return (
-                <MonacoWindow/>
-            );
+            return <MonacoWindow />;
         }
         if (component === 'ResultsWindow') {
-            return (
-                <ResultsWindow/>
-            );
+            return <ResultsWindow />;
         }
 
         if (component === 'SubmissionWindow') {

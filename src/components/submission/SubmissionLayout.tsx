@@ -26,12 +26,15 @@ export default function SubmissionLayoutComponent({
     const [opened, { toggle }] = useDisclosure();
 
     const [code, setCode] = useState('');
-    const [selectedLanguage, setSelectedLanguage] = useState<Language | null>(null);
+    const [selectedLanguage, setSelectedLanguage] = useState<Language | null>(
+        null,
+    );
     const [submissions, setSubmissions] = useState<TestCaseSubmission[]>([]);
     const [result, setResult] = useState<TotalResult | null>(null);
     const [pretestResults, setPretestResults] = useState<TestCaseSubmission[]>(
         [],
     );
+    const [openedWindow, setOpenedWindow] = useState(false);
 
     const handleSubmit = async (code: string, pretest: boolean) => {
         try {
@@ -44,6 +47,7 @@ export default function SubmissionLayoutComponent({
                     is_pretest_run: pretest,
                 },
             });
+            setOpenedWindow(pretest);
         } catch (error) {
             console.error('Submission error:', error);
         }
@@ -119,7 +123,22 @@ export default function SubmissionLayoutComponent({
                     }}
                     className='bg-slate-100'
                 >
-                    <SubmissionContext.Provider value={{ code, setCode, selectedLanguage, setSelectedLanguage, submissions, setSubmissions, result, setResult, pretestResults, setPretestResults }}>
+                    <SubmissionContext.Provider
+                        value={{
+                            code,
+                            setCode,
+                            selectedLanguage,
+                            setSelectedLanguage,
+                            submissions,
+                            setSubmissions,
+                            result,
+                            setResult,
+                            pretestResults,
+                            setPretestResults,
+                            openedWindow,
+                            setOpenedWindow
+                        }}
+                    >
                         {children}
                     </SubmissionContext.Provider>
                 </AppShell.Main>

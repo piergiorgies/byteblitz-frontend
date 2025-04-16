@@ -23,7 +23,8 @@ import SubmissionResultIcon from './SubmissionResult';
 import { SubmissionContext } from '../contexts/SubmissionContext';
 
 export default function ResultsWindow() {
-    const { submissions, setSubmissions, result, setResult } = useContext(SubmissionContext);
+    const { submissions, setSubmissions, result, setResult } =
+        useContext(SubmissionContext);
 
     const [submissionResults, setSubmissionResults] = useState<{
         [key: number]: SubmissionResult;
@@ -36,6 +37,7 @@ export default function ResultsWindow() {
             shouldReconnect: () => true,
             reconnectAttempts: 10,
             reconnectInterval: 2000,
+            share: true,
         },
     );
 
@@ -48,9 +50,7 @@ export default function ResultsWindow() {
                     setResult(totalResult);
                 } else {
                     const submission: TestCaseSubmission = message;
-                    if (submission.is_pretest_run) {
-                        // setPretestResults((prev) => [...prev, submission]);
-                    } else {
+                    if (!submission.is_pretest_run) {
                         setSubmissions((prev) => [...prev, submission]);
                     }
                 }

@@ -4,7 +4,7 @@ import { createContext, Dispatch, SetStateAction } from 'react';
 
 export interface SubmissionContextType {
     code: string;
-    setCode:  Dispatch<SetStateAction<string>>;
+    setCode: Dispatch<SetStateAction<string>>;
     selectedLanguage: Language | null;
     setSelectedLanguage: Dispatch<SetStateAction<Language | null>>;
     submissions: TestCaseSubmission[];
@@ -13,17 +13,21 @@ export interface SubmissionContextType {
     setResult: Dispatch<SetStateAction<TotalResult | null>>;
     pretestResults: TestCaseSubmission[];
     setPretestResults: Dispatch<SetStateAction<TestCaseSubmission[]>>;
+    openedWindow: boolean;
+    setOpenedWindow: Dispatch<SetStateAction<boolean>>;
 }
 
 export const SubmissionContext = createContext<SubmissionContextType>({
     code: '',
-    setCode: () => {},
+    setCode: () => { },
     selectedLanguage: null,
-    setSelectedLanguage: () => {},
+    setSelectedLanguage: () => { },
     submissions: [],
-    setSubmissions: () => {},
+    setSubmissions: () => { },
     result: null,
-    setResult: () => {},
+    setResult: () => { },
     pretestResults: [],
-    setPretestResults: () => {},
+    setPretestResults: () => { },
+    openedWindow: false,
+    setOpenedWindow: () => { },
 });
