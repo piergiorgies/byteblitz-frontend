@@ -26,7 +26,8 @@ import { SubmissionContext } from '../contexts/SubmissionContext';
 
 export default function MonacoWindow() {
     const [languages, setLanguages] = useState<Language[]>([]);
-    const { code, setCode, selectedLanguage, setSelectedLanguage } = useContext(SubmissionContext);
+    const { code, setCode, selectedLanguage, setSelectedLanguage } =
+        useContext(SubmissionContext);
 
     const saveCode = useDebouncedCallback((code: string) => {
         localStorage.setItem('savedCode', code);

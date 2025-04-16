@@ -26,7 +26,9 @@ export default function SubmissionLayoutComponent({
     const [opened, { toggle }] = useDisclosure();
 
     const [code, setCode] = useState('');
-    const [selectedLanguage, setSelectedLanguage] = useState<Language | null>(null);
+    const [selectedLanguage, setSelectedLanguage] = useState<Language | null>(
+        null,
+    );
     const [submissions, setSubmissions] = useState<TestCaseSubmission[]>([]);
     const [result, setResult] = useState<TotalResult | null>(null);
     const [pretestResults, setPretestResults] = useState<TestCaseSubmission[]>(
@@ -119,7 +121,20 @@ export default function SubmissionLayoutComponent({
                     }}
                     className='bg-slate-100'
                 >
-                    <SubmissionContext.Provider value={{ code, setCode, selectedLanguage, setSelectedLanguage, submissions, setSubmissions, result, setResult, pretestResults, setPretestResults }}>
+                    <SubmissionContext.Provider
+                        value={{
+                            code,
+                            setCode,
+                            selectedLanguage,
+                            setSelectedLanguage,
+                            submissions,
+                            setSubmissions,
+                            result,
+                            setResult,
+                            pretestResults,
+                            setPretestResults,
+                        }}
+                    >
                         {children}
                     </SubmissionContext.Provider>
                 </AppShell.Main>

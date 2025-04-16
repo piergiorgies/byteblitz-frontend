@@ -4,7 +4,7 @@ import { createContext, Dispatch, SetStateAction } from 'react';
 
 export interface SubmissionContextType {
     code: string;
-    setCode:  Dispatch<SetStateAction<string>>;
+    setCode: Dispatch<SetStateAction<string>>;
     selectedLanguage: Language | null;
     setSelectedLanguage: Dispatch<SetStateAction<Language | null>>;
     submissions: TestCaseSubmission[];

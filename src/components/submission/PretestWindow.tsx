@@ -24,7 +24,6 @@ export default function PretestWindow({
 
     const { pretestResults, result } = useContext(SubmissionContext);
 
-
     const [rootRef, setRootRef] = useState<HTMLDivElement | null>(null);
     const [value, setValue] = useState<string | null>();
 

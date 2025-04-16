@@ -11,7 +11,6 @@ import {
     NumberInput,
     Select,
     SimpleGrid,
-    Space,
     Table,
     Text,
     Textarea,

@@ -23,7 +23,8 @@ import SubmissionResultIcon from './SubmissionResult';
 import { SubmissionContext } from '../contexts/SubmissionContext';
 
 export default function ResultsWindow() {
-    const { submissions, setSubmissions, result, setResult } = useContext(SubmissionContext);
+    const { submissions, setSubmissions, result, setResult } =
+        useContext(SubmissionContext);
 
     const [submissionResults, setSubmissionResults] = useState<{
         [key: number]: SubmissionResult;

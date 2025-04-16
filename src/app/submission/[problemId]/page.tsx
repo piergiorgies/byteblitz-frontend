@@ -144,14 +144,10 @@ export default function Submission() {
             return <ProblemWindow problemInfo={problemInfo} />;
         }
         if (component === 'MonacoWindow') {
-            return (
-                <MonacoWindow/>
-            );
+            return <MonacoWindow />;
         }
         if (component === 'ResultsWindow') {
-            return (
-                <ResultsWindow/>
-            );
+            return <ResultsWindow />;
         }
 
         if (component === 'SubmissionWindow') {
