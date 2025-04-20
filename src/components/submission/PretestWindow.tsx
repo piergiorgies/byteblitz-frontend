@@ -20,6 +20,7 @@ export default function PretestWindow({
     testCases: ProblemTestCase[] | null;
 }) {
     useEffect(() => {
+        if (testCases === null) return;
         testCases?.sort((a, b) => a.number - b.number);
     }, [testCases]);
 
@@ -30,7 +31,7 @@ export default function PretestWindow({
     const [value, setValue] = useState<string | null>();
 
     useEffect(() => {
-        setValue(testCases ? `case-${testCases[0].number}` : null);
+        setValue(testCases && testCases[0] ? `case-${testCases[0].number}` : null);
     }, [testCases]);
 
     const controlsRefs = useRef<Record<string, HTMLButtonElement | null>>({});
@@ -71,38 +72,35 @@ export default function PretestWindow({
     }, [lastMessage]);
 
     const getResultString = (result: TestCaseSubmission) => {
-        if (result.result_id === 1) {
-            return (
-                <Text size='md' c='green'>
-                    Correct
-                </Text>
-            );
-        } else if (result.result_id === 2) {
-            return (
-                <Text size='md' c='red'>
-                    Wrong Answer
-                </Text>
-            );
-        } else if (result.result_id === 3) {
-            return (
-                <Text size='md' c='yellow'>
-                    Time Limit Exceeded
-                </Text>
-            );
-        } else if (result.result_id === 4) {
-            return (
-                <Text size='md' c='blue'>
-                    Memory Limit Exceeded
-                </Text>
-            );
-        } else if (result.result_id === 5) {
-            return (
-                <Text size='md' c='blue'>
-                    Compilation Error
-                </Text>
-            );
-        }
+        const colorMap: Record<number, string> = {
+            1: 'green',
+            2: 'red',
+            3: 'yellow',
+            4: 'blue',
+            5: 'blue',
+        };
+        const labelMap: Record<number, string> = {
+            1: 'Correct',
+            2: 'Wrong Answer',
+            3: 'Time Limit Exceeded',
+            4: 'Memory Limit Exceeded',
+            5: 'Compilation Error',
+        };
+        if (!colorMap[result.result_id]) return null;
+        return (
+            <Text size='md' c={colorMap[result.result_id]}>
+                {labelMap[result.result_id]}
+            </Text>
+        );
     };
+
+    if (!Array.isArray(testCases) || testCases.length === 0) {
+        return (
+            <Box p='md'>
+                <Text c='dimmed'>No test cases available.</Text>
+            </Box>
+        );
+    }
 
     return (
         <Box>
@@ -169,23 +167,25 @@ export default function PretestWindow({
                                         (result &&
                                             result.is_pretest_run &&
                                             result.result !== '')) && (
-                                        <Blockquote c={'red'} color='red'>
-                                            {partialResult?.notes ??
-                                                result?.result}
-                                        </Blockquote>
-                                    )}
+                                            <Blockquote c={'red'} color='red'>
+                                                {partialResult?.notes ??
+                                                    result?.result}
+                                            </Blockquote>
+                                        )}
                                     <Box>
                                         <Text size='sm' c='gray'>
                                             Input =
                                         </Text>
                                         <Box
-                                            bg='gray.1'
+                                            bg='gray.   1'
                                             p='xs'
                                             style={{
                                                 borderRadius: '6px',
                                             }}
                                         >
-                                            {test.input}
+                                            <pre>
+                                                {test.input}
+                                            </pre>
                                         </Box>
                                     </Box>
 

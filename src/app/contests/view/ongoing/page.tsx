@@ -18,6 +18,7 @@ import {
     Text,
     Title,
     useMantineTheme,
+    Tooltip,
 } from '@mantine/core';
 import {
     flexRender,
@@ -125,17 +126,34 @@ export default function OngoingContests() {
             {
                 header: 'Languages',
                 accessorKey: 'languages',
-                cell: (info: any) => (
-                    <Group gap='xs'>
-                        {info
-                            .getValue()
-                            .map((language: string, index: number) => (
+                cell: (info: any) => {
+                    const languages: string[] = info.getValue();
+                    const displayed = languages.slice(0, 3);
+                    const hidden = languages.slice(3);
+
+                    return (
+                        <Group gap='xs'>
+                            {displayed.map((language, index) => (
                                 <Badge key={index} color='blue' variant='light'>
                                     {language}
                                 </Badge>
                             ))}
-                    </Group>
-                ),
+
+                            {hidden.length > 0 && (
+                                <Tooltip
+                                    label={hidden.join(', ')}
+                                    withArrow
+                                    withinPortal
+                                    multiline
+                                >
+                                    <Badge color='gray' variant='light'>
+                                        +{hidden.length} more
+                                    </Badge>
+                                </Tooltip>
+                            )}
+                        </Group>
+                    );
+                },
             },
             {
                 header: 'Difficulty',
@@ -217,7 +235,7 @@ export default function OngoingContests() {
             <Space h='xl' />
 
             <Grid gutter={{ base: 5, xs: 'md', md: 'xl', xl: 50 }}>
-                <Grid.Col span={6}>
+                <Grid.Col span={6} bg={'white'}>
                     <Title order={4}>Problems</Title>
                     <Table highlightOnHover>
                         <Table.Thead>
@@ -237,7 +255,7 @@ export default function OngoingContests() {
                                                             <FaSort />
                                                         </span>
                                                     ) : header.column.getIsSorted() ===
-                                                      'desc' ? (
+                                                        'desc' ? (
                                                         <span className='me-1 text-slate-400'>
                                                             <FaSortDown />
                                                         </span>
