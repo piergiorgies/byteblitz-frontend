@@ -9,16 +9,18 @@ import {
     SortingState,
     useReactTable,
 } from '@tanstack/react-table';
-import { use, useCallback, useEffect, useMemo, useState } from 'react';
+import { use, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import {
     Box,
     Button,
+    Center,
     Divider,
     Flex,
     Pagination,
     Select,
     Table,
     Text,
+    Title,
     Tooltip,
 } from '@mantine/core';
 import dayjs from 'dayjs';
@@ -26,15 +28,15 @@ import SubmissionResultIcon from './SubmissionResult';
 import { FaSort, FaSortDown, FaSortUp, FaUpload } from 'react-icons/fa6';
 import { Language } from '@/models/Language';
 import { objectToCamel } from 'ts-case-convert';
+import { on } from 'events';
+import { SubmissionContext } from '../contexts/SubmissionContext';
 
 type SubmissionTableProps = {
     problemId: number;
-    setCode: (code: string) => void;
 };
 
-export default function SubmissionTable({
+export default function SubmissionWindow({
     problemId,
-    setCode,
 }: SubmissionTableProps) {
     const [submissions, setSubmissions] = useState<ProblemSubmission[]>([]);
     const [pageSize, setPageSize] = useState(10);
@@ -45,6 +47,9 @@ export default function SubmissionTable({
         pageSize: pageSize,
     });
     const [rowCount, setRowCount] = useState(10);
+
+    const { setCode, setSelectedLanguage } =
+        useContext(SubmissionContext);
 
     const [submissionResults, setSubmissionResults] = useState<{
         [key: number]: SubmissionResult;
@@ -182,6 +187,16 @@ export default function SubmissionTable({
         [submissionResults],
     );
 
+    const onClickLoadCode = (code: string, language_id: number) => {
+        setCode(code);
+        const selectedLanguage = languages.find(
+            (language) => language.id === language_id,
+        );
+        if (selectedLanguage) {
+            setSelectedLanguage(selectedLanguage);
+        }
+    };
+
     const table = useReactTable({
         data: submissions,
         columns: columns,
@@ -198,7 +213,12 @@ export default function SubmissionTable({
         rowCount,
     });
     return (
-        <Box>
+        <Box m={10}>
+            <Center>
+                <Title p={10} fs='italic'>
+                    Submissions
+                </Title>
+            </Center>
             <Table highlightOnHover>
                 <Table.Thead>
                     {table.getHeaderGroups().map((headerGroup) => (
@@ -254,9 +274,10 @@ export default function SubmissionTable({
                                             variant='subtle'
                                             color='grey'
                                             onClick={() => {
-                                                setCode(
+                                                onClickLoadCode(
                                                     row.original.submitted_code,
-                                                );
+                                                    row.original.language_id
+                                                )
                                             }}
                                         >
                                             <FaUpload />

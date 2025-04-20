@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation';
 import React from 'react';
 import AdminLayoutComponent from '../admin/AdminLayout';
 import MainLayout from './MainLayout';
+import SubmissionLayoutComponent from '../submission/SubmissionLayout';
 
 export default function AppLayout({
     children,
@@ -28,6 +29,21 @@ export default function AppLayout({
             >
                 {children}
             </AdminLayoutComponent>
+        );
+    }
+
+    if (
+        pathname.includes('submission') &&
+        username != null &&
+        userPermissions != null
+    ) {
+        return (
+            <SubmissionLayoutComponent
+                username={username}
+                userPermissions={userPermissions}
+            >
+                {children}
+            </SubmissionLayoutComponent>
         );
     }
 

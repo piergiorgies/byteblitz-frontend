@@ -7,6 +7,7 @@ import {
     useCombobox,
     Text,
     Tooltip,
+    Container,
 } from '@mantine/core';
 import { useDebouncedCallback } from '@mantine/hooks';
 import { Editor } from '@monaco-editor/react';
@@ -14,28 +15,19 @@ import {
     Dispatch,
     SetStateAction,
     useCallback,
+    useContext,
     useEffect,
     useState,
 } from 'react';
 import { FaChevronDown, FaUpload } from 'react-icons/fa6';
 import { IoCloudDoneOutline } from 'react-icons/io5';
-import { MosaicBranch, MosaicWindow } from 'react-mosaic-component';
 import { objectToCamel } from 'ts-case-convert';
+import { SubmissionContext } from '../contexts/SubmissionContext';
 
-export default function MonacoWindow({
-    path,
-    selectedLanguage,
-    code,
-    setCode,
-    setSelectedLanguage,
-}: {
-    path: MosaicBranch[];
-    selectedLanguage: Language | null;
-    code: string;
-    setCode: (code: string) => void;
-    setSelectedLanguage: Dispatch<SetStateAction<Language | null>>;
-}) {
+export default function MonacoWindow() {
     const [languages, setLanguages] = useState<Language[]>([]);
+    const { code, setCode, selectedLanguage, setSelectedLanguage } =
+        useContext(SubmissionContext);
 
     const saveCode = useDebouncedCallback((code: string) => {
         localStorage.setItem('savedCode', code);
@@ -81,7 +73,7 @@ export default function MonacoWindow({
     }, [getLanguages]);
 
     return (
-        <MosaicWindow additionalControls={[]} title='Code' path={path}>
+        <Flex mx='md' mb='lg' direction='column' gap='xs'>
             <Flex bg='white' justify='space-between' px='xs'>
                 <Combobox
                     store={combobox}
@@ -143,16 +135,24 @@ export default function MonacoWindow({
                 </Flex>
             </Flex>
 
-            <Editor
-                theme='vs-dark'
-                language={selectedLanguage?.code ?? 'cpp'}
-                value={code}
-                onChange={(value) => {
-                    setSaved(false);
-                    setCode(value || '');
-                    saveCode(value || '');
-                }}
-            />
-        </MosaicWindow>
+            <div style={{ height: 'calc(100vh - 200px)', marginTop: 10, width: '100%' }}>
+                <Editor
+                    height='100%'
+                    width='100%'
+                    theme='vs-dark'
+                    language={selectedLanguage?.code ?? 'cpp'}
+                    value={code}
+                    onChange={(value) => {
+                        setSaved(false);
+                        setCode(value || '');
+                        saveCode(value || '');
+                    }}
+                    options={{
+                        fontSize: 16,
+                        minimap: { enabled: false },
+                    }}
+                />
+            </div>
+        </Flex>
     );
 }
