@@ -90,10 +90,6 @@ export default function Submission() {
 
     const [model, setModel] = useState<Model | null>(null);
 
-    const { openedWindow, setOpenedWindow, code, setCode } =
-        useContext(SubmissionContext);
-
-    // Fetch problem info and initialize layout model after data is retrieved
     useEffect(() => {
         const fetchProblemInfo = async () => {
             const { problemId } = params;
@@ -139,7 +135,6 @@ export default function Submission() {
             console.log('SubmissionWindow');
             return (
                 <SubmissionWindow
-                    setCode={setCode}
                     problemId={problemInfo?.id ?? 0}
                 />
             );
@@ -150,7 +145,6 @@ export default function Submission() {
         }
     };
 
-    // Save layout to localStorage whenever the layout changes
     useEffect(() => {
         if (model) {
             model.addChangeListener(() => {

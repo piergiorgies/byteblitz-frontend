@@ -303,12 +303,13 @@ export default function EditProblem({
                     <Select
                         label='Difficulty'
                         placeholder='Select difficulty'
-                        data={[
-                            { value: Complexity.Easy, label: 'Easy' },
-                            { value: Complexity.Medium, label: 'Medium' },
-                            { value: Complexity.Hard, label: 'Hard' },
-                        ]}
+                        data={Object.values(Complexity).map((difficulty) => ({
+                            value: difficulty,
+                            label: difficulty.charAt(0).toUpperCase() +
+                                difficulty.slice(1),
+                        }))}
                         key={problemInfoForm.key('difficulty')}
+                        defaultValue={savedProblem?.difficulty}
                         {...problemInfoForm.getInputProps('difficulty')}
                     />
 

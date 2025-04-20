@@ -73,7 +73,7 @@ export default function MonacoWindow() {
     }, [getLanguages]);
 
     return (
-        <Container>
+        <Flex mx='md' mb='lg' direction='column' gap='xs'>
             <Flex bg='white' justify='space-between' px='xs'>
                 <Combobox
                     store={combobox}
@@ -135,9 +135,10 @@ export default function MonacoWindow() {
                 </Flex>
             </Flex>
 
-            <div style={{ height: 'calc(100vh - 200px)', marginTop: 10 }}>
+            <div style={{ height: 'calc(100vh - 200px)', marginTop: 10, width: '100%' }}>
                 <Editor
                     height='100%'
+                    width='100%'
                     theme='vs-dark'
                     language={selectedLanguage?.code ?? 'cpp'}
                     value={code}
@@ -152,6 +153,6 @@ export default function MonacoWindow() {
                     }}
                 />
             </div>
-        </Container>
+        </Flex>
     );
 }
