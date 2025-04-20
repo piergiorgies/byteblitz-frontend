@@ -60,6 +60,10 @@ export default function ResultsWindow() {
         }
     }, [lastMessage]);
 
+    useEffect(() => {
+        testCases?.sort((a, b) => a.number - b.number);
+    }, [testCases]);
+
     const getSubmissionResults = useCallback(async () => {
         try {
             const response = await api.get('submissions/results');

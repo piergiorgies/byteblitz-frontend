@@ -172,6 +172,6 @@ export default function Submission() {
             </Flex>
 
             {model && <Layout model={model} factory={factory} />}
-        </Flex>
+        </Flex >
     );
 }
