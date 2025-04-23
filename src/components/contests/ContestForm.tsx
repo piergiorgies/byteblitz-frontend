@@ -198,10 +198,11 @@ export default function ContestForm({
                     selectedProblem={selectedProblem}
                     onSelectionChange={handleProblemSelect}
                 />
-
-                <Button type='submit' mt='xl'>
-                    {mode === 'add' ? 'Add Contest' : 'Save Changes'}
-                </Button>
+                <Flex justify='end'>
+                    <Button type='submit' mt='xl'>
+                        {mode === 'add' ? 'Add' : 'Save'}
+                    </Button>
+                </Flex>
             </form>
         </Box>
     );

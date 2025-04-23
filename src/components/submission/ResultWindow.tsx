@@ -17,7 +17,7 @@ import {
     Text,
 } from '@mantine/core';
 import { useCallback, useContext, useEffect, useState } from 'react';
-import { FaCode, FaPlay, FaRegPaperPlane } from 'react-icons/fa6';
+import { FaCode } from 'react-icons/fa6';
 import useWebSocket from 'react-use-websocket';
 import SubmissionResultIcon from './SubmissionResult';
 import { SubmissionContext } from '../contexts/SubmissionContext';
@@ -59,10 +59,6 @@ export default function ResultsWindow() {
             }
         }
     }, [lastMessage]);
-
-    useEffect(() => {
-        testCases?.sort((a, b) => a.number - b.number);
-    }, [testCases]);
 
     const getSubmissionResults = useCallback(async () => {
         try {

@@ -112,9 +112,11 @@ export default function UserForm({
                     {...userInfoForm.getInputProps('user_type_id')}
                 />
             </SimpleGrid>
-            <Button type='submit' mt='xl'>
-                {mode === 'add' ? 'Add User' : 'Save Changes'}
-            </Button>
+            <Flex justify='end'>
+                <Button type='submit' mt='xl'>
+                    {mode === 'add' ? 'Add' : 'Save'}
+                </Button>
+            </Flex>
         </form>
     );
 }
