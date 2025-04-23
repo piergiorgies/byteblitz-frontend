@@ -30,13 +30,10 @@ import {
 } from '@tanstack/react-table';
 import { HTTPError } from 'ky';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
     FaCaretLeft,
     FaInfo,
-    FaSort,
-    FaSortDown,
-    FaSortUp,
 } from 'react-icons/fa6';
 
 export default function OngoingContests() {
@@ -64,9 +61,16 @@ export default function OngoingContests() {
         }
     };
 
-    const handleProblemClick = (id: number) => {
-        router.push(`/submission/${id}`);
-    };
+    const handleProblemClick = useCallback(
+        (id: number) => {
+            console.log('Problem ID:', id);
+            console.log('Contest:', contest);
+            if (!contest) return;
+            router.push(`/contests/${contest.id}/submission/${id}`);
+        },
+        [contest, router]
+    );
+
 
     useEffect(() => {
         fetchContest();
@@ -154,7 +158,7 @@ export default function OngoingContests() {
                 ),
             },
         ],
-        [],
+        [handleProblemClick],
     );
 
     const problemTable = useReactTable({
