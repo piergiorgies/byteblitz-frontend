@@ -9,7 +9,6 @@ import {
     Select,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { notifications } from '@mantine/notifications';
 import { useEffect, useState } from 'react';
 import api from '@/utils/ky';
 import { UserType } from '@/models/User';

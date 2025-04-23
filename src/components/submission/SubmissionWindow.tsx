@@ -304,7 +304,7 @@ export default function SubmissionWindow({ problemId }: SubmissionTableProps) {
                         { value: '15', label: '15' },
                     ]}
                     value={pageSize.toString()}
-                    onChange={(value, _) =>
+                    onChange={(value) =>
                         setPageSize(value == null ? 10 : parseInt(value))
                     }
                 />

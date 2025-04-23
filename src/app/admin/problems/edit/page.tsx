@@ -1,10 +1,10 @@
 'use client';
 
 import EditProblem from '@/components/problems/EditProblem';
-import { Problem, ProblemTestCase } from '@/models/Problem';
+import { Problem } from '@/models/Problem';
 import api from '@/utils/ky';
 import { Center, Loader } from '@mantine/core';
-import { useParams, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { objectToCamel, objectToSnake } from 'ts-case-convert';
 import { notifications } from '@mantine/notifications';
