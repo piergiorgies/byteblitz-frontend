@@ -2,8 +2,6 @@
 import { useParams } from 'next/navigation';
 import ProblemSubmission from '@/components/submission/ProblemSubmission';
 
-
-
 export default function Submission() {
     const params = useParams();
 
@@ -12,6 +10,7 @@ export default function Submission() {
     return (
         <ProblemSubmission
             problemId={Number(problemId)}
-            goBackUrl='/contests' />
-    )
+            goBackUrl='/contests'
+        />
+    );
 }

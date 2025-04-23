@@ -31,10 +31,7 @@ import {
 import { HTTPError } from 'ky';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import {
-    FaCaretLeft,
-    FaInfo,
-} from 'react-icons/fa6';
+import { FaCaretLeft, FaInfo } from 'react-icons/fa6';
 
 export default function OngoingContests() {
     const [contest, setContest] = useState<PastContest>();
@@ -68,9 +65,8 @@ export default function OngoingContests() {
             if (!contest) return;
             router.push(`/contests/${contest.id}/submission/${id}`);
         },
-        [contest, router]
+        [contest, router],
     );
-
 
     useEffect(() => {
         fetchContest();
@@ -142,8 +138,14 @@ export default function OngoingContests() {
                                 </Badge>
                             ))}
                             {hidden.length > 0 && (
-                                <Tooltip label={hidden.join(', ')} withArrow multiline>
-                                    <Badge color='gray' variant='light'>+{hidden.length} more</Badge>
+                                <Tooltip
+                                    label={hidden.join(', ')}
+                                    withArrow
+                                    multiline
+                                >
+                                    <Badge color='gray' variant='light'>
+                                        +{hidden.length} more
+                                    </Badge>
                                 </Tooltip>
                             )}
                         </Group>
@@ -181,13 +183,17 @@ export default function OngoingContests() {
                 onMouseOver={() => setIsHovered(true)}
                 onMouseOut={() => setIsHovered(false)}
             >
-                <FaCaretLeft color={isHovered ? theme.colors[theme.primaryColor][6] : 'gray'} />
+                <FaCaretLeft
+                    color={
+                        isHovered ? theme.colors[theme.primaryColor][6] : 'gray'
+                    }
+                />
                 <Text size='md' c={isHovered ? theme.primaryColor : 'dimmed'}>
                     Back to contest
                 </Text>
             </Group>
             <Space h='md' />
-            <Paper radius="md" shadow="xs" p="xl" pt="xs" withBorder>
+            <Paper radius='md' shadow='xs' p='xl' pt='xs' withBorder>
                 <ContestHeader
                     title={contest?.name || 'Contest'}
                     startDatetime={
@@ -202,24 +208,31 @@ export default function OngoingContests() {
                     }
                     timeLeft={timeLeft}
                 />
-                <Space h="lg" />
+                <Space h='lg' />
                 <Paper
                     withBorder
-                    radius="md"
-                    p="md"
-                    shadow="xs"
+                    radius='md'
+                    p='md'
+                    shadow='xs'
                     style={{ backgroundColor: theme.colors.gray[0] }}
                 >
-                    <Group align="center" mb="sm">
-                        <Flex align="center" gap="xs" mb="sm">
-                            <FaInfo size={16} style={{ color: theme.colors.blue[6], marginTop: 2 }} />
-                            <Text fw={600} size="md" c="blue.8">
+                    <Group align='center' mb='sm'>
+                        <Flex align='center' gap='xs' mb='sm'>
+                            <FaInfo
+                                size={16}
+                                style={{
+                                    color: theme.colors.blue[6],
+                                    marginTop: 2,
+                                }}
+                            />
+                            <Text fw={600} size='md' c='blue.8'>
                                 Contest Description
                             </Text>
                         </Flex>
                     </Group>
-                    <Text size="sm" c="gray.8">
-                        {contest?.description || 'No description provided for this contest.'}
+                    <Text size='sm' c='gray.8'>
+                        {contest?.description ||
+                            'No description provided for this contest.'}
                     </Text>
                 </Paper>
             </Paper>
@@ -227,7 +240,9 @@ export default function OngoingContests() {
             <Space h='xl' />
 
             <Card withBorder shadow='sm' radius='md' p='md'>
-                <Title order={4} mb='md'>Problems</Title>
+                <Title order={4} mb='md'>
+                    Problems
+                </Title>
                 <Table highlightOnHover>
                     <Table.Thead>
                         {problemTable.getHeaderGroups().map((headerGroup) => (
@@ -246,7 +261,10 @@ export default function OngoingContests() {
                                             ) : (
                                                 <span className='me-1 text-slate-400'><FaSortUp /></span>
                                             )} */}
-                                            {flexRender(header.column.columnDef.header, header.getContext())}
+                                            {flexRender(
+                                                header.column.columnDef.header,
+                                                header.getContext(),
+                                            )}
                                         </div>
                                     </Table.Th>
                                 ))}
@@ -258,7 +276,10 @@ export default function OngoingContests() {
                             <Table.Tr key={row.id}>
                                 {row.getVisibleCells().map((cell) => (
                                     <Table.Td key={cell.id}>
-                                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                        {flexRender(
+                                            cell.column.columnDef.cell,
+                                            cell.getContext(),
+                                        )}
                                     </Table.Td>
                                 ))}
                             </Table.Tr>

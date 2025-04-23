@@ -1,19 +1,18 @@
 'use client';
 
-import { Problem } from "@/models/Problem";
-import api from "@/utils/ky";
-import { Layout, Model, TabNode } from "flexlayout-react";
-import { useEffect, useState } from "react";
-import { objectToCamel } from "ts-case-convert";
-import ProblemWindow from "./ProblemWindow";
-import MonacoWindow from "./MonacoWindow";
-import ResultsWindow from "./ResultWindow";
-import SubmissionWindow from "./SubmissionWindow";
-import PretestWindow from "./PretestWindow";
-import { ActionIcon, Flex, Tooltip } from "@mantine/core";
-import { FaRotateLeft } from "react-icons/fa6";
+import { Problem } from '@/models/Problem';
+import api from '@/utils/ky';
+import { Layout, Model, TabNode } from 'flexlayout-react';
+import { useEffect, useState } from 'react';
+import { objectToCamel } from 'ts-case-convert';
+import ProblemWindow from './ProblemWindow';
+import MonacoWindow from './MonacoWindow';
+import ResultsWindow from './ResultWindow';
+import SubmissionWindow from './SubmissionWindow';
+import PretestWindow from './PretestWindow';
+import { ActionIcon, Flex, Tooltip } from '@mantine/core';
+import { FaRotateLeft } from 'react-icons/fa6';
 import 'flexlayout-react/style/underline.css';
-
 
 const master_layout = {
     global: {},
@@ -121,7 +120,12 @@ export default function ProblemSubmission({
     const factory = (node: TabNode) => {
         const component = node.getComponent();
         if (component === 'ProblemWindow') {
-            return <ProblemWindow problemInfo={problemInfo} />;
+            return (
+                <ProblemWindow
+                    problemInfo={problemInfo}
+                    goBackUrl={goBackUrl}
+                />
+            );
         }
         if (component === 'MonacoWindow') {
             return <MonacoWindow />;
@@ -132,11 +136,7 @@ export default function ProblemSubmission({
 
         if (component === 'SubmissionWindow') {
             console.log('SubmissionWindow');
-            return (
-                <SubmissionWindow
-                    problemId={problemInfo?.id ?? 0}
-                />
-            );
+            return <SubmissionWindow problemId={problemInfo?.id ?? 0} />;
         }
 
         if (component === 'PretestWindow') {
@@ -171,6 +171,6 @@ export default function ProblemSubmission({
             </Flex>
 
             {model && <Layout model={model} factory={factory} />}
-        </Flex >
+        </Flex>
     );
 }

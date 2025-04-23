@@ -1,4 +1,13 @@
-import { Box, Button, Center, Container, Text, Flex, Stack, Title } from '@mantine/core';
+import {
+    Box,
+    Button,
+    Center,
+    Container,
+    Text,
+    Flex,
+    Stack,
+    Title,
+} from '@mantine/core';
 import { RichTextEditor } from '@mantine/tiptap';
 import { useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
@@ -6,12 +15,16 @@ import Image from '@tiptap/extension-image';
 import { Markdown } from 'tiptap-markdown';
 import { FaArrowLeft, FaStopwatch } from 'react-icons/fa6';
 import Difficulty from '../problems/Difficulty';
+import { Problem } from '@/models/Problem';
+import { Complexity } from '@/models/Difficulty';
+import { useContext } from 'react';
+import { SubmissionContext } from '../contexts/SubmissionContext';
 
 export default function ProblemWindow({
     problemInfo,
-    goBackUrl
+    goBackUrl,
 }: {
-    problemInfo: any,
+    problemInfo: Problem | null;
     goBackUrl?: string;
 }) {
     const problemTextEditor = useEditor({
@@ -28,15 +41,21 @@ export default function ProblemWindow({
         editable: false,
     });
 
+    const { selectedLanguage } = useContext(SubmissionContext);
+
+    const timeLimit = problemInfo?.constraints?.find(
+        (constraint) => constraint.languageId === selectedLanguage?.id,
+    )?.timeLimit;
+
+    const memoryLimit = problemInfo?.constraints?.find(
+        (constraint) => constraint.languageId === selectedLanguage?.id,
+    )?.memoryLimit;
+
     return (
         <Container>
             <Container fluid bg='white' py='xs' h='100%'>
                 <Flex direction='column' h='100%' style={{ overflowY: 'auto' }}>
-                    <Flex
-                        justify='space-between'
-                        align='center'
-                        pos='relative'
-                    >
+                    <Flex justify='space-between' align='center' pos='relative'>
                         {goBackUrl == null ? (
                             <Box />
                         ) : (
@@ -63,7 +82,7 @@ export default function ProblemWindow({
                             </Title>
                         </Center>
                         <Difficulty
-                            difficulty={problemInfo?.difficulty}
+                            difficulty={problemInfo?.difficulty as Complexity}
                             size='lg'
                         />
                     </Flex>
@@ -79,7 +98,7 @@ export default function ProblemWindow({
                         >
                             <FaStopwatch />
                             <Text>Time limit: </Text>
-                            <Text fw='bolder'>100 ms</Text>
+                            <Text fw='bolder'>{timeLimit} ms</Text>
                         </Flex>
                         <Flex
                             fz='xs'
@@ -91,7 +110,7 @@ export default function ProblemWindow({
                         >
                             <FaStopwatch />
                             <Text>Memory limit: </Text>
-                            <Text fw='bolder'>100 MB</Text>
+                            <Text fw='bolder'>{memoryLimit} MB</Text>
                         </Flex>
                     </Stack>
                     <Box>

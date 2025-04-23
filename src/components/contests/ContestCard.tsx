@@ -63,12 +63,16 @@ export default function ContestCard({ contest }: ContestCardProps) {
             <Flex>
                 <div>
                     <Text size='xl'>{contest.name}</Text>
-                    <Text size="md" c="dimmed" style={{
-                        whiteSpace: 'nowrap',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        maxWidth: 400
-                    }}>
+                    <Text
+                        size='md'
+                        c='dimmed'
+                        style={{
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            maxWidth: 400,
+                        }}
+                    >
                         {contest.description}
                     </Text>
 

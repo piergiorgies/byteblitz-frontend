@@ -38,14 +38,18 @@ export default function SubmissionLayoutComponent({
 
     const handleSubmit = async (code: string, pretest: boolean) => {
         try {
+            const reqBody: any = {
+                problem_id: parseInt(params.problemId as string),
+                language_id: (selectedLanguage?.id ?? 1).toString(),
+                submitted_code: code,
+                notes: '',
+                is_pretest_run: pretest,
+            };
+            if (params.contestId) {
+                reqBody.contest_id = parseInt(params.contestId as string);
+            }
             await api.post('submissions', {
-                json: {
-                    problem_id: params.problemId,
-                    language_id: (selectedLanguage?.id ?? 1).toString(),
-                    submitted_code: code,
-                    notes: '',
-                    is_pretest_run: pretest,
-                },
+                json: reqBody,
             });
             setOpenedWindow(pretest);
         } catch (error) {
@@ -136,7 +140,7 @@ export default function SubmissionLayoutComponent({
                             pretestResults,
                             setPretestResults,
                             openedWindow,
-                            setOpenedWindow
+                            setOpenedWindow,
                         }}
                     >
                         {children}

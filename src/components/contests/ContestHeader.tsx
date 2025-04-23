@@ -65,7 +65,11 @@ export default function ContestHeader({
 
     return (
         <Flex direction='column' align='start' mt={8} gap='xs'>
-            <Flex justify='space-between' align='center' style={{ width: '100%' }}>
+            <Flex
+                justify='space-between'
+                align='center'
+                style={{ width: '100%' }}
+            >
                 <Flex align='center'>
                     <Title order={1}>{title}</Title>
                     <Badge color={dynamicBadgeColor} variant='light' ml={10}>
@@ -83,7 +87,10 @@ export default function ContestHeader({
                             bg={theme.colors.green[0]}
                         >
                             <Group gap='xs'>
-                                <FaHourglassHalf size={14} color={theme.colors.green[7]} />
+                                <FaHourglassHalf
+                                    size={14}
+                                    color={theme.colors.green[7]}
+                                />
                                 <Text size='sm' c='green.9'>
                                     Ends in: {timeLeft}
                                 </Text>
@@ -106,7 +113,10 @@ export default function ContestHeader({
             <Flex direction='row' gap='lg' align='center'>
                 {startDatetime && (
                     <Group gap='xs'>
-                        <FaRegClock size={18} style={{ color: theme.colors.gray[6] }} />
+                        <FaRegClock
+                            size={18}
+                            style={{ color: theme.colors.gray[6] }}
+                        />
                         <Text size='sm' c='dimmed'>
                             Starts:
                         </Text>
@@ -125,7 +135,10 @@ export default function ContestHeader({
 
                 {endDatetime && (
                     <Group gap='xs'>
-                        <FaRegClock size={18} style={{ color: theme.colors.gray[6] }} />
+                        <FaRegClock
+                            size={18}
+                            style={{ color: theme.colors.gray[6] }}
+                        />
                         <Text size='sm' c='dimmed'>
                             Ends:
                         </Text>

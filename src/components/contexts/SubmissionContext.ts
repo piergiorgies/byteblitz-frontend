@@ -19,15 +19,15 @@ export interface SubmissionContextType {
 
 export const SubmissionContext = createContext<SubmissionContextType>({
     code: '',
-    setCode: () => { },
+    setCode: () => {},
     selectedLanguage: null,
-    setSelectedLanguage: () => { },
+    setSelectedLanguage: () => {},
     submissions: [],
-    setSubmissions: () => { },
+    setSubmissions: () => {},
     result: null,
-    setResult: () => { },
+    setResult: () => {},
     pretestResults: [],
-    setPretestResults: () => { },
+    setPretestResults: () => {},
     openedWindow: false,
-    setOpenedWindow: () => { },
+    setOpenedWindow: () => {},
 });

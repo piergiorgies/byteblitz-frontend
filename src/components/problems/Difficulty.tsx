@@ -14,8 +14,8 @@ export default function Difficulty({ difficulty, size }: DifficultyProps) {
                 difficulty === Complexity.Easy
                     ? 'green'
                     : difficulty === Complexity.Medium
-                        ? 'orange'
-                        : 'red'
+                      ? 'orange'
+                      : 'red'
             }
             size={size}
         >

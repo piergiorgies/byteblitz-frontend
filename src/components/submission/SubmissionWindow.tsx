@@ -9,7 +9,14 @@ import {
     SortingState,
     useReactTable,
 } from '@tanstack/react-table';
-import { use, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import {
+    use,
+    useCallback,
+    useContext,
+    useEffect,
+    useMemo,
+    useState,
+} from 'react';
 import {
     Box,
     Button,
@@ -35,9 +42,7 @@ type SubmissionTableProps = {
     problemId: number;
 };
 
-export default function SubmissionWindow({
-    problemId,
-}: SubmissionTableProps) {
+export default function SubmissionWindow({ problemId }: SubmissionTableProps) {
     const [submissions, setSubmissions] = useState<ProblemSubmission[]>([]);
     const [pageSize, setPageSize] = useState(10);
     const [sorting, setSorting] = useState<SortingState>([]);
@@ -48,8 +53,7 @@ export default function SubmissionWindow({
     });
     const [rowCount, setRowCount] = useState(10);
 
-    const { setCode, setSelectedLanguage } =
-        useContext(SubmissionContext);
+    const { setCode, setSelectedLanguage } = useContext(SubmissionContext);
 
     const [submissionResults, setSubmissionResults] = useState<{
         [key: number]: SubmissionResult;
@@ -113,7 +117,7 @@ export default function SubmissionWindow({
 
             if (
                 pagination.pageIndex * pagination.pageSize >=
-                submissions.count &&
+                    submissions.count &&
                 pagination.pageIndex !== 0
             ) {
                 setPagination({
@@ -235,7 +239,7 @@ export default function SubmissionWindow({
                                                 <FaSort />
                                             </span>
                                         ) : header.column.getIsSorted() ===
-                                            'desc' ? (
+                                          'desc' ? (
                                             <span className='me-1 text-slate-400'>
                                                 <FaSortDown />
                                             </span>
@@ -276,8 +280,8 @@ export default function SubmissionWindow({
                                             onClick={() => {
                                                 onClickLoadCode(
                                                     row.original.submitted_code,
-                                                    row.original.language_id
-                                                )
+                                                    row.original.language_id,
+                                                );
                                             }}
                                         >
                                             <FaUpload />

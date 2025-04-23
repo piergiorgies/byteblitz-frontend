@@ -123,13 +123,17 @@ export default function ViewContestPage() {
                 onMouseOver={() => setIsHovered(true)}
                 onMouseOut={() => setIsHovered(false)}
             >
-                <FaCaretLeft color={isHovered ? theme.colors[theme.primaryColor][6] : 'gray'} />
+                <FaCaretLeft
+                    color={
+                        isHovered ? theme.colors[theme.primaryColor][6] : 'gray'
+                    }
+                />
                 <Text size='md' c={isHovered ? theme.primaryColor : 'dimmed'}>
                     Back to contest
                 </Text>
             </Group>
             <Space h='md' />
-            <Paper radius="md" shadow="xs" p="xl" pt="xs" withBorder>
+            <Paper radius='md' shadow='xs' p='xl' pt='xs' withBorder>
                 <ContestHeader
                     title={contest?.name || 'Contest'}
                     startDatetime={
@@ -143,24 +147,31 @@ export default function ViewContestPage() {
                             : undefined
                     }
                 />
-                <Space h="lg" />
+                <Space h='lg' />
                 <Paper
                     withBorder
-                    radius="md"
-                    p="md"
-                    shadow="xs"
+                    radius='md'
+                    p='md'
+                    shadow='xs'
                     style={{ backgroundColor: theme.colors.gray[0] }}
                 >
-                    <Group align="center" mb="sm">
-                        <Flex align="center" gap="xs" mb="sm">
-                            <FaInfo size={16} style={{ color: theme.colors.blue[6], marginTop: 2 }} />
-                            <Text fw={600} size="md" c="blue.8">
+                    <Group align='center' mb='sm'>
+                        <Flex align='center' gap='xs' mb='sm'>
+                            <FaInfo
+                                size={16}
+                                style={{
+                                    color: theme.colors.blue[6],
+                                    marginTop: 2,
+                                }}
+                            />
+                            <Text fw={600} size='md' c='blue.8'>
                                 Contest Description
                             </Text>
                         </Flex>
                     </Group>
-                    <Text size="sm" c="gray.8">
-                        {contest?.description || 'No description provided for this contest.'}
+                    <Text size='sm' c='gray.8'>
+                        {contest?.description ||
+                            'No description provided for this contest.'}
                     </Text>
                 </Paper>
             </Paper>
@@ -188,7 +199,7 @@ export default function ViewContestPage() {
                                                             <FaSort />
                                                         </span>
                                                     ) : header.column.getIsSorted() ===
-                                                        'desc' ? (
+                                                      'desc' ? (
                                                         <span className='me-1 text-slate-400'>
                                                             <FaSortDown />
                                                         </span>
