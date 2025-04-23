@@ -63,7 +63,12 @@ export default function ContestCard({ contest }: ContestCardProps) {
             <Flex>
                 <div>
                     <Text size='xl'>{contest.name}</Text>
-                    <Text size='md' c='dimmed'>
+                    <Text size="md" c="dimmed" style={{
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        maxWidth: 400
+                    }}>
                         {contest.description}
                     </Text>
 
@@ -99,7 +104,9 @@ export default function ContestCard({ contest }: ContestCardProps) {
                         </Group>
                     </Group>
                 </div>
-                <div>{actionButton}</div>
+                <Flex justify={'flex-end'} style={{ flex: 1 }}>
+                    <div>{actionButton}</div>
+                </Flex>
             </Flex>
         </Card>
     );
