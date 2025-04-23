@@ -23,6 +23,7 @@ import {
     Badge,
     Grid,
     Blockquote,
+    Paper,
 } from '@mantine/core';
 import {
     flexRender,
@@ -114,54 +115,66 @@ export default function ViewContestPage() {
     return forbidden ? (
         <Forbidden />
     ) : (
-        <Container size='lg'>
-            <Flex justify='left'>
-                <Group
-                    gap='xs'
-                    onClick={() => router.back()}
-                    style={{
-                        cursor: 'pointer',
-                        transition: 'color 0.2s ease-in-out',
-                    }}
-                    onMouseOver={() => setIsHovered(true)}
-                    onMouseOut={() => setIsHovered(false)}
+        <Container size='lg' py='xl'>
+            <Group
+                gap='xs'
+                onClick={() => router.back()}
+                style={{ cursor: 'pointer' }}
+                onMouseOver={() => setIsHovered(true)}
+                onMouseOut={() => setIsHovered(false)}
+            >
+                <FaCaretLeft
+                    color={
+                        isHovered ? theme.colors[theme.primaryColor][6] : 'gray'
+                    }
+                />
+                <Text size='md' c={isHovered ? theme.primaryColor : 'dimmed'}>
+                    Back to contest
+                </Text>
+            </Group>
+            <Space h='md' />
+            <Paper radius='md' shadow='xs' p='xl' pt='xs' withBorder>
+                <ContestHeader
+                    title={contest?.name || 'Contest'}
+                    startDatetime={
+                        contest?.start_datetime
+                            ? new Date(contest.start_datetime).toISOString()
+                            : undefined
+                    }
+                    endDatetime={
+                        contest?.end_datetime
+                            ? new Date(contest.end_datetime).toISOString()
+                            : undefined
+                    }
+                />
+                <Space h='lg' />
+                <Paper
+                    withBorder
+                    radius='md'
+                    p='md'
+                    shadow='xs'
+                    style={{ backgroundColor: theme.colors.gray[0] }}
                 >
-                    <FaCaretLeft
-                        color={
-                            isHovered
-                                ? theme.colors[theme.primaryColor][6]
-                                : 'gray'
-                        }
-                    />
-                    <Text
-                        size='md'
-                        c={isHovered ? theme.primaryColor : 'dimmed'}
-                    >
-                        Back to contest
+                    <Group align='center' mb='sm'>
+                        <Flex align='center' gap='xs' mb='sm'>
+                            <FaInfo
+                                size={16}
+                                style={{
+                                    color: theme.colors.blue[6],
+                                    marginTop: 2,
+                                }}
+                            />
+                            <Text fw={600} size='md' c='blue.8'>
+                                Contest Description
+                            </Text>
+                        </Flex>
+                    </Group>
+                    <Text size='sm' c='gray.8'>
+                        {contest?.description ||
+                            'No description provided for this contest.'}
                     </Text>
-                </Group>
-            </Flex>
-
-            <Space h='xl' />
-
-            <ContestHeader
-                title={contest?.name || ''}
-                startDatetime={
-                    contest?.start_datetime
-                        ? new Date(contest.start_datetime).toISOString()
-                        : undefined
-                }
-                endDatetime={
-                    contest?.end_datetime
-                        ? new Date(contest.end_datetime).toISOString()
-                        : undefined
-                }
-            />
-
-            <Space h='xl' />
-            <Blockquote my={4} color='gray' icon={<FaInfo />} iconSize={30}>
-                {contest?.description}
-            </Blockquote>
+                </Paper>
+            </Paper>
 
             <Space h='xl' />
 

@@ -135,7 +135,13 @@ export default function MonacoWindow() {
                 </Flex>
             </Flex>
 
-            <div style={{ height: 'calc(100vh - 200px)', marginTop: 10, width: '100%' }}>
+            <div
+                style={{
+                    height: 'calc(100vh - 200px)',
+                    marginTop: 10,
+                    width: '100%',
+                }}
+            >
                 <Editor
                     height='100%'
                     width='100%'

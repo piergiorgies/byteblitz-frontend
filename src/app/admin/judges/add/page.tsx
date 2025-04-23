@@ -1,13 +1,6 @@
 'use client';
 
-import {
-    Button,
-    Divider,
-    Flex,
-    SimpleGrid,
-    TextInput,
-    Title,
-} from '@mantine/core';
+import { Button, Flex, SimpleGrid, TextInput, Title } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import api from '@/utils/ky';
 import { notifications } from '@mantine/notifications';

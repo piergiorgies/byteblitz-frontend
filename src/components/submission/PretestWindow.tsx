@@ -31,7 +31,9 @@ export default function PretestWindow({
     const [value, setValue] = useState<string | null>();
 
     useEffect(() => {
-        setValue(testCases && testCases[0] ? `case-${testCases[0].number}` : null);
+        setValue(
+            testCases && testCases[0] ? `case-${testCases[0].number}` : null,
+        );
     }, [testCases]);
 
     const controlsRefs = useRef<Record<string, HTMLButtonElement | null>>({});
@@ -167,11 +169,11 @@ export default function PretestWindow({
                                         (result &&
                                             result.is_pretest_run &&
                                             result.result !== '')) && (
-                                            <Blockquote c={'red'} color='red'>
-                                                {partialResult?.notes ??
-                                                    result?.result}
-                                            </Blockquote>
-                                        )}
+                                        <Blockquote c={'red'} color='red'>
+                                            {partialResult?.notes ??
+                                                result?.result}
+                                        </Blockquote>
+                                    )}
                                     <Box>
                                         <Text size='sm' c='gray'>
                                             Input =
@@ -183,11 +185,9 @@ export default function PretestWindow({
                                                 borderRadius: '6px',
                                             }}
                                         >
-                                            <pre>
-                                                {test.input}
-                                            </pre>
-                                        </Box >
-                                    </Box >
+                                            <pre>{test.input}</pre>
+                                        </Box>
+                                    </Box>
 
                                     <Box mt='md'>
                                         <Text size='sm' c='gray'>
@@ -204,8 +204,7 @@ export default function PretestWindow({
                                             {test.output}
                                         </Box>
                                     </Box>
-                                    {
-                                        partialResult &&
+                                    {partialResult &&
                                         partialResult.notes === '' && (
                                             <Box mt='md'>
                                                 <Text size='sm' c='gray'>
@@ -221,14 +220,13 @@ export default function PretestWindow({
                                                     {partialResult.output}
                                                 </Box>
                                             </Box>
-                                        )
-                                    }
-                                </ScrollArea >
-                            </Tabs.Panel >
+                                        )}
+                                </ScrollArea>
+                            </Tabs.Panel>
                         );
                     })}
-                </Tabs >
+                </Tabs>
             )}
-        </Box >
+        </Box>
     );
 }

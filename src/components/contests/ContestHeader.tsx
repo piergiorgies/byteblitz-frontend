@@ -1,6 +1,5 @@
 'use client';
 
-import api from '@/utils/ky';
 import {
     Flex,
     Group,
@@ -8,43 +7,43 @@ import {
     Title,
     Badge,
     useMantineTheme,
-    Grid,
     Button,
+    Paper,
 } from '@mantine/core';
-import { FaRegClock } from 'react-icons/fa6';
+import { FaRegClock, FaHourglassHalf } from 'react-icons/fa6';
 
 interface ContestHeaderProps {
     title: string;
     startDatetime?: string;
     endDatetime?: string;
-    isRegistratioOpen?: boolean;
+    isRegistrationOpen?: boolean;
     handleUserRegistration?: () => void;
+    timeLeft?: string;
 }
 
 export default function ContestHeader({
     title,
     startDatetime,
     endDatetime,
-    isRegistratioOpen,
+    isRegistrationOpen,
     handleUserRegistration,
+    timeLeft,
 }: ContestHeaderProps) {
     const theme = useMantineTheme();
 
-    // Helper function to determine the contest status
     const getStatus = () => {
-        if (!startDatetime || !endDatetime) return 'upcoming'; // Default if no datetimes
+        if (!startDatetime || !endDatetime) return 'upcoming';
         const now = new Date().getTime();
         const start = new Date(startDatetime).getTime();
         const end = new Date(endDatetime).getTime();
 
-        if (now < start) return 'upcoming'; // Contest has not started yet
-        if (now >= start && now <= end) return 'ongoing'; // Contest is currently ongoing
-        return 'past'; // Contest has ended
+        if (now < start) return 'upcoming';
+        if (now >= start && now <= end) return 'ongoing';
+        return 'past';
     };
 
     const currentStatus = getStatus();
 
-    // Dynamic badge text and color based on status
     let dynamicBadgeText = '';
     let dynamicBadgeColor = '';
     switch (currentStatus) {
@@ -60,12 +59,9 @@ export default function ContestHeader({
             dynamicBadgeText = 'Past';
             dynamicBadgeColor = 'gray';
             break;
-        default:
-            dynamicBadgeText = 'No Status'; // Fallback if something goes wrong
-            dynamicBadgeColor = 'gray'; // Fallback
     }
 
-    const showRegistration = currentStatus === 'upcoming' && isRegistratioOpen;
+    const showRegistration = currentStatus === 'upcoming' && isRegistrationOpen;
 
     return (
         <Flex direction='column' align='start' mt={8} gap='xs'>
@@ -81,20 +77,39 @@ export default function ContestHeader({
                     </Badge>
                 </Flex>
 
-                {/* Registration Button (Positioned top-right) */}
-                {showRegistration && (
-                    <Button
-                        size='sm'
-                        color='blue'
-                        variant='outline'
-                        onClick={handleUserRegistration}
-                    >
-                        Register Now
-                    </Button>
-                )}
+                <Group gap='sm'>
+                    {timeLeft && currentStatus === 'ongoing' && (
+                        <Paper
+                            radius='md'
+                            p='xs'
+                            withBorder
+                            shadow='xs'
+                            bg={theme.colors.green[0]}
+                        >
+                            <Group gap='xs'>
+                                <FaHourglassHalf
+                                    size={14}
+                                    color={theme.colors.green[7]}
+                                />
+                                <Text size='sm' c='green.9'>
+                                    Ends in: {timeLeft}
+                                </Text>
+                            </Group>
+                        </Paper>
+                    )}
+                    {showRegistration && (
+                        <Button
+                            size='sm'
+                            color='blue'
+                            variant='outline'
+                            onClick={handleUserRegistration}
+                        >
+                            Register Now
+                        </Button>
+                    )}
+                </Group>
             </Flex>
 
-            {/* Date-Time Info */}
             <Flex direction='row' gap='lg' align='center'>
                 {startDatetime && (
                     <Group gap='xs'>

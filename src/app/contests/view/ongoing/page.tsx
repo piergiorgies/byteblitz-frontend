@@ -9,9 +9,9 @@ import {
     Notification,
     Badge,
     Blockquote,
+    Card,
     Container,
     Flex,
-    Grid,
     Group,
     Space,
     Table,
@@ -19,6 +19,8 @@ import {
     Title,
     useMantineTheme,
     Tooltip,
+    Divider,
+    Paper,
 } from '@mantine/core';
 import {
     flexRender,
@@ -28,14 +30,8 @@ import {
 } from '@tanstack/react-table';
 import { HTTPError } from 'ky';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
-import {
-    FaCaretLeft,
-    FaInfo,
-    FaSort,
-    FaSortDown,
-    FaSortUp,
-} from 'react-icons/fa6';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { FaCaretLeft, FaInfo } from 'react-icons/fa6';
 
 export default function OngoingContests() {
     const [contest, setContest] = useState<PastContest>();
@@ -43,11 +39,8 @@ export default function OngoingContests() {
     const contestId = searchParams.get('id');
     const router = useRouter();
     const [isHovered, setIsHovered] = useState(false);
-
     const [forbidden, setForbidden] = useState(true);
-
     const [timeLeft, setTimeLeft] = useState<string>('');
-
     const theme = useMantineTheme();
 
     const fetchContest = async () => {
@@ -65,9 +58,15 @@ export default function OngoingContests() {
         }
     };
 
-    const handleProblemClick = (id: number) => {
-        router.push(`/submission/${id}`);
-    };
+    const handleProblemClick = useCallback(
+        (id: number) => {
+            console.log('Problem ID:', id);
+            console.log('Contest:', contest);
+            if (!contest) return;
+            router.push(`/contests/${contest.id}/submission/${id}`);
+        },
+        [contest, router],
+    );
 
     useEffect(() => {
         fetchContest();
@@ -138,12 +137,10 @@ export default function OngoingContests() {
                                     {language}
                                 </Badge>
                             ))}
-
                             {hidden.length > 0 && (
                                 <Tooltip
                                     label={hidden.join(', ')}
                                     withArrow
-                                    withinPortal
                                     multiline
                                 >
                                     <Badge color='gray' variant='light'>
@@ -163,7 +160,7 @@ export default function OngoingContests() {
                 ),
             },
         ],
-        [],
+        [handleProblemClick],
     );
 
     const problemTable = useReactTable({
@@ -178,123 +175,125 @@ export default function OngoingContests() {
     return forbidden ? (
         <Forbidden />
     ) : (
-        <Container size='lg'>
-            <Flex justify='left'>
-                <Group
-                    pt={15}
-                    gap='xs'
-                    onClick={() => router.back()}
-                    style={{
-                        cursor: 'pointer',
-                        transition: 'color 0.2s ease-in-out',
-                    }}
-                    onMouseOver={() => setIsHovered(true)}
-                    onMouseOut={() => setIsHovered(false)}
+        <Container size='lg' py='xl'>
+            <Group
+                gap='xs'
+                onClick={() => router.back()}
+                style={{ cursor: 'pointer' }}
+                onMouseOver={() => setIsHovered(true)}
+                onMouseOut={() => setIsHovered(false)}
+            >
+                <FaCaretLeft
+                    color={
+                        isHovered ? theme.colors[theme.primaryColor][6] : 'gray'
+                    }
+                />
+                <Text size='md' c={isHovered ? theme.primaryColor : 'dimmed'}>
+                    Back to contest
+                </Text>
+            </Group>
+            <Space h='md' />
+            <Paper radius='md' shadow='xs' p='xl' pt='xs' withBorder>
+                <ContestHeader
+                    title={contest?.name || 'Contest'}
+                    startDatetime={
+                        contest?.start_datetime
+                            ? new Date(contest.start_datetime).toISOString()
+                            : undefined
+                    }
+                    endDatetime={
+                        contest?.end_datetime
+                            ? new Date(contest.end_datetime).toISOString()
+                            : undefined
+                    }
+                    timeLeft={timeLeft}
+                />
+                <Space h='lg' />
+                <Paper
+                    withBorder
+                    radius='md'
+                    p='md'
+                    shadow='xs'
+                    style={{ backgroundColor: theme.colors.gray[0] }}
                 >
-                    <FaCaretLeft
-                        color={
-                            isHovered
-                                ? theme.colors[theme.primaryColor][6]
-                                : 'gray'
-                        }
-                    />
-                    <Text
-                        size='md'
-                        c={isHovered ? theme.primaryColor : 'dimmed'}
-                    >
-                        Back to contest
+                    <Group align='center' mb='sm'>
+                        <Flex align='center' gap='xs' mb='sm'>
+                            <FaInfo
+                                size={16}
+                                style={{
+                                    color: theme.colors.blue[6],
+                                    marginTop: 2,
+                                }}
+                            />
+                            <Text fw={600} size='md' c='blue.8'>
+                                Contest Description
+                            </Text>
+                        </Flex>
+                    </Group>
+                    <Text size='sm' c='gray.8'>
+                        {contest?.description ||
+                            'No description provided for this contest.'}
                     </Text>
-                </Group>
-            </Flex>
-
-            <ContestHeader
-                title={contest?.name || 'Contest'}
-                startDatetime={
-                    contest?.start_datetime
-                        ? new Date(contest.start_datetime).toISOString()
-                        : undefined
-                }
-                endDatetime={
-                    contest?.end_datetime
-                        ? new Date(contest.end_datetime).toISOString()
-                        : undefined
-                }
-            />
-
-            <Space h='lg' />
-            <Notification color='green' closeButtonProps={{ hidden: true }}>
-                <Text c='dimmed'>Ends in:</Text>
-                <Text>{timeLeft}</Text>
-            </Notification>
-
-            <Space h='xl' />
-            <Blockquote my={4} color='gray' icon={<FaInfo />} iconSize={30}>
-                {contest?.description}
-            </Blockquote>
+                </Paper>
+            </Paper>
 
             <Space h='xl' />
 
-            <Grid gutter={{ base: 5, xs: 'md', md: 'xl', xl: 50 }}>
-                <Grid.Col span={6} bg={'white'}>
-                    <Title order={4}>Problems</Title>
-                    <Table highlightOnHover>
-                        <Table.Thead>
-                            {problemTable
-                                .getHeaderGroups()
-                                .map((headerGroup) => (
-                                    <Table.Tr key={headerGroup.id}>
-                                        {headerGroup.headers.map((header) => (
-                                            <Table.Th
-                                                key={header.id}
-                                                onClick={header.column.getToggleSortingHandler()}
-                                                style={{ cursor: 'pointer' }}
-                                            >
-                                                <div className='flex items-center'>
-                                                    {!header.column.getIsSorted() ? (
-                                                        <span className='me-1 text-slate-400'>
-                                                            <FaSort />
-                                                        </span>
-                                                    ) : header.column.getIsSorted() ===
-                                                      'desc' ? (
-                                                        <span className='me-1 text-slate-400'>
-                                                            <FaSortDown />
-                                                        </span>
-                                                    ) : (
-                                                        <span className='me-1 text-slate-400'>
-                                                            <FaSortUp />
-                                                        </span>
-                                                    )}
-                                                    {flexRender(
-                                                        header.column.columnDef
-                                                            .header,
-                                                        header.getContext(),
-                                                    )}
-                                                </div>
-                                            </Table.Th>
-                                        ))}
-                                    </Table.Tr>
-                                ))}
-                        </Table.Thead>
-                        <Table.Tbody>
-                            {problemTable.getRowModel().rows.map((row) => (
-                                <Table.Tr key={row.id}>
-                                    {row.getVisibleCells().map((cell) => (
-                                        <Table.Td key={cell.id}>
+            <Card withBorder shadow='sm' radius='md' p='md'>
+                <Title order={4} mb='md'>
+                    Problems
+                </Title>
+                <Table highlightOnHover>
+                    <Table.Thead>
+                        {problemTable.getHeaderGroups().map((headerGroup) => (
+                            <Table.Tr key={headerGroup.id}>
+                                {headerGroup.headers.map((header) => (
+                                    <Table.Th
+                                        key={header.id}
+                                        onClick={header.column.getToggleSortingHandler()}
+                                        style={{ cursor: 'pointer' }}
+                                    >
+                                        <div className='flex items-center'>
+                                            {/* {!header.column.getIsSorted() ? (
+                                                <span className='me-1 text-slate-400'><FaSort /></span>
+                                            ) : header.column.getIsSorted() === 'desc' ? (
+                                                <span className='me-1 text-slate-400'><FaSortDown /></span>
+                                            ) : (
+                                                <span className='me-1 text-slate-400'><FaSortUp /></span>
+                                            )} */}
                                             {flexRender(
-                                                cell.column.columnDef.cell,
-                                                cell.getContext(),
+                                                header.column.columnDef.header,
+                                                header.getContext(),
                                             )}
-                                        </Table.Td>
-                                    ))}
-                                </Table.Tr>
-                            ))}
-                        </Table.Tbody>
-                    </Table>
-                </Grid.Col>
-                <Grid.Col span={6}>
-                    <Title order={4}>Leaderboard</Title>
-                </Grid.Col>
-            </Grid>
+                                        </div>
+                                    </Table.Th>
+                                ))}
+                            </Table.Tr>
+                        ))}
+                    </Table.Thead>
+                    <Table.Tbody>
+                        {problemTable.getRowModel().rows.map((row) => (
+                            <Table.Tr key={row.id}>
+                                {row.getVisibleCells().map((cell) => (
+                                    <Table.Td key={cell.id}>
+                                        {flexRender(
+                                            cell.column.columnDef.cell,
+                                            cell.getContext(),
+                                        )}
+                                    </Table.Td>
+                                ))}
+                            </Table.Tr>
+                        ))}
+                    </Table.Tbody>
+                </Table>
+            </Card>
+
+            <Space h='xl' />
+
+            <Card withBorder shadow='sm' radius='md' p='md'>
+                <Title order={4}>Leaderboard</Title>
+                <Text c='dimmed'>Coming soon...</Text>
+            </Card>
         </Container>
     );
 }

@@ -98,7 +98,7 @@ export default function UsersTable({
     };
 
     const handleSelectionChange = (userId: number, isSelected: boolean) => {
-        let updatedSelection = new Set(selectedUserIds);
+        const updatedSelection = new Set(selectedUserIds);
 
         if (isSelected) {
             updatedSelection.add(userId);

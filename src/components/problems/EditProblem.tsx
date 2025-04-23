@@ -305,7 +305,8 @@ export default function EditProblem({
                         placeholder='Select difficulty'
                         data={Object.values(Complexity).map((difficulty) => ({
                             value: difficulty,
-                            label: difficulty.charAt(0).toUpperCase() +
+                            label:
+                                difficulty.charAt(0).toUpperCase() +
                                 difficulty.slice(1),
                         }))}
                         key={problemInfoForm.key('difficulty')}
