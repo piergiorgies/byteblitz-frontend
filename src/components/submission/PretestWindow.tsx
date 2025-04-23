@@ -177,7 +177,7 @@ export default function PretestWindow({
                                             Input =
                                         </Text>
                                         <Box
-                                            bg='gray.   1'
+                                            bg='gray.1'
                                             p='xs'
                                             style={{
                                                 borderRadius: '6px',
@@ -186,8 +186,8 @@ export default function PretestWindow({
                                             <pre>
                                                 {test.input}
                                             </pre>
-                                        </Box>
-                                    </Box>
+                                        </Box >
+                                    </Box >
 
                                     <Box mt='md'>
                                         <Text size='sm' c='gray'>
@@ -204,7 +204,8 @@ export default function PretestWindow({
                                             {test.output}
                                         </Box>
                                     </Box>
-                                    {partialResult &&
+                                    {
+                                        partialResult &&
                                         partialResult.notes === '' && (
                                             <Box mt='md'>
                                                 <Text size='sm' c='gray'>
@@ -220,13 +221,14 @@ export default function PretestWindow({
                                                     {partialResult.output}
                                                 </Box>
                                             </Box>
-                                        )}
-                                </ScrollArea>
-                            </Tabs.Panel>
+                                        )
+                                    }
+                                </ScrollArea >
+                            </Tabs.Panel >
                         );
                     })}
-                </Tabs>
+                </Tabs >
             )}
-        </Box>
+        </Box >
     );
 }
