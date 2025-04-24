@@ -5,8 +5,8 @@ import Forbidden from '@/components/global/Forbidden';
 import {
     Contest,
     ContestProblem,
-    ContestInfo,
-    PastContest,
+    ContestMinimal,
+    ContestInfos,
 } from '@/models/Contest';
 import api from '@/utils/ky';
 import {
@@ -43,7 +43,7 @@ import {
 } from 'react-icons/fa6';
 
 export default function ViewContestPage() {
-    const [contest, setContest] = useState<PastContest>();
+    const [contest, setContest] = useState<ContestInfos>();
     const searchParams = useSearchParams();
     const contestId = searchParams.get('id');
     const router = useRouter();
@@ -56,7 +56,7 @@ export default function ViewContestPage() {
     const fetchContest = async () => {
         try {
             const response = await api.get(`contests/${contestId}/past`);
-            const data = await response.json<PastContest>();
+            const data = await response.json<ContestInfos>();
             setContest(data);
             setForbidden(false);
         } catch (error: unknown) {
@@ -199,7 +199,7 @@ export default function ViewContestPage() {
                                                             <FaSort />
                                                         </span>
                                                     ) : header.column.getIsSorted() ===
-                                                      'desc' ? (
+                                                        'desc' ? (
                                                         <span className='me-1 text-slate-400'>
                                                             <FaSortDown />
                                                         </span>

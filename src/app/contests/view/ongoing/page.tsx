@@ -1,9 +1,10 @@
 'use client';
 
 import ContestHeader from '@/components/contests/ContestHeader';
+import ScoreboardTable from '@/components/contests/Scoreboard';
 import Forbidden from '@/components/global/Forbidden';
 import Difficulty from '@/components/problems/Difficulty';
-import { ContestInfo, PastContest } from '@/models/Contest';
+import { ContestMinimal, ContestInfos } from '@/models/Contest';
 import api from '@/utils/ky';
 import {
     Notification,
@@ -34,7 +35,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FaCaretLeft, FaInfo } from 'react-icons/fa6';
 
 export default function OngoingContests() {
-    const [contest, setContest] = useState<PastContest>();
+    const [contest, setContest] = useState<ContestInfos>();
     const searchParams = useSearchParams();
     const contestId = searchParams.get('id');
     const router = useRouter();
@@ -46,7 +47,7 @@ export default function OngoingContests() {
     const fetchContest = async () => {
         try {
             const response = await api.get(`contests/${contestId}/ongoing`);
-            const data = await response.json<PastContest>();
+            const data = await response.json<ContestInfos>();
             setContest(data);
             setForbidden(false);
         } catch (error: unknown) {
@@ -254,13 +255,6 @@ export default function OngoingContests() {
                                         style={{ cursor: 'pointer' }}
                                     >
                                         <div className='flex items-center'>
-                                            {/* {!header.column.getIsSorted() ? (
-                                                <span className='me-1 text-slate-400'><FaSort /></span>
-                                            ) : header.column.getIsSorted() === 'desc' ? (
-                                                <span className='me-1 text-slate-400'><FaSortDown /></span>
-                                            ) : (
-                                                <span className='me-1 text-slate-400'><FaSortUp /></span>
-                                            )} */}
                                             {flexRender(
                                                 header.column.columnDef.header,
                                                 header.getContext(),
@@ -292,7 +286,13 @@ export default function OngoingContests() {
 
             <Card withBorder shadow='sm' radius='md' p='md'>
                 <Title order={4}>Leaderboard</Title>
-                <Text c='dimmed'>Coming soon...</Text>
+                {contest &&
+                    <ScoreboardTable
+                        scoreboard={contest.scoreboard}
+                        problems={contest.problems}
+                        users={contest.users}
+                    />
+                }
             </Card>
         </Container>
     );
