@@ -1,36 +1,119 @@
 'use client';
-import api from '@/utils/ky';
-import { Button, Center, SimpleGrid, Space } from '@mantine/core';
-import { useEffect, useState } from 'react';
+
+import {
+    Button,
+    Center,
+    Container,
+    Space,
+    Stack,
+    Text,
+    Title,
+    Card,
+    SimpleGrid,
+    Group,
+    Divider,
+    ThemeIcon,
+    useMantineTheme,
+} from '@mantine/core';
 import { useRouter } from 'next/navigation';
-import { FaRepeat } from 'react-icons/fa6';
+import { FaCode, FaTrophy, FaUser } from 'react-icons/fa6';
 
 export default function Home() {
     const router = useRouter();
+    const theme = useMantineTheme();
 
     return (
-        <Center className='bg-gray-100'>
-            <div className='hero bg-base-200 my-6 min-h-screen'>
-                <Space h={50} />
+        <Container fluid>
+            <div
+                className='min-h-screen py-16'
+            >
                 <Center>
-                    <div className='hero-content text-center'>
-                        <div className='max-w-lg'>
-                            <h1 className='text-5xl font-bold'>
-                                Welcome to ByteBlitz!
-                            </h1>
-                            <h4 className='my-4 text-2xl'>
-                                A platform for coding competitions.
-                            </h4>
-                        </div>
-                    </div>
+                    <Stack gap='lg' align='center' className='text-center'>
+                        <Title order={1} size='3rem'>
+                            Welcome to ByteBlitz
+                        </Title>
+                        <Text size='xl' c='dimmed'>
+                            A platform for coding competitions and problem solving.
+                        </Text>
+                        <Group mt='md'>
+                            <Button
+                                size='md'
+                                variant='outline'
+                                onClick={() => router.push('/problems')}
+                            >
+                                Try a Problem
+                            </Button>
+                            <Button
+                                size='md'
+                                variant='filled'
+                                onClick={() => router.push('/contests')}
+                            >
+                                Join a Contest
+                            </Button>
+                        </Group>
+                    </Stack>
                 </Center>
-                <Space h={50} />
-                <div className='flex justify-center'>
-                    <Button fullWidth onClick={() => router.push('/contests')}>
-                        View Contests
-                    </Button>
-                </div>
+
+                <Space h='xl' />
+
+                <Center>
+                    <SimpleGrid cols={{ base: 1, sm: 3 }} spacing='xl' px='xl' w='100%' maw={900}>
+                        <StatCard
+                            icon={<FaCode size={24} />}
+                            title='500+'
+                            subtitle='Problems Solved'
+                        />
+                        <StatCard
+                            icon={<FaTrophy size={24} />}
+                            title='120+'
+                            subtitle='Contests Hosted'
+                        />
+                        <StatCard
+                            icon={<FaUser size={24} />}
+                            title='1,000+'
+                            subtitle='Users Registered'
+                        />
+                    </SimpleGrid>
+                </Center>
             </div>
-        </Center>
+        </Container>
+    );
+}
+
+function StatCard({
+    icon,
+    title,
+    subtitle,
+}: {
+    icon: React.ReactNode;
+    title: string;
+    subtitle: string;
+}) {
+    const theme = useMantineTheme();
+
+    return (
+        <Card
+            shadow='sm'
+            padding='xl'
+            radius='md'
+            withBorder
+            style={{ backgroundColor: theme.white }}
+        >
+            <Group justify='space-between'>
+                <ThemeIcon
+                    variant='light'
+                    size='lg'
+                    radius='xl'
+                    color='primary'
+                >
+                    {icon}
+                </ThemeIcon>
+            </Group>
+            <Divider my='sm' />
+            <Title order={3}>{title}</Title>
+            <Text c='dimmed' size='sm'>
+                {subtitle}
+            </Text>
+        </Card>
     );
 }

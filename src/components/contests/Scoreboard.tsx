@@ -49,12 +49,6 @@ export default function ScoreboardTable({
         return map;
     }, [problems]);
 
-    const getColor = (percent: number) => {
-        if (percent >= 0.9) return '#51cf66'; // green
-        if (percent >= 0.5) return '#fcc419'; // yellow
-        return '#f03e3e'; // red
-    };
-
     const columns = useMemo<ColumnDef<UserScore>[]>(
         () => [
             {
@@ -91,21 +85,9 @@ export default function ScoreboardTable({
                     },
                     cell: (info: any) => {
                         const score = info.getValue() !== undefined ? (info.getValue() as number) : 0;
-                        const maxPoints = problemMap.get(problemId)?.points ?? 0;
-                        const percent = maxPoints === 0 ? 0 : Math.min(1, score / maxPoints);
-
-                        const gradient = `linear-gradient(90deg, ${getColor(percent)} ${percent * 100}%, #e9ecef ${percent * 100}%)`;
 
                         return (
-                            <Text
-                                px={8}
-                                py={4}
-                                style={{
-                                    background: gradient,
-                                    textAlign: 'center',
-                                    borderRadius: 4,
-                                }}
-                            >
+                            <Text>
                                 {score}
                             </Text>
                         );
