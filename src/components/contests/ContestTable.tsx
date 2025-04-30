@@ -13,6 +13,7 @@ import {
     Space,
     Table,
     Text,
+    Tooltip,
 } from '@mantine/core';
 import { Contest } from '@/models/Contest';
 import api from '@/utils/ky';
@@ -146,7 +147,23 @@ export default function ContestTable({ filter }: { filter: string }) {
             {
                 accessorKey: 'description',
                 header: 'Description',
-                cell: (info: any) => <Text>{info.getValue()}</Text>,
+                cell: (info: any) => {
+                    const description = info.getValue();
+                    return (
+                        <Tooltip
+                            label={description}
+                            withinPortal
+                            openDelay={400}
+                            transitionProps={{ transition: 'pop' }}>
+                            <Text>
+                                {description.length > 50
+                                    ? description.substring(0, 50) + '...'
+                                    : description}
+                            </Text>
+                        </Tooltip >
+
+                    );
+                },
             },
             {
                 accessorKey: 'start_datetime',
@@ -220,7 +237,7 @@ export default function ContestTable({ filter }: { filter: string }) {
                                                 <FaSort />
                                             </span>
                                         ) : header.column.getIsSorted() ===
-                                          'desc' ? (
+                                            'desc' ? (
                                             <span className='me-1 text-slate-400'>
                                                 <FaSortDown />
                                             </span>

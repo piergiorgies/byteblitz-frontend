@@ -1,6 +1,6 @@
 'use client';
 
-import { ContestInfo } from '@/models/Contest';
+import { ContestMinimal } from '@/models/Contest';
 import { User } from '@/models/User';
 import { Box, Button, Card, Flex, Group, Text } from '@mantine/core';
 import dayjs from 'dayjs';
@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 import { FaClock, FaPeopleGroup, FaQuestion, FaUpload } from 'react-icons/fa6';
 
 type ContestCardProps = {
-    contest: ContestInfo;
+    contest: ContestMinimal;
 };
 
 export default function ContestCard({ contest }: ContestCardProps) {

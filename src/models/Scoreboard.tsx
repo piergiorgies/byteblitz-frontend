@@ -1,5 +1,9 @@
-export interface Scoreboard {
-    userteams: string[];
-    problems: string[];
-    scores: number[][];
+export interface UserScore {
+    user_id: number;
+    total_score: number;
+    problems: Record<number, number>;
 }
+
+export interface Scoreboard {
+    rankings: UserScore[];
+};

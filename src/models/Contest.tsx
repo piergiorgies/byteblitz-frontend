@@ -1,4 +1,5 @@
-import { Scoreboard } from './Scoreboard';
+import { Complexity } from "./Difficulty";
+import { Scoreboard } from "./Scoreboard";
 
 export interface Contest {
     id: number;
@@ -10,7 +11,7 @@ export interface Contest {
     is_registration_open: boolean;
 }
 
-export interface ContestInfo extends Contest {
+export interface ContestMinimal extends Contest {
     duration: number;
     n_participants: number;
     n_problems: number;
@@ -18,16 +19,19 @@ export interface ContestInfo extends Contest {
 }
 
 export interface ContestProblem {
+    id: number;
     title: string;
     points: number;
     languages: string[];
+    difficulty: Complexity;
+    is_public: boolean;
 }
 
 export interface ContestUser {
     id: number;
     username: string;
 }
-export interface PastContest extends Contest {
+export interface ContestInfos extends Contest {
     duration: number;
     n_submissions: number;
     problems: ContestProblem[];

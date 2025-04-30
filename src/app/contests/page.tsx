@@ -13,13 +13,13 @@ import {
 import { useEffect, useState } from 'react';
 import api from '@/utils/ky';
 import ContestCard from '@/components/contests/ContestCard';
-import { ContestInfo } from '@/models/Contest';
+import { ContestMinimal } from '@/models/Contest';
 
 export default function Contests() {
     const [contests, setContests] = useState<{
-        ongoing: ContestInfo[];
-        upcoming: ContestInfo[];
-        past: ContestInfo[];
+        ongoing: ContestMinimal[];
+        upcoming: ContestMinimal[];
+        past: ContestMinimal[];
     }>({
         ongoing: [],
         upcoming: [],
@@ -33,9 +33,9 @@ export default function Contests() {
                 const response = await api.get('contests/info');
                 response
                     .json<{
-                        ongoing: ContestInfo[];
-                        upcoming: ContestInfo[];
-                        past: ContestInfo[];
+                        ongoing: ContestMinimal[];
+                        upcoming: ContestMinimal[];
+                        past: ContestMinimal[];
                     }>()
                     .then((data) => {
                         setContests(data);
@@ -102,7 +102,7 @@ export default function Contests() {
     );
 }
 
-function ContestList({ contests }: { contests: ContestInfo[] }) {
+function ContestList({ contests }: { contests: ContestMinimal[] }) {
     if (contests.length === 0) {
         return <Text mt='md'>No contests available</Text>;
     }
