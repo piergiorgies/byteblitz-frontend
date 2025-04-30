@@ -2,7 +2,7 @@
 
 import { Problem } from '@/models/Problem';
 import api from '@/utils/ky';
-import { Layout, Model, TabNode } from 'flexlayout-react';
+import { Action, Actions, Layout, Model, TabNode } from 'flexlayout-react';
 import { useEffect, useState } from 'react';
 import { objectToCamel } from 'ts-case-convert';
 import ProblemWindow from './ProblemWindow';
@@ -10,11 +10,11 @@ import MonacoWindow from './MonacoWindow';
 import ResultsWindow from './ResultWindow';
 import SubmissionWindow from './SubmissionWindow';
 import PretestWindow from './PretestWindow';
-import { ActionIcon, Flex, Tooltip } from '@mantine/core';
+import { ActionIcon, Button, Flex, Tooltip } from '@mantine/core';
 import { FaRotateLeft } from 'react-icons/fa6';
 import 'flexlayout-react/style/underline.css';
 
-const master_layout = {
+const masterLayout = {
     global: {},
     borders: [],
     layout: {
@@ -101,7 +101,7 @@ export default function ProblemSubmission({
                 const savedLayout = localStorage.getItem('layout');
                 const newModel = savedLayout
                     ? Model.fromJson(JSON.parse(savedLayout))
-                    : Model.fromJson(master_layout);
+                    : Model.fromJson(masterLayout);
                 setModel(newModel);
             } catch (error) {
                 console.error('Failed to fetch problem info:', error);
@@ -112,7 +112,7 @@ export default function ProblemSubmission({
     }, [problemId]);
     const resetDefaultWindowLayout = () => {
         if (model) {
-            const newModel = Model.fromJson(master_layout);
+            const newModel = Model.fromJson(masterLayout);
             setModel(newModel);
         }
     };
@@ -131,7 +131,7 @@ export default function ProblemSubmission({
             return <MonacoWindow />;
         }
         if (component === 'ResultsWindow') {
-            return <ResultsWindow />;
+            return <ResultsWindow layoutModel={model} />;
         }
 
         if (component === 'SubmissionWindow') {
