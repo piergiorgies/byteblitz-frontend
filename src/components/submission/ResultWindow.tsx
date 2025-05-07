@@ -13,7 +13,6 @@ import {
     ScrollArea,
     Space,
     Table,
-    Tabs,
     Text,
 } from '@mantine/core';
 import { useCallback, useContext, useEffect, useState } from 'react';
@@ -21,8 +20,9 @@ import { FaCode } from 'react-icons/fa6';
 import useWebSocket from 'react-use-websocket';
 import SubmissionResultIcon from './SubmissionResult';
 import { SubmissionContext } from '../contexts/SubmissionContext';
+import { Actions, Model } from 'flexlayout-react';
 
-export default function ResultsWindow() {
+export default function ResultsWindow({ layoutModel }: { layoutModel: Model | null }) {
     const { submissions, setSubmissions, result, setResult } =
         useContext(SubmissionContext);
 
@@ -41,6 +41,9 @@ export default function ResultsWindow() {
         },
     );
 
+    const [resultTabId, setResultTabId] = useState<string | null>(null);
+    const [testCasesTabId, setTestCasesTabId] = useState<string | null>(null);
+
     useEffect(() => {
         if (lastMessage !== null) {
             try {
@@ -52,13 +55,19 @@ export default function ResultsWindow() {
                     const submission: TestCaseSubmission = message;
                     if (!submission.is_pretest_run) {
                         setSubmissions((prev) => [...prev, submission]);
+
+                        const action = Actions.selectTab(resultTabId ?? '');
+                        layoutModel?.doAction(action);
+                    } else {
+                        const action = Actions.selectTab(testCasesTabId ?? '');
+                        layoutModel?.doAction(action);
                     }
                 }
             } catch (error) {
                 console.log(error);
             }
         }
-    }, [lastMessage]);
+    }, [lastMessage, resultTabId, testCasesTabId]);
 
     const getSubmissionResults = useCallback(async () => {
         try {
@@ -80,6 +89,21 @@ export default function ResultsWindow() {
     useEffect(() => {
         getSubmissionResults();
     }, [getSubmissionResults]);
+
+    useEffect(() => {
+        if(layoutModel == null) return;
+
+        layoutModel.visitNodes((node) => {
+            const name = (node.toJson() as Record<string, string>).name;
+            if(name === 'Results') {
+                const id = (node.toJson() as any).id;
+                setResultTabId(id);
+            } else if (name === 'Test Case') {
+                const id = (node.toJson() as any).id;
+                setTestCasesTabId(id);
+            }
+        });
+    }, [layoutModel]);
 
     return (
         <Container>
