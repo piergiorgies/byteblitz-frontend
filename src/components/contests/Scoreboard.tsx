@@ -27,16 +27,18 @@ import { ContestProblem, ContestUser } from '@/models/Contest';
 export default function ScoreboardTable({
     scoreboard,
     problems,
-    users
+    users,
 }: {
-    scoreboard: Scoreboard,
-    problems: ContestProblem[],
-    users: ContestUser[]
+    scoreboard: Scoreboard;
+    problems: ContestProblem[];
+    users: ContestUser[];
 }) {
     const problemIds = useMemo(() => {
         const problemSet = new Set<number>();
         scoreboard.rankings.forEach((user) =>
-            Object.keys(user.problems).forEach((pid) => problemSet.add(Number(pid))),
+            Object.keys(user.problems).forEach((pid) =>
+                problemSet.add(Number(pid)),
+            ),
         );
         return Array.from(problemSet).sort((a, b) => a - b);
     }, [scoreboard]);
@@ -74,9 +76,18 @@ export default function ScoreboardTable({
 
                         return (
                             <Tooltip label={title} withArrow withinPortal>
-                                <Flex align="center" justify="space-between" w="100%" gap="xs">
+                                <Flex
+                                    align='center'
+                                    justify='space-between'
+                                    w='100%'
+                                    gap='xs'
+                                >
                                     <Text truncate>{title}</Text>
-                                    <Badge variant="light" color="gray" size="sm">
+                                    <Badge
+                                        variant='light'
+                                        color='gray'
+                                        size='sm'
+                                    >
                                         {points}
                                     </Badge>
                                 </Flex>
@@ -84,23 +95,26 @@ export default function ScoreboardTable({
                         );
                     },
                     cell: (info: any) => {
-                        const score = info.getValue() !== undefined ? (info.getValue() as number) : 0;
+                        const score =
+                            info.getValue() !== undefined
+                                ? (info.getValue() as number)
+                                : 0;
 
-                        return (
-                            <Text>
-                                {score}
-                            </Text>
-                        );
+                        return <Text>{score}</Text>;
                     },
                 };
             }),
             {
                 accessorKey: 'total_score',
                 header: 'Total Score',
-                cell: (info) => <Text fw="bold" style={{ textAlign: 'center' }}>{info.getValue<number>()}</Text>,
+                cell: (info) => (
+                    <Text fw='bold' style={{ textAlign: 'center' }}>
+                        {info.getValue<number>()}
+                    </Text>
+                ),
             },
         ],
-        [problemIds, users, problemMap]
+        [problemIds, users, problemMap],
     );
 
     const table = useReactTable({
@@ -132,7 +146,9 @@ export default function ScoreboardTable({
                             <Table.Tr>
                                 <Table.Td colSpan={columns.length}>
                                     <Center>
-                                        <Text c="dimmed">No data available.</Text>
+                                        <Text c='dimmed'>
+                                            No data available.
+                                        </Text>
                                     </Center>
                                 </Table.Td>
                             </Table.Tr>
@@ -141,7 +157,10 @@ export default function ScoreboardTable({
                                 <Table.Tr key={row.id}>
                                     {row.getVisibleCells().map((cell) => (
                                         <Table.Td key={cell.id}>
-                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                            {flexRender(
+                                                cell.column.columnDef.cell,
+                                                cell.getContext(),
+                                            )}
                                         </Table.Td>
                                     ))}
                                 </Table.Tr>

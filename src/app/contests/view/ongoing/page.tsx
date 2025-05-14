@@ -4,12 +4,10 @@ import ContestHeader from '@/components/contests/ContestHeader';
 import ScoreboardTable from '@/components/contests/Scoreboard';
 import Forbidden from '@/components/global/Forbidden';
 import Difficulty from '@/components/problems/Difficulty';
-import { ContestMinimal, ContestInfos } from '@/models/Contest';
+import { ContestInfos } from '@/models/Contest';
 import api from '@/utils/ky';
 import {
-    Notification,
     Badge,
-    Blockquote,
     Card,
     Container,
     Flex,
@@ -20,7 +18,6 @@ import {
     Title,
     useMantineTheme,
     Tooltip,
-    Divider,
     Paper,
 } from '@mantine/core';
 import {
@@ -286,13 +283,13 @@ export default function OngoingContests() {
 
             <Card withBorder shadow='sm' radius='md' p='md'>
                 <Title order={4}>Leaderboard</Title>
-                {contest &&
+                {contest && (
                     <ScoreboardTable
                         scoreboard={contest.scoreboard}
                         problems={contest.problems}
                         users={contest.users}
                     />
-                }
+                )}
             </Card>
         </Container>
     );

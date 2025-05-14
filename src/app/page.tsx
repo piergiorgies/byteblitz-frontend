@@ -30,8 +30,7 @@ export default function Home() {
             const response = await api.get('dashboard/stats');
             const data = await response.json<Statistics>();
             setStatistics(data);
-        }
-        catch (error) {
+        } catch (error) {
             console.error(error);
         }
     };
@@ -42,9 +41,7 @@ export default function Home() {
 
     return (
         <Container fluid>
-            <div
-                className='min-h-screen py-16'
-            >
+            <div className='min-h-screen py-16'>
                 <Center>
                     <Stack gap='lg' align='center' className='text-center'>
                         <Title order={1} size='3rem'>
@@ -75,7 +72,13 @@ export default function Home() {
                 <Space h='xl' />
 
                 <Center>
-                    <SimpleGrid cols={{ base: 1, sm: 3 }} spacing='xl' px='xl' w='100%' maw={900}>
+                    <SimpleGrid
+                        cols={{ base: 1, sm: 3 }}
+                        spacing='xl'
+                        px='xl'
+                        w='100%'
+                        maw={900}
+                    >
                         <StatCard
                             icon={<FaCode size={24} />}
                             data={statistics?.problems.toString() || '0'}
