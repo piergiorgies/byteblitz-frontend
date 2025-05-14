@@ -43,7 +43,7 @@ export default function PretestWindow({
             controlsRefs.current[val] = node;
         }
     };
-    const websocketUrl = `wss://byteblitz.ziocecio.it/api/general/ws`;
+    const websocketUrl = process.env.NEXT_PUBLIC_API_WS_HOST + '/general/ws';
     const { sendMessage, lastMessage, readyState } = useWebSocket(
         websocketUrl,
         {
@@ -169,11 +169,11 @@ export default function PretestWindow({
                                         (result &&
                                             result.is_pretest_run &&
                                             result.result !== '')) && (
-                                        <Blockquote c={'red'} color='red'>
-                                            {partialResult?.notes ??
-                                                result?.result}
-                                        </Blockquote>
-                                    )}
+                                            <Blockquote c={'red'} color='red'>
+                                                {partialResult?.notes ??
+                                                    result?.result}
+                                            </Blockquote>
+                                        )}
                                     <Box>
                                         <Text size='sm' c='gray'>
                                             Input =

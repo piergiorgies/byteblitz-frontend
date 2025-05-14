@@ -30,7 +30,7 @@ export default function ResultsWindow({ layoutModel }: { layoutModel: Model | nu
         [key: number]: SubmissionResult;
     } | null>(null);
 
-    const websocketUrl = `wss://byteblitz.ziocecio.it/api/general/ws`;
+    const websocketUrl = process.env.NEXT_PUBLIC_API_WS_HOST + '/general/ws';
     const { sendMessage, lastMessage, readyState } = useWebSocket(
         websocketUrl,
         {
@@ -91,11 +91,11 @@ export default function ResultsWindow({ layoutModel }: { layoutModel: Model | nu
     }, [getSubmissionResults]);
 
     useEffect(() => {
-        if(layoutModel == null) return;
+        if (layoutModel == null) return;
 
         layoutModel.visitNodes((node) => {
             const name = (node.toJson() as Record<string, string>).name;
-            if(name === 'Results') {
+            if (name === 'Results') {
                 const id = (node.toJson() as any).id;
                 setResultTabId(id);
             } else if (name === 'Test Case') {
