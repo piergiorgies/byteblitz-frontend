@@ -28,7 +28,6 @@ export default function SubmissionPage() {
     return (
         <ProblemSubmission
             problemId={Number(problemId)}
-            goBackUrl='/contests'
         />
     );
 }

@@ -39,6 +39,8 @@ export async function parseTestCasesZipFile(files: FileWithPath[]) {
 
         // There is a .in without a related .out
         if (first !== second) throw new Error('Unrelated files');
+
+        console.log('ok');
     }
 
     const results: Record<
