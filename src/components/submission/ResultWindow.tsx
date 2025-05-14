@@ -22,7 +22,11 @@ import SubmissionResultIcon from './SubmissionResult';
 import { SubmissionContext } from '../contexts/SubmissionContext';
 import { Actions, Model } from 'flexlayout-react';
 
-export default function ResultsWindow({ layoutModel }: { layoutModel: Model | null }) {
+export default function ResultsWindow({
+    layoutModel,
+}: {
+    layoutModel: Model | null;
+}) {
     const { submissions, setSubmissions, result, setResult } =
         useContext(SubmissionContext);
 

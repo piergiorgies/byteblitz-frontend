@@ -286,13 +286,13 @@ export default function OngoingContests() {
 
             <Card withBorder shadow='sm' radius='md' p='md'>
                 <Title order={4}>Leaderboard</Title>
-                {contest &&
+                {contest && (
                     <ScoreboardTable
                         scoreboard={contest.scoreboard}
                         problems={contest.problems}
                         users={contest.users}
                     />
-                }
+                )}
             </Card>
         </Container>
     );

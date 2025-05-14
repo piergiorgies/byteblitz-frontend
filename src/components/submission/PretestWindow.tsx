@@ -169,11 +169,11 @@ export default function PretestWindow({
                                         (result &&
                                             result.is_pretest_run &&
                                             result.result !== '')) && (
-                                            <Blockquote c={'red'} color='red'>
-                                                {partialResult?.notes ??
-                                                    result?.result}
-                                            </Blockquote>
-                                        )}
+                                        <Blockquote c={'red'} color='red'>
+                                            {partialResult?.notes ??
+                                                result?.result}
+                                        </Blockquote>
+                                    )}
                                     <Box>
                                         <Text size='sm' c='gray'>
                                             Input =

@@ -251,6 +251,7 @@ export default function ProblemsTable({
                     {table.getHeaderGroups().map((headerGroup) => (
                         <Table.Tr key={headerGroup.id}>
                             {selectable && <Table.Th></Table.Th>}
+
                             {headerGroup.headers.map((header) => (
                                 <Table.Th
                                     key={header.id}
@@ -279,7 +280,9 @@ export default function ProblemsTable({
                                     </div>
                                 </Table.Th>
                             ))}
-                            <Table.Th></Table.Th>
+                            {showDelayInput && (
+                                <Table.Th>Publication Delay</Table.Th>
+                            )}
                         </Table.Tr>
                     ))}
                 </Table.Thead>

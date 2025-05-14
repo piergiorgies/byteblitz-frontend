@@ -154,14 +154,14 @@ export default function ContestTable({ filter }: { filter: string }) {
                             label={description}
                             withinPortal
                             openDelay={400}
-                            transitionProps={{ transition: 'pop' }}>
+                            transitionProps={{ transition: 'pop' }}
+                        >
                             <Text>
                                 {description.length > 50
                                     ? description.substring(0, 50) + '...'
                                     : description}
                             </Text>
-                        </Tooltip >
-
+                        </Tooltip>
                     );
                 },
             },
@@ -237,7 +237,7 @@ export default function ContestTable({ filter }: { filter: string }) {
                                                 <FaSort />
                                             </span>
                                         ) : header.column.getIsSorted() ===
-                                            'desc' ? (
+                                          'desc' ? (
                                             <span className='me-1 text-slate-400'>
                                                 <FaSortDown />
                                             </span>
