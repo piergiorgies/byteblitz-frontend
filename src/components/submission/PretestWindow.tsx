@@ -43,7 +43,7 @@ export default function PretestWindow({
             controlsRefs.current[val] = node;
         }
     };
-    const websocketUrl = `wss://byteblitz.ziocecio.it/api/general/ws`;
+    const websocketUrl = `ws://localhost:9010/general/ws`;
     const { sendMessage, lastMessage, readyState } = useWebSocket(
         websocketUrl,
         {
