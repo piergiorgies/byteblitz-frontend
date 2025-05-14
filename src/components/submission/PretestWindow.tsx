@@ -169,11 +169,11 @@ export default function PretestWindow({
                                         (result &&
                                             result.is_pretest_run &&
                                             result.result !== '')) && (
-                                        <Blockquote c={'red'} color='red'>
-                                            {partialResult?.notes ??
-                                                result?.result}
-                                        </Blockquote>
-                                    )}
+                                            <Blockquote c={'red'} color='red'>
+                                                {partialResult?.notes ??
+                                                    result?.result}
+                                            </Blockquote>
+                                        )}
                                     <Box>
                                         <Text size='sm' c='gray'>
                                             Input =
@@ -201,7 +201,7 @@ export default function PretestWindow({
                                                 borderRadius: '6px',
                                             }}
                                         >
-                                            {test.output}
+                                            <pre>{test.output}</pre>
                                         </Box>
                                     </Box>
                                     {partialResult &&
@@ -217,7 +217,7 @@ export default function PretestWindow({
                                                         borderRadius: '6px',
                                                     }}
                                                 >
-                                                    {partialResult.output}
+                                                    <pre>{partialResult.output}</pre>
                                                 </Box>
                                             </Box>
                                         )}
