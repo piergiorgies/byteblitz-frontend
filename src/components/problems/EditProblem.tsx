@@ -39,7 +39,7 @@ import '@mantine/tiptap/styles.css';
 import '@mantine/dropzone/styles.css';
 import { parseTestCasesZipFile } from '@/utils/files';
 import { Complexity } from '@/models/Difficulty';
-import { showNotification } from '@mantine/notifications';
+import { notifications, showNotification } from '@mantine/notifications';
 
 type onProblemSave = (problem: Problem) => Promise<void>;
 
@@ -271,6 +271,9 @@ export default function EditProblem({
         setProblemTestCases(testCases);
     };
 
+    const MB = 1024 ** 2;
+    const maxSize = 10;
+
     useEffect(() => {
         getLanguages();
     }, []);
@@ -455,8 +458,12 @@ export default function EditProblem({
 
             <Dropzone
                 onDrop={onTestCasesFileDrop}
-                onReject={(files) => console.log('rejected files', files)}
-                maxSize={5 * 1024 ** 2}
+                onReject={(files) => notifications.show({
+                    title: 'Invalid file',
+                    message: `The file inserted is not valid`,
+                    color: 'red',
+                })}
+                maxSize={maxSize * MB}
                 accept={[MIME_TYPES.zip]}
             >
                 <Group
@@ -476,7 +483,7 @@ export default function EditProblem({
                             Upload the zip with the test cases
                         </Text>
                         <Text c='dimmed' size='sm'>
-                            Make sure the file inside are in the right format
+                            Make sure the file inside are in the right format. Max {maxSize} MB
                         </Text>
                     </Flex>
                 </Group>

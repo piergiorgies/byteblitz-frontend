@@ -3,26 +3,20 @@
 import ContestHeader from '@/components/contests/ContestHeader';
 import Forbidden from '@/components/global/Forbidden';
 import {
-    Contest,
-    ContestProblem,
-    ContestMinimal,
     ContestInfos,
 } from '@/models/Contest';
 import api from '@/utils/ky';
 import {
     Container,
-    Center,
     Flex,
     Group,
     Text,
     Title,
-    Notification,
     useMantineTheme,
     Space,
     Table,
     Badge,
     Grid,
-    Blockquote,
     Paper,
 } from '@mantine/core';
 import {

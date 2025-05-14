@@ -79,8 +79,8 @@ export default function LoginModal({
         <Modal opened={showModal} onClose={closeModal}>
             <form onSubmit={loginForm.onSubmit(doLogin)}>
                 <TextInput
-                    label='Email'
-                    placeholder='Enter your email'
+                    label='Email or Username'
+                    placeholder='Enter your email or username'
                     required
                     mb='sm'
                     key={loginForm.key('username')}

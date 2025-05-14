@@ -1,5 +1,5 @@
-import { Complexity } from "./Difficulty";
-import { Scoreboard } from "./Scoreboard";
+import { Complexity } from './Difficulty';
+import { Scoreboard } from './Scoreboard';
 
 export interface Contest {
     id: number;
