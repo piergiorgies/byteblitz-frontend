@@ -63,7 +63,9 @@ export default function AdminLayoutComponent({
                 <AppShell.Navbar p='xs'>
                     <AdminNavbar userPermissions={userPermissions} />
                 </AppShell.Navbar>
-                <AppShell.Main className='bg-slate-100'>
+                <AppShell.Main 
+                // className='bg-slate-100'
+                >
                     {children}
                 </AppShell.Main>
             </AppShell>

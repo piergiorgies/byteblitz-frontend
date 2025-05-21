@@ -125,7 +125,7 @@ export default function SubmissionLayoutComponent({
                         paddingBottom: 0,
                         paddingTop: '60px',
                     }}
-                    className='bg-slate-100'
+                    // className='bg-slate-100'
                 >
                     <SubmissionContext.Provider
                         value={{

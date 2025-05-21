@@ -57,7 +57,7 @@ export default function MainLayout({
                         paddingBottom: 0,
                         paddingTop: '60px',
                     }}
-                    className='bg-slate-100'
+                    // className='bg-slate-100'
                 >
                     {children}
                 </AppShell.Main>
