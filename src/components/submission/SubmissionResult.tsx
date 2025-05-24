@@ -8,17 +8,21 @@ import {
 } from 'react-icons/fa6';
 
 interface SubmissionResultIconProps {
-    resultId: number;
-    submissionResults: { [key: number]: { code: string } } | null;
+    resultId?: number;
+    submissionResults?: { [key: number]: { code: string } } | null;
+    label?: string;
 }
 
 export default function SubmissionResultIcon({
     resultId,
     submissionResults,
+    label,
 }: SubmissionResultIconProps) {
-    if (!submissionResults) return null;
-
-    const resultCode = submissionResults[resultId]?.code;
+    const resultCode =
+        label ??
+        (resultId !== undefined && submissionResults
+            ? submissionResults[resultId]?.code
+            : null);
 
     const resultIcons: Record<string, JSX.Element> = {
         AC: (
@@ -58,5 +62,5 @@ export default function SubmissionResultIcon({
         ),
     };
 
-    return resultIcons[resultCode] || null;
+    return resultCode ? resultIcons[resultCode] || null : null;
 }

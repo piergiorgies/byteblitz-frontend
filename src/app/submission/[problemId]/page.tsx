@@ -7,9 +7,5 @@ export default function Submission() {
 
     const { problemId } = params;
 
-    return (
-        <ProblemSubmission
-            problemId={Number(problemId)}
-        />
-    );
+    return <ProblemSubmission problemId={Number(problemId)} />;
 }

@@ -33,3 +33,13 @@ export interface TotalResult {
     result: string;
     is_pretest_run: boolean;
 }
+
+export interface SubmissionDetail {
+    created_at: Date;
+    problem_id: number;
+    problem_title: string;
+    result_code: string;
+    execution_time: number;
+    memory: number;
+    language_name: string;
+}

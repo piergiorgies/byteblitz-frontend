@@ -9,14 +9,7 @@ import {
     SortingState,
     useReactTable,
 } from '@tanstack/react-table';
-import {
-    use,
-    useCallback,
-    useContext,
-    useEffect,
-    useMemo,
-    useState,
-} from 'react';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import {
     Box,
     Button,
@@ -35,7 +28,6 @@ import SubmissionResultIcon from './SubmissionResult';
 import { FaSort, FaSortDown, FaSortUp, FaUpload } from 'react-icons/fa6';
 import { Language } from '@/models/Language';
 import { objectToCamel } from 'ts-case-convert';
-import { on } from 'events';
 import { SubmissionContext } from '../contexts/SubmissionContext';
 
 type SubmissionTableProps = {

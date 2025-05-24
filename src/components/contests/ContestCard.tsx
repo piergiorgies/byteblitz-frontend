@@ -2,7 +2,7 @@
 
 import { ContestMinimal } from '@/models/Contest';
 import { User } from '@/models/User';
-import { Box, Button, Card, Flex, Group, Text } from '@mantine/core';
+import { Box, Button, Card, Flex, Group, Text, Tooltip } from '@mantine/core';
 import dayjs from 'dayjs';
 import { useRouter } from 'next/navigation';
 import { FaClock, FaPeopleGroup, FaQuestion, FaUpload } from 'react-icons/fa6';
@@ -62,19 +62,34 @@ export default function ContestCard({ contest }: ContestCardProps) {
         >
             <Flex>
                 <div>
-                    <Text size='xl'>{contest.name}</Text>
-                    <Text
-                        size='md'
-                        c='dimmed'
-                        style={{
-                            whiteSpace: 'nowrap',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            maxWidth: 400,
-                        }}
-                    >
-                        {contest.description}
-                    </Text>
+                    <Tooltip label={contest.name} disabled={contest.name.length <= 30} withArrow>
+                        <Text
+                            size="xl"
+                            style={{
+                                whiteSpace: 'nowrap',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                maxWidth: 400,
+                            }}
+                        >
+                            {contest.name}
+                        </Text>
+                    </Tooltip>
+
+                    <Tooltip label={contest.description} disabled={contest.description.length <= 100} withArrow>
+                        <Text
+                            size="md"
+                            c="dimmed"
+                            style={{
+                                whiteSpace: 'nowrap',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                maxWidth: 400,
+                            }}
+                        >
+                            {contest.description}
+                        </Text>
+                    </Tooltip>
 
                     <Group mt='md'>
                         <Text size='xs'>

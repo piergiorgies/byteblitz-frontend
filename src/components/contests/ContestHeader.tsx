@@ -120,7 +120,7 @@ export default function ContestHeader({
                         <Text size='sm' c='dimmed'>
                             Starts:
                         </Text>
-                        <Text size='sm' fw={600} c='gray.9'>
+                        <Text size='sm' fw={600} style={{ color: theme.colors.gray[6] }}>
                             {new Date(startDatetime).toLocaleString('en-US', {
                                 weekday: 'short',
                                 month: 'long',
@@ -142,7 +142,7 @@ export default function ContestHeader({
                         <Text size='sm' c='dimmed'>
                             Ends:
                         </Text>
-                        <Text size='sm' fw={600} c='gray.9'>
+                        <Text size='sm' fw={600} style={{ color: theme.colors.gray[6] }}>
                             {new Date(endDatetime).toLocaleString('en-US', {
                                 weekday: 'short',
                                 month: 'long',

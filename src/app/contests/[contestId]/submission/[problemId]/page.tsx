@@ -27,9 +27,5 @@ export default function SubmissionPage() {
             console.log(error);
         }
     };
-    return (
-        <ProblemSubmission
-            problemId={Number(problemId)}
-        />
-    );
+    return <ProblemSubmission problemId={Number(problemId)} />;
 }

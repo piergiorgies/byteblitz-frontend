@@ -118,11 +118,7 @@ export default function ProblemSubmission({
     const factory = (node: TabNode) => {
         const component = node.getComponent();
         if (component === 'ProblemWindow') {
-            return (
-                <ProblemWindow
-                    problemInfo={problemInfo}
-                />
-            );
+            return <ProblemWindow problemInfo={problemInfo} />;
         }
         if (component === 'MonacoWindow') {
             return <MonacoWindow />;

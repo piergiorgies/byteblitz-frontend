@@ -179,7 +179,6 @@ export default function PretestWindow({
                                             Input =
                                         </Text>
                                         <Box
-                                            bg='gray.1'
                                             p='xs'
                                             style={{
                                                 borderRadius: '6px',
@@ -195,7 +194,6 @@ export default function PretestWindow({
                                         </Text>
 
                                         <Box
-                                            bg='gray.1'
                                             p='xs'
                                             style={{
                                                 borderRadius: '6px',
@@ -217,7 +215,9 @@ export default function PretestWindow({
                                                         borderRadius: '6px',
                                                     }}
                                                 >
-                                                    <pre>{partialResult.output}</pre>
+                                                    <pre>
+                                                        {partialResult.output}
+                                                    </pre>
                                                 </Box>
                                             </Box>
                                         )}
