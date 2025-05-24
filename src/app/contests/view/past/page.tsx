@@ -2,9 +2,7 @@
 
 import ContestHeader from '@/components/contests/ContestHeader';
 import Forbidden from '@/components/global/Forbidden';
-import {
-    ContestInfos,
-} from '@/models/Contest';
+import { ContestInfos } from '@/models/Contest';
 import api from '@/utils/ky';
 import {
     Container,
@@ -193,7 +191,7 @@ export default function ViewContestPage() {
                                                             <FaSort />
                                                         </span>
                                                     ) : header.column.getIsSorted() ===
-                                                        'desc' ? (
+                                                      'desc' ? (
                                                         <span className='me-1 text-slate-400'>
                                                             <FaSortDown />
                                                         </span>

@@ -20,10 +20,7 @@ import { notifications } from '@mantine/notifications';
 import { HTTPError } from 'ky';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-import {
-    FaCaretLeft,
-    FaInfo,
-} from 'react-icons/fa6';
+import { FaCaretLeft, FaInfo } from 'react-icons/fa6';
 
 export default function ViewContestPage() {
     const [contest, setContest] = useState<ContestMinimal>();
@@ -45,8 +42,6 @@ export default function ViewContestPage() {
         } catch (error) {
             console.error('Error fetching contest:', error);
         }
-
-        console.log(contest);
     };
 
     useEffect(() => {

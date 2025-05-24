@@ -54,13 +54,15 @@ export default function ProblemWindow({
 
     return (
         <Container>
-            <Container fluid bg='white' py='xs' h='100%'>
+            <Container fluid py='xs' h='100%'>
                 <Flex direction='column' h='100%' style={{ overflowY: 'auto' }}>
                     <Flex justify='space-between' align='center' pos='relative'>
                         <Button
                             variant='subtle'
                             leftSection={<FaArrowLeft />}
-                            onClick={() => { router.back(); }}
+                            onClick={() => {
+                                router.back();
+                            }}
                         >
                             Go back
                         </Button>

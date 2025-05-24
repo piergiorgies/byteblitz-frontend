@@ -207,13 +207,7 @@ export default function OngoingContests() {
                     timeLeft={timeLeft}
                 />
                 <Space h='lg' />
-                <Paper
-                    withBorder
-                    radius='md'
-                    p='md'
-                    shadow='xs'
-                    style={{ backgroundColor: theme.colors.gray[0] }}
-                >
+                <Paper withBorder radius='md' p='md' shadow='xs'>
                     <Group align='center' mb='sm'>
                         <Flex align='center' gap='xs' mb='sm'>
                             <FaInfo
@@ -228,7 +222,7 @@ export default function OngoingContests() {
                             </Text>
                         </Flex>
                     </Group>
-                    <Text size='sm' c='gray.8'>
+                    <Text size='sm'>
                         {contest?.description ||
                             'No description provided for this contest.'}
                     </Text>

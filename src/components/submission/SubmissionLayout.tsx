@@ -1,6 +1,6 @@
 'use client';
 
-import { AppShell, Burger, Button, Flex, Group, Title } from '@mantine/core';
+import { AppShell, Burger, Button, Flex, Group, Title, Tooltip } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import React, { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
@@ -12,6 +12,7 @@ import api from '@/utils/ky';
 import { TestCaseSubmission, TotalResult } from '@/models/Submission';
 import { notifications } from '@mantine/notifications';
 import { HTTPError } from 'ky';
+import ColorSchemeChanger from '../global/ColorSchemeChanger';
 
 export default function SubmissionLayoutComponent({
     children,
@@ -68,7 +69,8 @@ export default function SubmissionLayoutComponent({
                     if (response.status === 403) {
                         notifications.show({
                             ...baseNotification,
-                            message: 'You have reached the submission rate limit.',
+                            message:
+                                'You have reached the submission rate limit.',
                         });
                     } else {
                         notifications.show({
@@ -91,11 +93,11 @@ export default function SubmissionLayoutComponent({
         handleSubmit(code, false);
     };
 
-    const submitCodeExample = async () => {
-        setPretestResults([]);
-        setResult(null);
-        handleSubmit(code, true);
-    };
+    // const submitCodeExample = async () => {
+    //     setPretestResults([]);
+    //     setResult(null);
+    //     handleSubmit(code, true);
+    // };
 
     return (
         <>
@@ -123,13 +125,15 @@ export default function SubmissionLayoutComponent({
                                 </Title>
 
                                 <Flex gap='sm'>
-                                    <Button
-                                        leftSection={<FaPlay />}
-                                        onClick={submitCodeExample}
-                                        variant='light'
-                                    >
-                                        Run Example
-                                    </Button>
+                                    <Tooltip label={'Coming soon!'} withArrow>
+                                        <Button
+                                            leftSection={<FaPlay />}
+                                            // onClick={submitCodeExample}
+                                            variant='light'
+                                        >
+                                            Run Example
+                                        </Button>
+                                    </Tooltip>
                                     <Button
                                         leftSection={<FaRegPaperPlane />}
                                         onClick={submitCode}
@@ -137,11 +141,13 @@ export default function SubmissionLayoutComponent({
                                         Submit
                                     </Button>
                                 </Flex>
-
-                                <HeaderUserButton
-                                    username={username}
-                                    userPermissions={userPermissions}
-                                />
+                                <Flex gap='sm'>
+                                    <ColorSchemeChanger />
+                                    <HeaderUserButton
+                                        username={username}
+                                        userPermissions={userPermissions}
+                                    />
+                                </Flex>
                             </Flex>
                         </Flex>
                     </Group>
@@ -153,7 +159,6 @@ export default function SubmissionLayoutComponent({
                         paddingBottom: 0,
                         paddingTop: '60px',
                     }}
-                    className='bg-slate-100'
                 >
                     <SubmissionContext.Provider
                         value={{

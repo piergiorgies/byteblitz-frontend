@@ -1,10 +1,17 @@
 'use client';
 
-import { AppShell, Burger, Flex, Group, Title } from '@mantine/core';
+import {
+    AppShell,
+    Burger,
+    Flex,
+    Group,
+    Title,
+} from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import React from 'react';
 import HeaderUserButton from './HeaderUserButton';
 import { useRouter } from 'next/navigation';
+import ColorSchemeChanger from '../global/ColorSchemeChanger';
+
 
 export default function MainLayout({
     children,
@@ -36,20 +43,25 @@ export default function MainLayout({
                                 w={'100%'}
                             >
                                 <Title
-                                    c='dimmed'
+                                    pt={5}
                                     role='button'
                                     onClick={() => router.push('/')}
                                 >
                                     ByteBlitz
                                 </Title>
-                                <HeaderUserButton
-                                    username={username}
-                                    userPermissions={userPermissions}
-                                />
+
+                                <Group>
+                                    <ColorSchemeChanger />
+                                    <HeaderUserButton
+                                        username={username}
+                                        userPermissions={userPermissions}
+                                    />
+                                </Group>
                             </Flex>
                         </Flex>
                     </Group>
                 </AppShell.Header>
+
                 <AppShell.Main
                     style={{
                         paddingLeft: 0,
@@ -57,7 +69,6 @@ export default function MainLayout({
                         paddingBottom: 0,
                         paddingTop: '60px',
                     }}
-                    className='bg-slate-100'
                 >
                     {children}
                 </AppShell.Main>

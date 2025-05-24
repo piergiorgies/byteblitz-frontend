@@ -6,7 +6,7 @@ export default async function AdminLayout({
     children,
 }: Readonly<{ children: React.ReactNode }>) {
     return (
-        <Box bg='white' p='md'>
+        <Box p='md'>
             <AutoBreadcrumbs />
             <Space h='sm' />
             {children}
