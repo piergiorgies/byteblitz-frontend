@@ -63,6 +63,15 @@ export default function ColorSchemeChanger() {
         }
     };
 
+    useEffect(() => {
+        const html = document.documentElement;
+        if (colorScheme === 'dark') {
+            html.classList.add('dark');
+        } else {
+            html.classList.remove('dark');
+        }
+    }, [colorScheme]);
+
     return (
         <Tooltip label={getTooltip()} position='bottom' withArrow>
             <ActionIcon

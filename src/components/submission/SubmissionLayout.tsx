@@ -1,6 +1,6 @@
 'use client';
 
-import { AppShell, Burger, Button, Flex, Group, Title } from '@mantine/core';
+import { AppShell, Burger, Button, Flex, Group, Title, Tooltip } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import React, { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
@@ -93,11 +93,11 @@ export default function SubmissionLayoutComponent({
         handleSubmit(code, false);
     };
 
-    const submitCodeExample = async () => {
-        setPretestResults([]);
-        setResult(null);
-        handleSubmit(code, true);
-    };
+    // const submitCodeExample = async () => {
+    //     setPretestResults([]);
+    //     setResult(null);
+    //     handleSubmit(code, true);
+    // };
 
     return (
         <>
@@ -125,13 +125,15 @@ export default function SubmissionLayoutComponent({
                                 </Title>
 
                                 <Flex gap='sm'>
-                                    <Button
-                                        leftSection={<FaPlay />}
-                                        onClick={submitCodeExample}
-                                        variant='light'
-                                    >
-                                        Run Example
-                                    </Button>
+                                    <Tooltip label={'Coming soon!'} withArrow>
+                                        <Button
+                                            leftSection={<FaPlay />}
+                                            // onClick={submitCodeExample}
+                                            variant='light'
+                                        >
+                                            Run Example
+                                        </Button>
+                                    </Tooltip>
                                     <Button
                                         leftSection={<FaRegPaperPlane />}
                                         onClick={submitCode}
