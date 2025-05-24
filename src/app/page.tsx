@@ -44,7 +44,7 @@ export default function Home() {
             <div className='min-h-screen py-16'>
                 <Center>
                     <Stack gap='lg' align='center' className='text-center'>
-                        <Title order={1} size='3rem'>
+                        <Title order={1} size='3rem' mt={50}>
                             Welcome to ByteBlitz
                         </Title>
                         <Text size='xl' c='dimmed'>
@@ -70,6 +70,9 @@ export default function Home() {
                 </Center>
 
                 <Space h='xl' />
+                <Center>
+                    <Divider my={'md'} />
+                </Center>
 
                 <Center>
                     <SimpleGrid
@@ -118,7 +121,7 @@ function StatCard({
             padding='xl'
             radius='md'
             withBorder
-            style={{ backgroundColor: theme.white }}
+
         >
             <Group justify='space-between'>
                 <ThemeIcon

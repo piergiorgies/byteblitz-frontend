@@ -74,7 +74,7 @@ export default function MonacoWindow() {
 
     return (
         <Flex mx='md' mb='lg' direction='column' gap='xs'>
-            <Flex bg='white' justify='space-between' px='xs'>
+            <Flex justify='space-between' px='xs'>
                 <Combobox
                     store={combobox}
                     width={250}

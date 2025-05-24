@@ -458,11 +458,13 @@ export default function EditProblem({
 
             <Dropzone
                 onDrop={onTestCasesFileDrop}
-                onReject={(files) => notifications.show({
-                    title: 'Invalid file',
-                    message: `The file inserted is not valid`,
-                    color: 'red',
-                })}
+                onReject={(files) =>
+                    notifications.show({
+                        title: 'Invalid file',
+                        message: `The file inserted is not valid`,
+                        color: 'red',
+                    })
+                }
                 maxSize={maxSize * MB}
                 accept={[MIME_TYPES.zip]}
             >
@@ -483,7 +485,8 @@ export default function EditProblem({
                             Upload the zip with the test cases
                         </Text>
                         <Text c='dimmed' size='sm'>
-                            Make sure the file inside are in the right format. Max {maxSize} MB
+                            Make sure the file inside are in the right format.
+                            Max {maxSize} MB
                         </Text>
                     </Flex>
                 </Group>

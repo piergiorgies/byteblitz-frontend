@@ -12,6 +12,7 @@ import api from '@/utils/ky';
 import { TestCaseSubmission, TotalResult } from '@/models/Submission';
 import { notifications } from '@mantine/notifications';
 import { HTTPError } from 'ky';
+import ColorSchemeChanger from '../global/ColorSchemeChanger';
 
 export default function SubmissionLayoutComponent({
     children,
@@ -68,7 +69,8 @@ export default function SubmissionLayoutComponent({
                     if (response.status === 403) {
                         notifications.show({
                             ...baseNotification,
-                            message: 'You have reached the submission rate limit.',
+                            message:
+                                'You have reached the submission rate limit.',
                         });
                     } else {
                         notifications.show({
@@ -137,11 +139,13 @@ export default function SubmissionLayoutComponent({
                                         Submit
                                     </Button>
                                 </Flex>
-
-                                <HeaderUserButton
-                                    username={username}
-                                    userPermissions={userPermissions}
-                                />
+                                <Flex gap='sm'>
+                                    <ColorSchemeChanger />
+                                    <HeaderUserButton
+                                        username={username}
+                                        userPermissions={userPermissions}
+                                    />
+                                </Flex>
                             </Flex>
                         </Flex>
                     </Group>
@@ -153,7 +157,6 @@ export default function SubmissionLayoutComponent({
                         paddingBottom: 0,
                         paddingTop: '60px',
                     }}
-                    className='bg-slate-100'
                 >
                     <SubmissionContext.Provider
                         value={{

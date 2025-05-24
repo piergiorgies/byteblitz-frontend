@@ -13,3 +13,13 @@ export interface UserType {
     permission: number;
     description: string;
 }
+
+export interface ProfileInfo {
+    acceptance: number;
+    total_year_sub: number;
+    submission_map: Record<string, number>;
+    email: string;
+    username: string;
+    registered_at: Date;
+    has_password: boolean;
+}

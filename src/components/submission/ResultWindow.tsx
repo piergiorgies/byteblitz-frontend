@@ -114,7 +114,7 @@ export default function ResultsWindow({
             <div className='w-full'>
                 <Flex justify='space-between' align='center' p='xs'></Flex>
             </div>
-            <Flex direction='column' h='100%' bg='white'>
+            <Flex direction='column' h='100%'>
                 <Flex direction='column' h='100%'>
                     <ScrollArea h='95%' w='100%'>
                         <Flex h='100%' p='xs'>

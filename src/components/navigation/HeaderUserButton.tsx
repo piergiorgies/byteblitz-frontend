@@ -72,6 +72,7 @@ export default function HeaderUserButton({
                 <Menu.Item
                     leftSection={<FaUser />}
                     rightSection={<FaChevronRight />}
+                    onClick={() => router.push('/user/profile')}
                 >
                     Profile
                 </Menu.Item>
