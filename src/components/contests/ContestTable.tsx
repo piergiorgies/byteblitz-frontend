@@ -29,6 +29,7 @@ import {
 import dayjs from 'dayjs';
 import {
     FaCheck,
+    FaInfo,
     FaPenToSquare,
     FaSort,
     FaSortDown,
@@ -237,7 +238,7 @@ export default function ContestTable({ filter }: { filter: string }) {
                                                 <FaSort />
                                             </span>
                                         ) : header.column.getIsSorted() ===
-                                          'desc' ? (
+                                            'desc' ? (
                                             <span className='me-1 text-slate-400'>
                                                 <FaSortDown />
                                             </span>
@@ -280,6 +281,23 @@ export default function ContestTable({ filter }: { filter: string }) {
                                     >
                                         <FaPenToSquare />
                                     </Button>
+                                    <Tooltip
+                                        label='View Submissions'
+                                        withinPortal
+                                    >
+                                        <Button
+                                            size='xs'
+                                            variant='subtle'
+                                            color='green'
+                                            onClick={() => {
+                                                router.push(
+                                                    `/admin/contests/submissions?id=${row.original.id}`,
+                                                );
+                                            }}
+                                        >
+                                            <FaInfo />
+                                        </Button>
+                                    </Tooltip>
                                     <Button
                                         size='xs'
                                         variant='subtle'
@@ -364,6 +382,6 @@ export default function ContestTable({ filter }: { filter: string }) {
                     }
                 />
             </Flex>
-        </Box>
+        </Box >
     );
 }

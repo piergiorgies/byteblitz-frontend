@@ -38,3 +38,29 @@ export interface ContestInfos extends Contest {
     users: ContestUser[];
     scoreboard: Scoreboard;
 }
+
+export interface ContestSubmission {
+    id: number;
+    problem_id: number;
+    problem_title: string;
+    user_id: number;
+    username: string;
+    status: string;
+    created_at: Date;
+    score: number;
+}
+
+export interface TestCaseDetail {
+    number: number;
+    memory: number;
+    time: number;
+    notes: string;
+    result_code: number;
+}
+
+export interface SubmissionInfo {
+    id: number;
+    code: string;
+    problem_id: number;
+    test_case_results: TestCaseDetail[];
+}

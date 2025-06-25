@@ -188,11 +188,11 @@ export default function ResultsWindow({
                                     p='lg'
                                     radius='xs'
                                     withBorder
-                                    bg={
-                                        result.result && result.result !== ''
-                                            ? 'red-100'
-                                            : 'white'
-                                    }
+                                // bg={
+                                //     result.result && result.result !== ''
+                                //         ? 'red-100'
+                                //         : 'white'
+                                // }
                                 >
                                     <Text w={700} size='lg'>
                                         Total Result
