@@ -19,13 +19,12 @@ import { Problem } from '@/models/Problem';
 import { Complexity } from '@/models/Difficulty';
 import { useContext } from 'react';
 import { SubmissionContext } from '../contexts/SubmissionContext';
+import { useRouter } from 'next/navigation';
 
 export default function ProblemWindow({
     problemInfo,
-    goBackUrl,
 }: {
     problemInfo: Problem | null;
-    goBackUrl?: string;
 }) {
     const problemTextEditor = useEditor({
         extensions: [
@@ -51,24 +50,20 @@ export default function ProblemWindow({
         (constraint) => constraint.languageId === selectedLanguage?.id,
     )?.memoryLimit;
 
+    const router = useRouter();
+
     return (
         <Container>
             <Container fluid bg='white' py='xs' h='100%'>
                 <Flex direction='column' h='100%' style={{ overflowY: 'auto' }}>
                     <Flex justify='space-between' align='center' pos='relative'>
-                        {goBackUrl == null ? (
-                            <Box />
-                        ) : (
-                            <Button
-                                variant='subtle'
-                                leftSection={<FaArrowLeft />}
-                                component='a'
-                                href={goBackUrl}
-                            >
-                                Go back
-                            </Button>
-                        )}
-
+                        <Button
+                            variant='subtle'
+                            leftSection={<FaArrowLeft />}
+                            onClick={() => { router.back(); }}
+                        >
+                            Go back
+                        </Button>
                         <Center
                             pos='absolute'
                             left='50%'

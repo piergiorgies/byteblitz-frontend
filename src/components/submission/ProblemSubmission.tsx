@@ -2,7 +2,7 @@
 
 import { Problem } from '@/models/Problem';
 import api from '@/utils/ky';
-import { Action, Actions, Layout, Model, TabNode } from 'flexlayout-react';
+import { Layout, Model, TabNode } from 'flexlayout-react';
 import { useEffect, useState } from 'react';
 import { objectToCamel } from 'ts-case-convert';
 import ProblemWindow from './ProblemWindow';
@@ -82,10 +82,8 @@ const masterLayout = {
 
 export default function ProblemSubmission({
     problemId,
-    goBackUrl,
 }: {
     problemId: number;
-    goBackUrl?: string;
 }) {
     const [problemInfo, setProblemInfo] = useState<Problem | null>(null);
 
@@ -123,7 +121,6 @@ export default function ProblemSubmission({
             return (
                 <ProblemWindow
                     problemInfo={problemInfo}
-                    goBackUrl={goBackUrl}
                 />
             );
         }

@@ -6,4 +6,4 @@ export interface UserScore {
 
 export interface Scoreboard {
     rankings: UserScore[];
-};
+}

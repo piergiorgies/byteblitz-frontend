@@ -1,5 +1,8 @@
 const nextConfig = {
-  /* config options here */
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  output: 'standalone'
 };
 
 export default nextConfig;

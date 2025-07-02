@@ -2,42 +2,27 @@
 
 import ContestHeader from '@/components/contests/ContestHeader';
 import Forbidden from '@/components/global/Forbidden';
-import { Contest, ContestProblem, ContestMinimal } from '@/models/Contest';
+import { ContestMinimal } from '@/models/Contest';
 import api from '@/utils/ky';
 import {
     Container,
-    Center,
     Flex,
     Group,
     Text,
     Title,
-    Notification,
     useMantineTheme,
     Space,
-    Table,
     Badge,
-    Grid,
-    Blockquote,
     Card,
     Paper,
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import {
-    flexRender,
-    getCoreRowModel,
-    getFilteredRowModel,
-    useReactTable,
-} from '@tanstack/react-table';
 import { HTTPError } from 'ky';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import {
     FaCaretLeft,
     FaInfo,
-    FaRegClock,
-    FaSort,
-    FaSortDown,
-    FaSortUp,
 } from 'react-icons/fa6';
 
 export default function ViewContestPage() {

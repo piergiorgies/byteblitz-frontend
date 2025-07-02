@@ -1,6 +1,8 @@
 'use client';
 import ProblemSubmission from '@/components/submission/ProblemSubmission';
 import api from '@/utils/ky';
+import { notifications } from '@mantine/notifications';
+import { HTTPError } from 'ky';
 import { useParams } from 'next/navigation';
 export default function SubmissionPage() {
     const params = useParams();
@@ -28,7 +30,6 @@ export default function SubmissionPage() {
     return (
         <ProblemSubmission
             problemId={Number(problemId)}
-            goBackUrl='/contests'
         />
     );
 }

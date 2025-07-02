@@ -10,6 +10,8 @@ import { Language } from '@/models/Language';
 import { SubmissionContext } from '../contexts/SubmissionContext';
 import api from '@/utils/ky';
 import { TestCaseSubmission, TotalResult } from '@/models/Submission';
+import { notifications } from '@mantine/notifications';
+import { HTTPError } from 'ky';
 
 export default function SubmissionLayoutComponent({
     children,
@@ -52,8 +54,34 @@ export default function SubmissionLayoutComponent({
                 json: reqBody,
             });
             setOpenedWindow(pretest);
-        } catch (error) {
-            console.error('Submission error:', error);
+        } catch (error: unknown) {
+            const baseNotification = {
+                title: 'Error',
+                color: 'red' as const,
+                message: 'An error occurred while updating the problem. Retry.',
+            };
+            if (error instanceof HTTPError) {
+                try {
+                    const response = error.response;
+                    const body = await response.json();
+
+                    if (response.status === 403) {
+                        notifications.show({
+                            ...baseNotification,
+                            message: 'You have reached the submission rate limit.',
+                        });
+                    } else {
+                        notifications.show({
+                            ...baseNotification,
+                            message: body?.detail ?? baseNotification.message,
+                        });
+                    }
+                } catch {
+                    notifications.show(baseNotification);
+                }
+            } else {
+                notifications.show(baseNotification);
+            }
         }
     };
 
