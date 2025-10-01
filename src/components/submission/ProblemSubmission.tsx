@@ -10,7 +10,7 @@ import MonacoWindow from './MonacoWindow';
 import ResultsWindow from './ResultWindow';
 import SubmissionWindow from './SubmissionWindow';
 import PretestWindow from './PretestWindow';
-import { ActionIcon, Button, Flex, Tooltip } from '@mantine/core';
+import { ActionIcon, Flex, Tooltip } from '@mantine/core';
 import { FaRotateLeft } from 'react-icons/fa6';
 import 'flexlayout-react/style/underline.css';
 

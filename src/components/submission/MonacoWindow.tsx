@@ -7,13 +7,10 @@ import {
     useCombobox,
     Text,
     Tooltip,
-    Container,
 } from '@mantine/core';
 import { useDebouncedCallback } from '@mantine/hooks';
 import { Editor } from '@monaco-editor/react';
 import {
-    Dispatch,
-    SetStateAction,
     useCallback,
     useContext,
     useEffect,
@@ -23,6 +20,7 @@ import { FaChevronDown, FaUpload } from 'react-icons/fa6';
 import { IoCloudDoneOutline } from 'react-icons/io5';
 import { objectToCamel } from 'ts-case-convert';
 import { SubmissionContext } from '../contexts/SubmissionContext';
+import { Problem } from '@/models/Problem';
 
 
 type MonacoWindowProps = {
@@ -31,6 +29,7 @@ type MonacoWindowProps = {
 
 type SavedCodeEntry = {
     problemId: number;
+    languageId: number;
     code: string;
     date: string;
 }
@@ -47,14 +46,14 @@ export default function MonacoWindow({ problemInfo }: MonacoWindowProps) {
         const existingValue = localStorage.getItem('savedCode');
         const parsed: SavedCodeEntry[] = existingValue ? JSON.parse(existingValue) : [];
 
-        // If the problem already exists, update it
         const existingIndex = parsed.findIndex(
-            (entry) => entry.problemId === problemInfo.id
+            (entry) => entry.problemId === problemInfo.id && entry.languageId === selectedLanguage?.id
         );
 
         if (existingIndex !== -1) {
             parsed[existingIndex] = {
-                problemId: problemInfo.id,
+                problemId: problemInfo.id || 0,
+                languageId: selectedLanguage?.id || 0,
                 code,
                 date: new Date().toISOString(),
             };
@@ -65,7 +64,8 @@ export default function MonacoWindow({ problemInfo }: MonacoWindowProps) {
             }
 
             parsed.push({
-                problemId: problemInfo.id,
+                problemId: problemInfo.id || 0,
+                languageId: selectedLanguage?.id || 0,
                 code,
                 date: new Date().toISOString(),
             });
@@ -85,12 +85,12 @@ export default function MonacoWindow({ problemInfo }: MonacoWindowProps) {
         const savedValue = localStorage.getItem('savedCode');
         if (savedValue && problemInfo) {
             const parsed: SavedCodeEntry[] = JSON.parse(savedValue);
-            const entry = parsed.find((e) => e.problemId === problemInfo.id);
+            const entry = parsed.find((e) => e.problemId === problemInfo.id && e.languageId === selectedLanguage?.id);
             if (entry) {
                 setCode(entry.code);
             }
         }
-    }, [problemInfo, setCode]);
+    }, [problemInfo, setCode, selectedLanguage]);
 
     const getLanguages = useCallback(async () => {
         try {
