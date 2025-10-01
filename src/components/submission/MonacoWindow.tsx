@@ -24,13 +24,54 @@ import { IoCloudDoneOutline } from 'react-icons/io5';
 import { objectToCamel } from 'ts-case-convert';
 import { SubmissionContext } from '../contexts/SubmissionContext';
 
-export default function MonacoWindow() {
+
+type MonacoWindowProps = {
+    problemInfo: Problem | null;
+}
+
+type SavedCodeEntry = {
+    problemId: number;
+    code: string;
+    date: string;
+}
+
+export default function MonacoWindow({ problemInfo }: MonacoWindowProps) {
     const [languages, setLanguages] = useState<Language[]>([]);
     const { code, setCode, selectedLanguage, setSelectedLanguage } =
         useContext(SubmissionContext);
 
+
     const saveCode = useDebouncedCallback((code: string) => {
-        localStorage.setItem('savedCode', code);
+        if (!problemInfo) return;
+
+        const existingValue = localStorage.getItem('savedCode');
+        const parsed: SavedCodeEntry[] = existingValue ? JSON.parse(existingValue) : [];
+
+        // If the problem already exists, update it
+        const existingIndex = parsed.findIndex(
+            (entry) => entry.problemId === problemInfo.id
+        );
+
+        if (existingIndex !== -1) {
+            parsed[existingIndex] = {
+                problemId: problemInfo.id,
+                code,
+                date: new Date().toISOString(),
+            };
+        } else {
+            // If length >= 10, remove oldest (index 0)
+            if (parsed.length >= 10) {
+                parsed.shift();
+            }
+
+            parsed.push({
+                problemId: problemInfo.id,
+                code,
+                date: new Date().toISOString(),
+            });
+        }
+
+        localStorage.setItem('savedCode', JSON.stringify(parsed));
         setSaved(true);
     }, 1000);
 
@@ -41,11 +82,15 @@ export default function MonacoWindow() {
     });
 
     useEffect(() => {
-        const savedCode = localStorage.getItem('savedCode');
-        if (savedCode) {
-            setCode(savedCode);
+        const savedValue = localStorage.getItem('savedCode');
+        if (savedValue && problemInfo) {
+            const parsed: SavedCodeEntry[] = JSON.parse(savedValue);
+            const entry = parsed.find((e) => e.problemId === problemInfo.id);
+            if (entry) {
+                setCode(entry.code);
+            }
         }
-    }, []);
+    }, [problemInfo, setCode]);
 
     const getLanguages = useCallback(async () => {
         try {

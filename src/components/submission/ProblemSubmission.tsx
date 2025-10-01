@@ -121,7 +121,7 @@ export default function ProblemSubmission({
             return <ProblemWindow problemInfo={problemInfo} />;
         }
         if (component === 'MonacoWindow') {
-            return <MonacoWindow />;
+            return <MonacoWindow problemInfo={problemInfo} />;
         }
         if (component === 'ResultsWindow') {
             return <ResultsWindow layoutModel={model} />;
