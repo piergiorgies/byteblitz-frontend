@@ -62,11 +62,6 @@ export default function ContestForm({
             };
     }, [initialValues]);
 
-    if (initialValues?.start_datetime) {
-        console.log('Original:', initialValues.start_datetime);
-        console.log('Parsed:', new Date(initialValues.start_datetime));
-        console.log('Local:', new Date(initialValues.start_datetime).toLocaleString());
-    }
     const contestForm = useForm({
         initialValues: localInitialValues,
         validate: {
@@ -100,10 +95,12 @@ export default function ContestForm({
 
     useEffect(() => {
         contestForm.setFieldValue('users', selectedUserIds);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedUserIds]);
 
     useEffect(() => {
         contestForm.setFieldValue('contest_problems', selectedProblem);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedProblem]);
 
     useEffect(() => {

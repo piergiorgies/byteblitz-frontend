@@ -4,7 +4,7 @@ import ContestForm from '@/components/contests/ContestForm';
 import api from '@/utils/ky';
 import { notifications } from '@mantine/notifications';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 export default function EditContestPage() {
     const router = useRouter();
@@ -12,7 +12,7 @@ export default function EditContestPage() {
     const contestId = searchParams.get('id');
     const [contest, setContest] = useState<any | null>(null);
 
-    const fetchContest = async () => {
+    const fetchContest = useCallback(async () => {
         try {
             const response = await api.get(`admin/contests/${contestId}`);
             const data = await response.json();
@@ -20,17 +20,28 @@ export default function EditContestPage() {
         } catch (error) {
             console.error('Error fetching contest:', error);
         }
-    };
+    }, [contestId]);
 
     const handleEditContest = async (values: any) => {
+        // convert to Date objects first (in case they are strings)
+        const startDate = values.start_datetime
+            ? new Date(values.start_datetime)
+            : null;
+        const endDate = values.end_datetime
+            ? new Date(values.end_datetime)
+            : null;
+
+        if (startDate && endDate) {
+            // get local shift in minutes and add it to start and end datetime
+            const localShiftInMinutes = new Date().getTimezoneOffset();
+            startDate.setMinutes(startDate.getMinutes() - localShiftInMinutes);
+            endDate.setMinutes(endDate.getMinutes() - localShiftInMinutes);
+        }
+
         const formattedValues = {
             ...values,
-            start_datetime: values.start_datetime
-                ? new Date(values.start_datetime)
-                : null,
-            end_datetime: values.end_datetime
-                ? new Date(values.end_datetime)
-                : null,
+            start_datetime: startDate,
+            end_datetime: endDate,
             problems: values.contest_problems,
         };
 
@@ -56,6 +67,7 @@ export default function EditContestPage() {
             });
         }
     };
+
 
     useEffect(() => {
         if (contestId) {

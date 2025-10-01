@@ -4,7 +4,6 @@ import {
     Box,
     Button,
     Center,
-    Checkbox,
     Divider,
     Flex,
     Pagination,
@@ -17,8 +16,7 @@ import {
 } from '@mantine/core';
 import { Contest } from '@/models/Contest';
 import api from '@/utils/ky';
-import { headers } from 'next/headers';
-import { use, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
     flexRender,
     getCoreRowModel,
@@ -175,7 +173,7 @@ export default function ContestTable({ filter }: { filter: string }) {
                 cell: (info: any) => {
                     const rawDate = info.getValue();
                     const formattedDate = rawDate
-                        ? dayjs.utc(rawDate).local().format('YYYY-MM-DD HH:mm:ss')
+                        ? dayjs.utc(rawDate).format('YYYY-MM-DD HH:mm:ss')
                         : 'N/A';
                     return <Text>{formattedDate}</Text>;
                 },
@@ -186,7 +184,7 @@ export default function ContestTable({ filter }: { filter: string }) {
                 cell: (info: any) => {
                     const rawDate = info.getValue();
                     const formattedDate = rawDate
-                        ? dayjs.utc(rawDate).local().format('YYYY-MM-DD HH:mm:ss')
+                        ? dayjs.utc(rawDate).format('YYYY-MM-DD HH:mm:ss')
                         : 'N/A';
                     return <Text>{formattedDate}</Text>;
                 },
