@@ -9,6 +9,7 @@ import {
     useMantineTheme,
     Button,
     Paper,
+    Tooltip
 } from '@mantine/core';
 import { FaRegClock, FaHourglassHalf } from 'react-icons/fa6';
 
@@ -30,6 +31,8 @@ export default function ContestHeader({
     timeLeft,
 }: ContestHeaderProps) {
     const theme = useMantineTheme();
+
+    const truncatedTitle = title.length > 40 ? title.slice(0, 37) + '...' : title;
 
     const getStatus = () => {
         if (!startDatetime || !endDatetime) return 'upcoming';
@@ -71,7 +74,9 @@ export default function ContestHeader({
                 style={{ width: '100%' }}
             >
                 <Flex align='center'>
-                    <Title order={1}>{title}</Title>
+                    <Tooltip label={title} withArrow>
+                        <Title order={1} >{truncatedTitle}</Title>
+                    </Tooltip>
                     <Badge color={dynamicBadgeColor} variant='light' ml={10}>
                         {dynamicBadgeText}
                     </Badge>
