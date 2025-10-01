@@ -180,7 +180,7 @@ export default function SubmissionWindow({ problemId }: SubmissionTableProps) {
                 ),
             },
         ],
-        [submissionResults],
+        [submissionResults, languages],
     );
 
     const onClickLoadCode = (code: string, language_id: number) => {
