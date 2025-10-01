@@ -55,8 +55,8 @@ export default function ChangePasswordForm({
                     message: 'There was an error processing the request',
                 });
             }
-        } catch (err) {
-            console.log('Error changing password:', err);
+        } catch (error) {
+            console.log(error);
         }
     };
 

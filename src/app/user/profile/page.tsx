@@ -9,11 +9,9 @@ import {
     Tabs,
     Paper,
     Skeleton,
-    Button,
     Divider,
     Grid,
     Space,
-    useMantineColorScheme,
 } from '@mantine/core';
 import { Heatmap } from '@mantine/charts';
 import { useEffect, useState, useCallback } from 'react';
@@ -24,15 +22,13 @@ export default function ProfilePage() {
     const [userInfo, setUserInfo] = useState<ProfileInfo>();
     const [loading, setLoading] = useState(true);
 
-    const { setColorScheme, clearColorScheme } = useMantineColorScheme();
-
     const fetchUserInfo = async () => {
         try {
             const response = await api.get('users/profile/info');
             const data = await response.json<ProfileInfo>();
             setUserInfo(data);
         } catch (error) {
-            console.log('Error fetching user info:', error);
+            console.log(error);
         } finally {
             setLoading(false);
         }

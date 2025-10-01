@@ -40,6 +40,9 @@ import {
 import { useRouter } from 'next/navigation';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
+import utc from 'dayjs/plugin/utc';
+
+dayjs.extend(utc);
 
 export default function ContestTable({ filter }: { filter: string }) {
     const [contests, setContests] = useState<Contest[]>([]);
@@ -172,7 +175,7 @@ export default function ContestTable({ filter }: { filter: string }) {
                 cell: (info: any) => {
                     const rawDate = info.getValue();
                     const formattedDate = rawDate
-                        ? dayjs(rawDate).format('YYYY-MM-DD HH:mm:ss')
+                        ? dayjs.utc(rawDate).local().format('YYYY-MM-DD HH:mm:ss')
                         : 'N/A';
                     return <Text>{formattedDate}</Text>;
                 },
@@ -183,7 +186,7 @@ export default function ContestTable({ filter }: { filter: string }) {
                 cell: (info: any) => {
                     const rawDate = info.getValue();
                     const formattedDate = rawDate
-                        ? dayjs(rawDate).format('YYYY-MM-DD HH:mm:ss')
+                        ? dayjs.utc(rawDate).local().format('YYYY-MM-DD HH:mm:ss')
                         : 'N/A';
                     return <Text>{formattedDate}</Text>;
                 },

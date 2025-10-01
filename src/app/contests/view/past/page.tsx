@@ -25,7 +25,7 @@ import {
 } from '@tanstack/react-table';
 import { HTTPError } from 'ky';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
     FaCaretLeft,
     FaInfo,
@@ -45,7 +45,7 @@ export default function ViewContestPage() {
 
     const theme = useMantineTheme();
 
-    const fetchContest = async () => {
+    const fetchContest = useCallback(async () => {
         try {
             const response = await api.get(`contests/${contestId}/past`);
             const data = await response.json<ContestInfos>();
@@ -55,14 +55,14 @@ export default function ViewContestPage() {
             if (error instanceof HTTPError && error.response.status === 403) {
                 setForbidden(true);
             } else {
-                console.log('Error fetching contest:', error);
+                console.log(error);
             }
         }
-    };
+    }, [contestId]);
 
     useEffect(() => {
         fetchContest();
-    }, [contestId]);
+    }, [fetchContest]);
 
     const problemColumns = useMemo(
         () => [
@@ -191,7 +191,7 @@ export default function ViewContestPage() {
                                                             <FaSort />
                                                         </span>
                                                     ) : header.column.getIsSorted() ===
-                                                      'desc' ? (
+                                                        'desc' ? (
                                                         <span className='me-1 text-slate-400'>
                                                             <FaSortDown />
                                                         </span>

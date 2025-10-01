@@ -15,7 +15,6 @@ import {
     Group,
     Divider,
     ThemeIcon,
-    useMantineTheme,
 } from '@mantine/core';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -26,7 +25,6 @@ export default function Home() {
     const [statistics, setStatistics] = useState<Statistics>();
     const getStatistics = async () => {
         try {
-            console.log('Fetching statistics...');
             const response = await api.get('dashboard/stats');
             const data = await response.json<Statistics>();
             setStatistics(data);
@@ -113,7 +111,6 @@ function StatCard({
     data: string;
     subtitle: string;
 }) {
-    const theme = useMantineTheme();
 
     return (
         <Card

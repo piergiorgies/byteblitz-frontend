@@ -128,7 +128,6 @@ export default function ProblemSubmission({
         }
 
         if (component === 'SubmissionWindow') {
-            console.log('SubmissionWindow');
             return <SubmissionWindow problemId={problemInfo?.id ?? 0} />;
         }
 

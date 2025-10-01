@@ -9,12 +9,15 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { DateTimePicker } from '@mantine/dates';
-import { useEffect, useState } from 'react';
-import { User } from '@/models/User';
+import { useEffect, useMemo, useState } from 'react';
 import { FaMagnifyingGlass } from 'react-icons/fa6';
 import UsersTable from '../users/UsersTable';
-import '@mantine/dates/styles.css';
+
 import ProblemsTable from '../problems/ProblemsTable';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+
+dayjs.extend(utc);
 
 type ContestFormProps = {
     mode: 'add' | 'edit';
@@ -36,20 +39,36 @@ export default function ContestForm({
     initialValues,
     onSubmit,
 }: ContestFormProps) {
+    const localInitialValues = useMemo(() => {
+        return initialValues
+            ? {
+                ...initialValues,
+                start_datetime: initialValues.start_datetime
+                    ? dayjs.utc(initialValues.start_datetime).local().toDate()
+                    : null,
+                end_datetime: initialValues.end_datetime
+                    ? new Date(initialValues.end_datetime)
+                    : null,
+            }
+            : {
+                name: '',
+                description: '',
+                start_datetime: null,
+                end_datetime: null,
+                users: [],
+                contest_problems: [],
+                is_public: false,
+                is_registration_open: false,
+            };
+    }, [initialValues]);
+
+    if (initialValues?.start_datetime) {
+        console.log('Original:', initialValues.start_datetime);
+        console.log('Parsed:', new Date(initialValues.start_datetime));
+        console.log('Local:', new Date(initialValues.start_datetime).toLocaleString());
+    }
     const contestForm = useForm({
-        initialValues: initialValues || {
-            name: '',
-            description: '',
-            start_datetime: null,
-            end_datetime: null,
-            users: [],
-            contest_problems: [] as {
-                problem_id: number;
-                publication_delay: number;
-            }[],
-            is_public: false,
-            is_registration_open: false,
-        },
+        initialValues: localInitialValues,
         validate: {
             name: (value) => (value.trim() ? null : 'Name is required'),
             description: (value) =>
@@ -88,7 +107,6 @@ export default function ContestForm({
     }, [selectedProblem]);
 
     useEffect(() => {
-        console.log('initialValues', initialValues);
         if (initialValues?.users) {
             setSelectedUserIds(initialValues.users);
         }

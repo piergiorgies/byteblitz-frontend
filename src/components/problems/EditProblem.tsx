@@ -175,7 +175,6 @@ export default function EditProblem({
     };
 
     const saveProblem = async (values: typeof problemInfoForm.values) => {
-        console.log('values', values);
         setIsProblemSaving(true);
 
         const limits = new Map<number, ConstraintsInfoInForm>();
@@ -228,7 +227,6 @@ export default function EditProblem({
             difficulty: values.difficulty,
         };
 
-        console.log('problem', problem);
         await onProblemSave(problem);
 
         setIsProblemSaving(false);

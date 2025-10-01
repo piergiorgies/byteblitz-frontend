@@ -41,7 +41,7 @@ export default function OngoingContests() {
     const [timeLeft, setTimeLeft] = useState<string>('');
     const theme = useMantineTheme();
 
-    const fetchContest = async () => {
+    const fetchContest = useCallback(async () => {
         try {
             const response = await api.get(`contests/${contestId}/ongoing`);
             const data = await response.json<ContestInfos>();
@@ -51,15 +51,13 @@ export default function OngoingContests() {
             if (error instanceof HTTPError && error.response.status === 403) {
                 setForbidden(true);
             } else {
-                console.log('Error fetching contest:', error);
+                console.log(error);
             }
         }
-    };
+    }, [contestId]);
 
     const handleProblemClick = useCallback(
         (id: number) => {
-            console.log('Problem ID:', id);
-            console.log('Contest:', contest);
             if (!contest) return;
             router.push(`/contests/${contest.id}/submission/${id}`);
         },
@@ -68,7 +66,7 @@ export default function OngoingContests() {
 
     useEffect(() => {
         fetchContest();
-    }, [contestId]);
+    }, [fetchContest]);
 
     useEffect(() => {
         if (!contest?.end_datetime) return;
