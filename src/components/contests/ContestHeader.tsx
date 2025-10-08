@@ -89,7 +89,6 @@ export default function ContestHeader({
                             p='xs'
                             withBorder
                             shadow='xs'
-                            bg={theme.colors.green[0]}
                         >
                             <Group gap='xs'>
                                 <FaHourglassHalf

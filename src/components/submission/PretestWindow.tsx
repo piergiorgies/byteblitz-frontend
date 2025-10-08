@@ -44,7 +44,7 @@ export default function PretestWindow({
         }
     };
     const websocketUrl = process.env.NEXT_PUBLIC_API_WS_HOST + '/general/ws';
-    const { sendMessage, lastMessage, readyState } = useWebSocket(
+    const { lastMessage } = useWebSocket(
         websocketUrl,
         {
             shouldReconnect: () => true,
@@ -71,7 +71,7 @@ export default function PretestWindow({
                 console.log(error);
             }
         }
-    }, [lastMessage]);
+    }, [lastMessage, setPretestResults, setResult]);
 
     const getResultString = (result: TestCaseSubmission) => {
         const colorMap: Record<number, string> = {
@@ -109,7 +109,7 @@ export default function PretestWindow({
             {testCases && (
                 <Tabs variant='none' value={value} onChange={setValue} py={10}>
                     <Tabs.List ref={setRootRef} className={classes.list} p={8}>
-                        {testCases.map((test, index) => {
+                        {testCases.map((test) => {
                             const subResult = pretestResults.find(
                                 (submission) =>
                                     submission.number === test.number,

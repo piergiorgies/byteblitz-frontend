@@ -7,10 +7,7 @@ import {
     Skeleton,
     Center,
     ScrollArea,
-    Paper,
-    Title,
     Tooltip,
-    Group,
     Badge,
     Flex,
 } from '@mantine/core';

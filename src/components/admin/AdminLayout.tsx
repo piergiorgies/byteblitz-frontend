@@ -6,6 +6,7 @@ import React from 'react';
 import AdminNavbar from './AdminNavbar';
 import HeaderUserButton from '../navigation/HeaderUserButton';
 import { useRouter } from 'next/navigation';
+import ColorSchemeChanger from '../global/ColorSchemeChanger';
 
 export default function AdminLayoutComponent({
     children,
@@ -45,17 +46,19 @@ export default function AdminLayoutComponent({
                                 w={'100%'}
                             >
                                 <Title
-                                    c='dimmed'
+                                    pt={5}
                                     role='button'
                                     onClick={() => router.push('/')}
                                 >
                                     ByteBlitz
                                 </Title>
-
-                                <HeaderUserButton
-                                    username={username}
-                                    userPermissions={userPermissions}
-                                />
+                                <Group>
+                                    <ColorSchemeChanger />
+                                    <HeaderUserButton
+                                        username={username}
+                                        userPermissions={userPermissions}
+                                    />
+                                </Group>
                             </Flex>
                         </Flex>
                     </Group>

@@ -1,8 +1,7 @@
 'use client';
 
 import { ContestMinimal } from '@/models/Contest';
-import { User } from '@/models/User';
-import { Box, Button, Card, Flex, Group, Text, Tooltip } from '@mantine/core';
+import { Button, Card, Group, Text, Tooltip } from '@mantine/core';
 import dayjs from 'dayjs';
 import { useRouter } from 'next/navigation';
 import { FaClock, FaPeopleGroup, FaQuestion, FaUpload } from 'react-icons/fa6';
@@ -60,73 +59,69 @@ export default function ContestCard({ contest }: ContestCardProps) {
             key={contest.id}
             mb='md'
         >
-            <Flex>
-                <div>
-                    <Tooltip label={contest.name} disabled={contest.name.length <= 30} withArrow>
-                        <Text
-                            size="xl"
-                            style={{
-                                whiteSpace: 'nowrap',
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis',
-                                maxWidth: 400,
-                            }}
-                        >
-                            {contest.name}
-                        </Text>
-                    </Tooltip>
+            <Group justify='space-between'>
+                <Tooltip label={contest.name} disabled={contest.name.length <= 30} withArrow>
+                    <Text
+                        size="xl"
+                        style={{
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            maxWidth: 400,
+                        }}
+                    >
+                        {contest.name}
+                    </Text>
+                </Tooltip>
+                {actionButton}
+            </Group>
 
-                    <Tooltip label={contest.description} disabled={contest.description.length <= 100} withArrow>
-                        <Text
-                            size="md"
-                            c="dimmed"
-                            style={{
-                                whiteSpace: 'nowrap',
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis',
-                                maxWidth: 400,
-                            }}
-                        >
-                            {contest.description}
-                        </Text>
-                    </Tooltip>
+            <Tooltip label={contest.description} disabled={contest.description.length <= 100} withArrow>
+                <Text
+                    size="md"
+                    c="dimmed"
+                    style={{
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        maxWidth: 400,
+                    }}
+                >
+                    {contest.description}
+                </Text>
+            </Tooltip>
 
-                    <Group mt='md'>
-                        <Text size='xs'>
-                            Starts: {start.format('DD MMM YYYY, HH:mm')}
-                        </Text>
-                        <Text size='xs'>
-                            Ends: {end.format('DD MMM YYYY, HH:mm')}
-                        </Text>
-                    </Group>
+            <Group mt='md'>
+                <Text size='xs'>
+                    Starts: {start.format('DD MMM YYYY, HH:mm')}
+                </Text>
+                <Text size='xs'>
+                    Ends: {end.format('DD MMM YYYY, HH:mm')}
+                </Text>
+            </Group>
 
-                    <Group mt='md'>
-                        <Group gap='xs'>
-                            <FaClock />
-                            <Text size='xs'>{contest.duration} hrs</Text>
-                        </Group>
-                        <Group gap='xs'>
-                            <FaPeopleGroup />
-                            <Text size='xs'>
-                                {contest.n_participants} participants
-                            </Text>
-                        </Group>
-                        <Group gap='xs'>
-                            <FaQuestion />
-                            <Text size='xs'>{contest.n_problems} problems</Text>
-                        </Group>
-                        <Group gap='xs'>
-                            <FaUpload />
-                            <Text size='xs'>
-                                {contest.n_submissions} submissions
-                            </Text>
-                        </Group>
-                    </Group>
-                </div>
-                <Flex justify={'flex-end'} style={{ flex: 1 }}>
-                    <div>{actionButton}</div>
-                </Flex>
-            </Flex>
+            <Group mt='md'>
+                <Group gap='xs'>
+                    <FaClock />
+                    <Text size='xs'>{contest.duration} hrs</Text>
+                </Group>
+                <Group gap='xs'>
+                    <FaPeopleGroup />
+                    <Text size='xs'>
+                        {contest.n_participants} participants
+                    </Text>
+                </Group>
+                <Group gap='xs'>
+                    <FaQuestion />
+                    <Text size='xs'>{contest.n_problems} problems</Text>
+                </Group>
+                <Group gap='xs'>
+                    <FaUpload />
+                    <Text size='xs'>
+                        {contest.n_submissions} submissions
+                    </Text>
+                </Group>
+            </Group>
         </Card>
     );
 }

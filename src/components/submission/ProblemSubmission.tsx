@@ -149,10 +149,10 @@ export default function ProblemSubmission({
             className='w-100 relative'
             style={{ height: 'calc(100vh - 60px)' }}
         >
-            <Flex className='absolute bottom-4 right-4 z-10'>
+            <Flex className='absolute bottom-2 right-2 z-10'>
                 <Tooltip label='Reset default layout' position='left' withArrow>
                     <ActionIcon
-                        variant='light'
+                        variant='filled'
                         radius='xl'
                         size='xl'
                         onClick={resetDefaultWindowLayout}

@@ -1,12 +1,12 @@
 'use client';
 
+import ContestDescription from '@/components/contests/ContestDescription';
 import ContestHeader from '@/components/contests/ContestHeader';
 import Forbidden from '@/components/global/Forbidden';
 import { ContestInfos } from '@/models/Contest';
 import api from '@/utils/ky';
 import {
     Container,
-    Flex,
     Group,
     Text,
     Title,
@@ -28,7 +28,6 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
     FaCaretLeft,
-    FaInfo,
     FaSort,
     FaSortDown,
     FaSortUp,
@@ -140,32 +139,7 @@ export default function ViewContestPage() {
                     }
                 />
                 <Space h='lg' />
-                <Paper
-                    withBorder
-                    radius='md'
-                    p='md'
-                    shadow='xs'
-                    style={{ backgroundColor: theme.colors.gray[0] }}
-                >
-                    <Group align='center' mb='sm'>
-                        <Flex align='center' gap='xs' mb='sm'>
-                            <FaInfo
-                                size={16}
-                                style={{
-                                    color: theme.colors.blue[6],
-                                    marginTop: 2,
-                                }}
-                            />
-                            <Text fw={600} size='md' c='blue.8'>
-                                Contest Description
-                            </Text>
-                        </Flex>
-                    </Group>
-                    <Text size='sm' c='gray.8'>
-                        {contest?.description ||
-                            'No description provided for this contest.'}
-                    </Text>
-                </Paper>
+                <ContestDescription description={contest?.description} />
             </Paper>
 
             <Space h='xl' />

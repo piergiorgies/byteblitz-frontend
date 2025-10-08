@@ -8,12 +8,13 @@ import {
     Text,
     Tooltip,
 } from '@mantine/core';
-import { useDebouncedCallback } from '@mantine/hooks';
+import { useDebouncedCallback, useFileDialog } from '@mantine/hooks';
 import { Editor } from '@monaco-editor/react';
 import {
     useCallback,
     useContext,
     useEffect,
+    useMemo,
     useState,
 } from 'react';
 import { FaChevronDown, FaUpload } from 'react-icons/fa6';
@@ -39,7 +40,6 @@ export default function MonacoWindow({ problemInfo }: MonacoWindowProps) {
     const { code, setCode, selectedLanguage, setSelectedLanguage } =
         useContext(SubmissionContext);
 
-
     const saveCode = useDebouncedCallback((code: string) => {
         if (!problemInfo) return;
 
@@ -58,7 +58,6 @@ export default function MonacoWindow({ problemInfo }: MonacoWindowProps) {
                 date: new Date().toISOString(),
             };
         } else {
-            // If length >= 10, remove oldest (index 0)
             if (parsed.length >= 10) {
                 parsed.shift();
             }
@@ -111,14 +110,53 @@ export default function MonacoWindow({ problemInfo }: MonacoWindowProps) {
         } catch (error) {
             console.log(error);
         }
-    }, []);
+    }, [setSelectedLanguage]);
+
+
+    const options = useMemo(() => {
+        const accept = languages.map((lang) => '.' + lang.fileExtension.toString()).join(', ');
+        console.log('File dialog accept:', accept);
+        return {
+            multiple: false,
+            accept,
+            resetOnOpen: true,
+        };
+    }, [languages]);
+
+    const fileDialog = useFileDialog(options);
 
     useEffect(() => {
         getLanguages().then(() => combobox.closeDropdown());
     }, [getLanguages]);
 
+    const pickedFiles = Array.from(fileDialog.files ?? []);
+
+    useEffect(() => {
+        if (pickedFiles.length > 0) {
+            const file = pickedFiles[0];
+            const extension = file.name.split('.').pop()?.toLowerCase();
+            const language = languages.find(
+                (lang) => lang.fileExtension.toLowerCase() === extension,
+            );
+            if (language) {
+                setSelectedLanguage(language);
+                localStorage.setItem('selectedLanguage', language.id.toString());
+            }
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const text = e.target?.result;
+                if (typeof text === 'string') {
+                    setCode(text);
+                    saveCode(text);
+                }
+            };
+            reader.readAsText(file);
+        }
+        fileDialog.reset();
+    }, [pickedFiles, setCode, saveCode, languages, setSelectedLanguage, fileDialog]);
+
     return (
-        <Flex mx='md' mb='lg' direction='column' gap='xs'>
+        <>
             <Flex justify='space-between' px='xs'>
                 <Combobox
                     store={combobox}
@@ -173,37 +211,33 @@ export default function MonacoWindow({ problemInfo }: MonacoWindowProps) {
                         </Tooltip>
                     )}
                     <Tooltip label='Load code'>
-                        <Button color='gray' variant='subtle'>
+                        <Button color='gray' variant='subtle' onClick={() => fileDialog.open()}>
                             <FaUpload />
                         </Button>
                     </Tooltip>
                 </Flex>
             </Flex>
 
-            <div
-                style={{
-                    height: 'calc(100vh - 200px)',
-                    marginTop: 10,
-                    width: '100%',
+            <Editor
+                height='100%'
+                width='100%'
+                theme='vs-dark'
+                language={selectedLanguage?.code ?? 'cpp'}
+                value={code}
+                onChange={(value) => {
+                    setSaved(false);
+                    setCode(value || '');
+                    saveCode(value || '');
                 }}
-            >
-                <Editor
-                    height='100%'
-                    width='100%'
-                    theme='vs-dark'
-                    language={selectedLanguage?.code ?? 'cpp'}
-                    value={code}
-                    onChange={(value) => {
-                        setSaved(false);
-                        setCode(value || '');
-                        saveCode(value || '');
-                    }}
-                    options={{
-                        fontSize: 16,
-                        minimap: { enabled: false },
-                    }}
-                />
-            </div>
-        </Flex>
+                options={{
+                    fontSize: 16,
+                    minimap: { enabled: false },
+                    scrollbar: { alwaysConsumeMouseWheel: false },
+                    automaticLayout: true,
+                    scrollBeyondLastLine: false,
+                    wordWrap: 'on',
+                }}
+            />
+        </>
     );
 }

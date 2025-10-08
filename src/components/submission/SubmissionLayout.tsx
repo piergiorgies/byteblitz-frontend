@@ -14,15 +14,26 @@ import { notifications } from '@mantine/notifications';
 import { HTTPError } from 'ky';
 import ColorSchemeChanger from '../global/ColorSchemeChanger';
 
+type SubmissionLayoutProps = {
+    children: React.ReactNode;
+    username: string | null;
+    userPermissions: number | null;
+};
+
+interface BodyRequest {
+    problem_id: number;
+    language_id: string;
+    submitted_code: string;
+    notes: string;
+    is_pretest_run: boolean;
+    contest_id?: number;
+}
+
 export default function SubmissionLayoutComponent({
     children,
     username,
     userPermissions,
-}: Readonly<{
-    children: React.ReactNode;
-    username: string | null;
-    userPermissions: number | null;
-}>) {
+}: SubmissionLayoutProps) {
     const params = useParams();
 
     const router = useRouter();
@@ -41,7 +52,7 @@ export default function SubmissionLayoutComponent({
 
     const handleSubmit = async (code: string, pretest: boolean) => {
         try {
-            const reqBody: any = {
+            const reqBody: BodyRequest = {
                 problem_id: parseInt(params.problemId as string),
                 language_id: (selectedLanguage?.id ?? 1).toString(),
                 submitted_code: code,
@@ -93,11 +104,11 @@ export default function SubmissionLayoutComponent({
         handleSubmit(code, false);
     };
 
-    // const submitCodeExample = async () => {
-    //     setPretestResults([]);
-    //     setResult(null);
-    //     handleSubmit(code, true);
-    // };
+    const submitCodeExample = async () => {
+        setPretestResults([]);
+        setResult(null);
+        handleSubmit(code, true);
+    };
 
     return (
         <>
@@ -117,7 +128,7 @@ export default function SubmissionLayoutComponent({
                                 w={'100%'}
                             >
                                 <Title
-                                    c='dimmed'
+                                    pt={5}
                                     role='button'
                                     onClick={() => router.push('/')}
                                 >
@@ -128,7 +139,7 @@ export default function SubmissionLayoutComponent({
                                     <Tooltip label={'Coming soon!'} withArrow>
                                         <Button
                                             leftSection={<FaPlay />}
-                                            // onClick={submitCodeExample}
+                                            onClick={submitCodeExample}
                                             variant='light'
                                         >
                                             Run Example

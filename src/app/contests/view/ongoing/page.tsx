@@ -1,5 +1,6 @@
 'use client';
 
+import ContestDescription from '@/components/contests/ContestDescription';
 import ContestHeader from '@/components/contests/ContestHeader';
 import ScoreboardTable from '@/components/contests/Scoreboard';
 import Forbidden from '@/components/global/Forbidden';
@@ -10,7 +11,6 @@ import {
     Badge,
     Card,
     Container,
-    Flex,
     Group,
     Space,
     Table,
@@ -19,6 +19,8 @@ import {
     useMantineTheme,
     Tooltip,
     Paper,
+    Loader,
+    Center,
 } from '@mantine/core';
 import {
     flexRender,
@@ -29,7 +31,7 @@ import {
 import { HTTPError } from 'ky';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { FaCaretLeft, FaInfo } from 'react-icons/fa6';
+import { FaCaretLeft } from 'react-icons/fa6';
 
 export default function OngoingContests() {
     const [contest, setContest] = useState<ContestInfos>();
@@ -37,11 +39,13 @@ export default function OngoingContests() {
     const contestId = searchParams.get('id');
     const router = useRouter();
     const [isHovered, setIsHovered] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const [forbidden, setForbidden] = useState(true);
     const [timeLeft, setTimeLeft] = useState<string>('');
     const theme = useMantineTheme();
 
     const fetchContest = useCallback(async () => {
+        setIsLoading(true);
         try {
             const response = await api.get(`contests/${contestId}/ongoing`);
             const data = await response.json<ContestInfos>();
@@ -54,6 +58,7 @@ export default function OngoingContests() {
                 console.log(error);
             }
         }
+        setIsLoading(false);
     }, [contestId]);
 
     const handleProblemClick = useCallback(
@@ -66,6 +71,15 @@ export default function OngoingContests() {
 
     useEffect(() => {
         fetchContest();
+    }, [fetchContest]);
+
+
+    // fetchContest every 30 seconds to update the contest info
+    useEffect(() => {
+        const interval = setInterval(() => {
+            fetchContest();
+        }, 30000);
+        return () => clearInterval(interval);
     }, [fetchContest]);
 
     useEffect(() => {
@@ -168,6 +182,16 @@ export default function OngoingContests() {
         manualPagination: true,
     });
 
+    if (isLoading) {
+        return (
+            <Container mt={'30%'}>
+                <Center>
+                    <Loader />
+                </Center>
+            </Container>
+        );
+    }
+
     return forbidden ? (
         <Forbidden />
     ) : (
@@ -205,26 +229,7 @@ export default function OngoingContests() {
                     timeLeft={timeLeft}
                 />
                 <Space h='lg' />
-                <Paper withBorder radius='md' p='md' shadow='xs'>
-                    <Group align='center' mb='sm'>
-                        <Flex align='center' gap='xs' mb='sm'>
-                            <FaInfo
-                                size={16}
-                                style={{
-                                    color: theme.colors.blue[6],
-                                    marginTop: 2,
-                                }}
-                            />
-                            <Text fw={600} size='md' c='blue.8'>
-                                Contest Description
-                            </Text>
-                        </Flex>
-                    </Group>
-                    <Text size='sm'>
-                        {contest?.description ||
-                            'No description provided for this contest.'}
-                    </Text>
-                </Paper>
+                <ContestDescription description={contest?.description} />
             </Paper>
 
             <Space h='xl' />
