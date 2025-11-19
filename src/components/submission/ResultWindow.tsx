@@ -6,7 +6,6 @@ import {
 import api from '@/utils/ky';
 import {
     Blockquote,
-    Button,
     Card,
     Container,
     Flex,
@@ -35,7 +34,7 @@ export default function ResultsWindow({
     } | null>(null);
 
     const websocketUrl = process.env.NEXT_PUBLIC_API_WS_HOST + '/general/ws';
-    const { sendMessage, lastMessage, readyState } = useWebSocket(
+    const { lastMessage } = useWebSocket(
         websocketUrl,
         {
             shouldReconnect: () => true,

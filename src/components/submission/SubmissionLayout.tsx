@@ -49,6 +49,7 @@ export default function SubmissionLayoutComponent({
         [],
     );
     const [openedWindow, setOpenedWindow] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleSubmit = async (code: string, pretest: boolean) => {
         try {
@@ -99,9 +100,11 @@ export default function SubmissionLayoutComponent({
     };
 
     const submitCode = async () => {
+        setIsLoading(true);
         setSubmissions([]);
         setResult(null);
         handleSubmit(code, false);
+        setIsLoading(false);
     };
 
     const submitCodeExample = async () => {
@@ -148,6 +151,7 @@ export default function SubmissionLayoutComponent({
                                     <Button
                                         leftSection={<FaRegPaperPlane />}
                                         onClick={submitCode}
+                                        loading={isLoading}
                                     >
                                         Submit
                                     </Button>
